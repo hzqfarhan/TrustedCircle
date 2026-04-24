@@ -10,6 +10,7 @@ interface NetworkGraphProps {
   currentUser: any;
   edgeStyle?: "solid" | "dotted" | "dashed";
   customAvatarMap?: Record<string, string>;
+  onNodeClick?: (user: any) => void;
 }
 
 const ROLE_DOT_COLORS: Record<string, string> = {
@@ -20,11 +21,9 @@ const ROLE_DOT_COLORS: Record<string, string> = {
   GENERAL: "bg-gray-400",
 };
 
-export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAvatarMap = {} }: NetworkGraphProps) {
-  const [activeCenterId, setActiveCenterId] = useState(currentUser?.id);
-
-  const activeUser = users.find((u) => u.id === activeCenterId) || currentUser;
-  const others = users.filter((u) => u.id !== activeCenterId);
+export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAvatarMap = {}, onNodeClick }: NetworkGraphProps) {
+  const activeUser = currentUser;
+  const others = users.filter((u) => u.id !== currentUser?.id);
 
   // Layout calculation
   const centerX = 150;
@@ -76,7 +75,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
           {/* Edges */}
           {nodes.filter((n) => !n.isCenter).map((n) => (
             <motion.line
-              key={`edge-${activeCenterId}-${n.id}`}
+              key={`edge-${currentUser.id}-${n.id}`}
               x1={centerX}
               y1={centerY}
               x2={n.x}
@@ -113,7 +112,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
               <div className="w-full h-full flex flex-col items-center justify-start">
                 <motion.div
                   layoutId={`node-avatar-${n.id}`}
-                  onClick={() => setActiveCenterId(n.id)}
+                  onClick={() => onNodeClick && onNodeClick(n)}
                   className={cn(
                     "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all shrink-0",
                     isCenter ? "border-blue-600 shadow-blue-500/40 shadow-xl z-20" : "border-white shadow-md hover:scale-110 z-10 hover:border-blue-200"
@@ -156,17 +155,6 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
         })}
       </svg>
       
-      {/* Reset button if looking at someone else's network */}
-      {activeCenterId !== currentUser.id && (
-        <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          onClick={() => setActiveCenterId(currentUser.id)}
-          className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm border border-blue-100 text-blue-600 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm"
-        >
-          Reset View
-        </motion.button>
-      )}
     </div>
   );
 }

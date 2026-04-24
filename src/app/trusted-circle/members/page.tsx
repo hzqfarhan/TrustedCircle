@@ -15,6 +15,9 @@ export default function MembersPage() {
   const { users, currentUser } = useAuth();
   const [viewMode, setViewMode] = useState<"list" | "network">("list");
 
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isSelectedUserOpen, setIsSelectedUserOpen] = useState(false);
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberRole, setNewMemberRole] = useState("GENERAL");
@@ -108,6 +111,10 @@ export default function MembersPage() {
               currentUser={currentUser} 
               edgeStyle="solid"
               customAvatarMap={customAvatarMap}
+              onNodeClick={(u) => {
+                setSelectedUser(u);
+                setIsSelectedUserOpen(true);
+              }}
             />
             <div className="mt-4 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
               <h3 className="text-sm font-semibold text-blue-900 mb-1">Your Circle Map</h3>
@@ -279,6 +286,67 @@ export default function MembersPage() {
                   ? "Biometrics confirmed successfully" 
                   : "Use Face ID or Touch ID to authorize adding a new member"}
               </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Selected User Profile Modal */}
+      <AnimatePresence>
+        {isSelectedUserOpen && selectedUser && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 pb-6"
+          >
+            <motion.div 
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setIsSelectedUserOpen(false)}
+                className="absolute top-4 right-4 bg-gray-100 p-1.5 rounded-full text-gray-500 hover:bg-gray-200 transition-colors"
+              >
+                <X size={18} />
+              </button>
+              
+              <div className="flex items-center gap-4 mb-6">
+                {(selectedUser.avatar || customAvatarMap[selectedUser.id]) ? (
+                  <img src={selectedUser.avatar || customAvatarMap[selectedUser.id]} alt={selectedUser.name} className="w-16 h-16 rounded-3xl object-cover shrink-0 shadow-sm" />
+                ) : (
+                  <div className={cn("w-16 h-16 rounded-3xl flex items-center justify-center text-xl font-bold shrink-0 shadow-sm", ROLE_COLORS[selectedUser.role] || "bg-gray-100 text-gray-700")}>
+                    {initials(selectedUser.name)}
+                  </div>
+                )}
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 tracking-tight">{selectedUser.name}</h2>
+                  <span className={cn("text-[10px] font-bold px-2.5 py-1 rounded-full inline-block mt-1.5 shadow-sm", ROLE_COLORS[selectedUser.role])}>
+                    {ROLE_LABELS[selectedUser.role] || selectedUser.role}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Permissions</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(permissions[selectedUser.role] || []).map((p: string) => (
+                      <span key={p} className="text-[10px] bg-gray-50 border border-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                        {p}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t border-gray-100">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Wallet Balance</p>
+                  <p className="text-xl font-bold text-gray-900">RM {selectedUser.wallet?.balance?.toFixed(2) ?? "0.00"}</p>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
