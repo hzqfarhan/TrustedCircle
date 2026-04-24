@@ -7,11 +7,21 @@ import { BottomNav } from "@/components/BottomNav";
 import { ROLE_LABELS, ROLE_COLORS, initials } from "@/lib/utils-tc";
 import { cn } from "@/lib/utils";
 import { NetworkGraph } from "@/components/NetworkGraph";
-import { Users, Share2 } from "lucide-react";
+import { Users, Share2, UserPlus, Fingerprint, CheckCircle2, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { addMemberToCircle } from "../actions";
 
 export default function MembersPage() {
   const { users, currentUser } = useAuth();
   const [viewMode, setViewMode] = useState<"list" | "network">("list");
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newMemberName, setNewMemberName] = useState("");
+  const [newMemberRole, setNewMemberRole] = useState("GENERAL");
+  
+  const [isBiometricScanning, setIsBiometricScanning] = useState(false);
+  const [isBiometricSuccess, setIsBiometricSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const customAvatarMap: Record<string, string> = {
     u_akmal: "/pfp/akmal.png",
@@ -30,10 +40,46 @@ export default function MembersPage() {
     CHILD: ["Own wallet view", "Spend within limits"],
   };
 
+  const handleAddSubmit = async () => {
+    if (!newMemberName.trim()) return;
+    setIsAddModalOpen(false);
+    setIsBiometricScanning(true);
+
+    // Simulate Biometric Scanning
+    setTimeout(() => {
+      setIsBiometricSuccess(true);
+      
+      // Simulate success delay before server action
+      setTimeout(async () => {
+        setIsSubmitting(true);
+        await addMemberToCircle(newMemberName, newMemberRole);
+        
+        // Reset and close
+        setIsBiometricScanning(false);
+        setIsBiometricSuccess(false);
+        setIsSubmitting(false);
+        setNewMemberName("");
+        setNewMemberRole("GENERAL");
+      }, 1000);
+    }, 2000);
+  };
+
   return (
     <MobileShell>
-      <WalletHeader showBack title="Circle Members" />
-      <div className="flex-1 overflow-y-auto p-4">
+      <WalletHeader 
+        showBack 
+        title="Circle Members" 
+        rightElement={
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center active:bg-blue-200 transition-colors text-blue-600"
+            aria-label="Add Member"
+          >
+            <UserPlus size={16} />
+          </button>
+        }
+      />
+      <div className="flex-1 overflow-y-auto p-4 relative pb-24">
         <div className="flex bg-gray-100 p-1 rounded-xl mb-4">
           <button
             onClick={() => setViewMode("list")}
@@ -124,6 +170,120 @@ export default function MembersPage() {
           </div>
         )}
       </div>
+
+      {/* Add Member Modal */}
+      <AnimatePresence>
+        {isAddModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 pb-6"
+          >
+            <motion.div 
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setIsAddModalOpen(false)}
+                className="absolute top-4 right-4 bg-gray-100 p-1.5 rounded-full text-gray-500"
+              >
+                <X size={18} />
+              </button>
+              
+              <h2 className="text-xl font-bold text-gray-900 mb-1">Add to Circle</h2>
+              <p className="text-xs text-gray-500 mb-6">Expand your trusted network</p>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Full Name</label>
+                  <input 
+                    type="text" 
+                    value={newMemberName}
+                    onChange={(e) => setNewMemberName(e.target.value)}
+                    placeholder="Enter member's name"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Assign Role</label>
+                  <select 
+                    value={newMemberRole}
+                    onChange={(e) => setNewMemberRole(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all appearance-none"
+                  >
+                    {Object.entries(ROLE_LABELS).map(([key, label]) => (
+                      <option key={key} value={key}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleAddSubmit}
+                disabled={!newMemberName.trim()}
+                className="w-full bg-blue-600 text-white font-semibold py-3.5 rounded-xl active:scale-[0.98] transition-transform disabled:opacity-50 disabled:active:scale-100"
+              >
+                Proceed
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Biometric Authentication Modal */}
+      <AnimatePresence>
+        {isBiometricScanning && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white w-full max-w-[280px] rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-2xl"
+            >
+              {!isBiometricSuccess ? (
+                <div className="relative mb-6">
+                  <motion.div 
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="absolute inset-0 bg-blue-100 rounded-full"
+                  />
+                  <div className="relative bg-white p-4 rounded-full text-blue-600">
+                    <Fingerprint size={48} strokeWidth={1.5} />
+                  </div>
+                </div>
+              ) : (
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="mb-6 bg-emerald-100 text-emerald-600 p-4 rounded-full"
+                >
+                  <CheckCircle2 size={48} />
+                </motion.div>
+              )}
+
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                {isBiometricSuccess ? "Authenticated" : "Verify Identity"}
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                {isSubmitting 
+                  ? "Adding member to circle..." 
+                  : isBiometricSuccess 
+                  ? "Biometrics confirmed successfully" 
+                  : "Use Face ID or Touch ID to authorize adding a new member"}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <BottomNav />
     </MobileShell>
   );

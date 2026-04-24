@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { ROLE_LABELS } from "@/lib/utils-tc";
 
 interface NetworkGraphProps {
   users: any[];
@@ -28,7 +29,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
   // Layout calculation
   const centerX = 150;
   const centerY = 150;
-  const radius = 100;
+  const radius = 110;
 
   const nodes = useMemo(() => {
     if (!activeUser) return [];
@@ -61,7 +62,14 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
 
   return (
     <div className="relative w-full aspect-square bg-white rounded-3xl border border-blue-100 overflow-hidden flex items-center justify-center p-4 shadow-sm">
-      {/* Removed Background Grid Pattern */}
+      {/* Background Grid Pattern */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-60"
+        style={{
+          backgroundImage: "radial-gradient(circle at 2px 2px, #cbd5e1 2px, transparent 0)",
+          backgroundSize: "24px 24px"
+        }}
+      />
 
       <svg className="w-full h-full overflow-visible" viewBox="0 0 300 300">
         <AnimatePresence>
@@ -88,7 +96,9 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
         {nodes.map((n, i) => {
           const isCenter = n.isCenter;
           const nodeSize = isCenter ? 72 : 48;
-          const foX = n.x - nodeSize / 2;
+          const foWidth = 140; // Wider to accommodate text without wrapping
+          const foHeight = 140; // Taller for avatar + text
+          const foX = n.x - foWidth / 2;
           const foY = n.y - nodeSize / 2;
 
           return (
@@ -96,52 +106,52 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
               key={`node-${n.id}`}
               x={foX}
               y={foY}
-              width={nodeSize}
-              height={nodeSize}
+              width={foWidth}
+              height={foHeight}
               className="overflow-visible"
             >
-              <motion.div
-                layoutId={`node-avatar-${n.id}`}
-                onClick={() => setActiveCenterId(n.id)}
-                className={cn(
-                  "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all",
-                  isCenter ? "border-blue-600 shadow-blue-500/40 shadow-xl z-20" : "border-white shadow-md hover:scale-110 z-10 hover:border-blue-200"
-                )}
-                style={{ width: nodeSize, height: nodeSize }}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20, delay: isCenter ? 0 : i * 0.05 }}
-              >
-                {(n.avatar || customAvatarMap[n.id]) ? (
-                  <img src={n.avatar || customAvatarMap[n.id]} alt={n.name} className="w-full h-full rounded-full object-cover" />
-                ) : (
-                  <span className="font-bold text-gray-500 text-lg">{n.name[0]}</span>
-                )}
+              <div className="w-full h-full flex flex-col items-center justify-start">
+                <motion.div
+                  layoutId={`node-avatar-${n.id}`}
+                  onClick={() => setActiveCenterId(n.id)}
+                  className={cn(
+                    "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all shrink-0",
+                    isCenter ? "border-blue-600 shadow-blue-500/40 shadow-xl z-20" : "border-white shadow-md hover:scale-110 z-10 hover:border-blue-200"
+                  )}
+                  style={{ width: nodeSize, height: nodeSize }}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20, delay: isCenter ? 0 : i * 0.05 }}
+                >
+                  {(n.avatar || customAvatarMap[n.id]) ? (
+                    <img src={n.avatar || customAvatarMap[n.id]} alt={n.name} className="w-full h-full rounded-full object-cover" />
+                  ) : (
+                    <span className="font-bold text-gray-500 text-lg">{n.name[0]}</span>
+                  )}
+                </motion.div>
                 
-                {/* Role indicator dot removed */}
-              </motion.div>
+                {/* Name and Pill Badge */}
+                <motion.div 
+                  className="mt-1.5 flex flex-col items-center gap-1"
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: isCenter ? 0.2 : i * 0.05 + 0.2 }}
+                >
+                  <span className={cn(
+                    "font-bold text-gray-900 leading-none text-center tracking-tight",
+                    isCenter ? "text-[11px]" : "text-[9px]"
+                  )}>
+                    {n.name} {n.id === currentUser.id && "(YOU)"}
+                  </span>
+                  <span className={cn(
+                    "bg-[#1a4bba] text-white font-bold rounded-full text-center tracking-wide",
+                    isCenter ? "text-[8px] px-2.5 py-[3px]" : "text-[7px] px-2 py-[2px]"
+                  )}>
+                    {ROLE_LABELS[n.role] || n.role}
+                  </span>
+                </motion.div>
+              </div>
             </foreignObject>
-          );
-        })}
-
-        {/* Labels overlayed via SVG text */}
-        {nodes.map((n) => {
-          const isCenter = n.isCenter;
-          const labelY = n.y + (isCenter ? 48 : 36);
-          return (
-            <motion.text
-              key={`label-${n.id}`}
-              layoutId={`node-label-${n.id}`}
-              x={n.x}
-              y={labelY}
-              textAnchor="middle"
-              fill={isCenter ? "#1e293b" : "#64748b"}
-              fontSize={isCenter ? "14px" : "11px"}
-              fontWeight={isCenter ? "bold" : "600"}
-              fontFamily="Inter, sans-serif"
-            >
-              {n.name} {n.id === currentUser.id && "(YOU)"}
-            </motion.text>
           );
         })}
       </svg>
