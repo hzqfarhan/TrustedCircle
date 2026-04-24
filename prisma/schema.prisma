@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id              String             @id @default(cuid())
+  name            String
+  avatar          String?
+  role            String             @default("GENERAL") // PARENT, CHILD, COMPANION, FRIEND, GENERAL
+  
+  wallet          Wallet?
+  
+  // Relationships
+  sharedFundsOwned SharedFund[]      @relation("SharedFundOwner")
+  sharedFundMemberships SharedFundMember[]
+  
+  childAccounts   ChildAccount[]     @relation("ChildAccountParent")
+  parentAccount   ChildAccount?      @relation("ChildAccountUser")
+  
+  sentTransactions Transaction[]     @relation("TransactionSender")
+  receivedTransactions Transaction[] @relation("TransactionReceiver")
+  
+  alerts          Alert[]
+  approvals       Approval[]
+  withdrawalRequests SharedFundWithdrawalRequest[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  balance   Float    @default(0.0)
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  amount        Float
+  note          String?
+  status        String   @default("COMPLETED") // PENDING, BLOCKED, COMPLETED
+  createdAt     DateTime @default(now())
+  
+  senderId      String?
+  sender        User?    @relation("TransactionSender", fields: [senderId], references: [id])
+  
+  receiverId    String?
+  receiver      User?    @relation("TransactionReceiver", fields: [receiverId], references: [id])
+  
+  category      String   @default("TRANSFER") // TRANSFER, MERCHANT, BILL, WITHDRAWAL
+  
+  riskAssessment RiskAssessment?
+}
+
+model SharedFund {
+  id            String             @id @default(cuid())
+  name          String
+  description   String?
+  balance       Float              @default(0.0)
+  goalAmount    Float?
+  approvalRule  String             @default("2_OF_3") // ALL, 2_OF_3, SELECTED, PARENT_ONLY
+  createdAt     DateTime           @default(now())
+  
+  ownerId       String
+  owner         User               @relation("SharedFundOwner", fields: [ownerId], references: [id])
+  
+  members       SharedFundMember[]
+  contributions SharedFundContribution[]
+  withdrawals   SharedFundWithdrawalRequest[]
+}
+
+model SharedFundMember {
+  id        String     @id @default(cuid())
+  role      String     @default("MEMBER") // ADMIN, MEMBER, APPROVER
+  
+  fundId    String
+  fund      SharedFund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@unique([fundId, userId])
+}
+
+model SharedFundContribution {
+  id        String     @id @default(cuid())
+  amount    Float
+  createdAt DateTime   @default(now())
+  
+  fundId    String
+  fund      SharedFund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+}
+
+model SharedFundWithdrawalRequest {
+  id          String   @id @default(cuid())
+  amount      Float
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED, COMPLETED
+  createdAt   DateTime @default(now())
+  description String?
+  
+  fundId      String
+  fund        SharedFund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  
+  requesterId String
+  requester   User       @relation(fields: [requesterId], references: [id])
+  
+  approvals   Approval[]
+}
+
+model Approval {
+  id          String   @id @default(cuid())
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  updatedAt   DateTime @updatedAt
+  
+  requestId   String
+  request     SharedFundWithdrawalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  
+  approverId  String
+  approver    User     @relation(fields: [approverId], references: [id])
+
+  @@unique([requestId, approverId])
+}
+
+model ChildAccount {
+  id            String   @id @default(cuid())
+  spendingLimit Float?
+  limitType     String   @default("MONTHLY") // WEEKLY, MONTHLY
+  
+  parentId      String
+  parent        User     @relation("ChildAccountParent", fields: [parentId], references: [id])
+  
+  childId       String   @unique
+  child         User     @relation("ChildAccountUser", fields: [childId], references: [id])
+  
+  zoneRules     ZoneRule[]
+}
+
+model ZoneRule {
+  id        String   @id @default(cuid())
+  name      String
+  isActive  Boolean  @default(true)
+  
+  childAccountId String
+  childAccount   ChildAccount @relation(fields: [childAccountId], references: [id], onDelete: Cascade)
+}
+
+model Alert {
+  id          String   @id @default(cuid())
+  message     String
+  severity    String   @default("LOW") // LOW, MEDIUM, HIGH
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model RiskAssessment {
+  id            String   @id @default(cuid())
+  score         Int
+  severity      String
+  reasons       String   // JSON string array
+  actions       String   // JSON string array
+  
+  transactionId String   @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model FlaggedRecipient {
+  id          String   @id @default(cuid())
+  accountId   String   @unique
+  reason      String
+  createdAt   DateTime @default(now())
+}
