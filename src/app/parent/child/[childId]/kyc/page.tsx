@@ -5,23 +5,24 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ShieldAlert, ShieldCheck, Upload, FileText } from "lucide-react";
 
-export default function ChildKycPage({ params }: { params: { childId: string } }) {
+export default function ChildKycPage({ params }: { params: Promise<{ childId: string }> }) {
   const { currentUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [kycDoc, setKycDoc] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [fileName, setFileName] = useState("");
+  const resolvedParams = React.use(params);
 
   useEffect(() => {
     if (authLoading) return;
     if (!currentUser) return router.push("/login");
 
-    fetch(`/api/children/${params.childId}/kyc?parentId=${currentUser.id}`)
+    fetch(`/api/children/${resolvedParams.childId}/kyc?parentId=${currentUser.id}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (!data) throw new Error("Not found");
@@ -29,7 +30,7 @@ export default function ChildKycPage({ params }: { params: { childId: string } }
       })
       .catch(() => {
         toast.error("KYC Details not found");
-        router.push(`/parent/child/${params.childId}/profile`);
+        router.push(`/parent/child/${resolvedParams.childId}/profile`);
       })
       .finally(() => setLoading(false));
   }, [currentUser, authLoading, params.childId, router]);
@@ -47,7 +48,7 @@ export default function ChildKycPage({ params }: { params: { childId: string } }
       size: 1024 * 500, // 500kb
     };
 
-    const res = await fetch(`/api/children/${params.childId}/kyc/upload`, {
+    const res = await fetch(`/api/children/${resolvedParams.childId}/kyc/upload`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ parentId: currentUser.id, data: payload }),
@@ -55,7 +56,7 @@ export default function ChildKycPage({ params }: { params: { childId: string } }
 
     if (res.ok) {
       toast.success("Document uploaded successfully. Under review.");
-      router.push(`/parent/child/${params.childId}/profile`);
+      router.push(`/parent/child/${resolvedParams.childId}/profile`);
     } else {
       const err = await res.json();
       toast.error(err.error || "Failed to upload document");

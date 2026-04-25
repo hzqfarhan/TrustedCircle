@@ -5,23 +5,24 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Trash2, AlertTriangle } from "lucide-react";
 
-export default function RemoveChildPage({ params }: { params: { childId: string } }) {
+export default function RemoveChildPage({ params }: { params: Promise<{ childId: string }> }) {
   const { currentUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [child, setChild] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState(false);
   const [confirmText, setConfirmText] = useState("");
+  const resolvedParams = React.use(params);
 
   useEffect(() => {
     if (authLoading) return;
     if (!currentUser) return router.push("/login");
 
-    fetch(`/api/children/${params.childId}?parentId=${currentUser.id}`)
+    fetch(`/api/children/${resolvedParams.childId}?parentId=${currentUser.id}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (!data) throw new Error("Not found");
@@ -42,7 +43,7 @@ export default function RemoveChildPage({ params }: { params: { childId: string 
 
     setRemoving(true);
 
-    const res = await fetch(`/api/children/${params.childId}?parentId=${currentUser.id}`, {
+    const res = await fetch(`/api/children/${resolvedParams.childId}?parentId=${currentUser.id}`, {
       method: "DELETE",
     });
 

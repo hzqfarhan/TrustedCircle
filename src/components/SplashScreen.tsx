@@ -25,25 +25,27 @@ export function SplashScreen() {
   return (
     <AnimatePresence>
       {show && (
-        <motion.div 
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[9999] bg-white flex items-center justify-center overflow-hidden h-[100dvh] w-screen"
-        >
-          <video 
-            src="/assets/splash.MP4" 
-            autoPlay 
-            muted 
-            playsInline 
-            controls={false}
-            className="w-full h-full object-cover pointer-events-none"
-            onEnded={() => {
-              setShow(false);
-              sessionStorage.setItem('splashShown', 'true');
-            }}
-          />
-        </motion.div>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
+          <motion.div 
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full h-[100dvh] sm:max-w-[430px] sm:h-[900px] sm:rounded-[2.5rem] sm:shadow-2xl bg-white relative flex flex-col overflow-hidden sm:border sm:border-gray-200 pointer-events-auto"
+          >
+            <video 
+              src="/assets/splash.MP4" 
+              autoPlay 
+              muted 
+              playsInline 
+              controls={false}
+              className="w-full h-full object-cover pointer-events-none"
+              onEnded={() => {
+                setShow(false);
+                sessionStorage.setItem('splashShown', 'true');
+              }}
+            />
+          </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );

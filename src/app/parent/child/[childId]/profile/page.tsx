@@ -6,22 +6,23 @@ import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
 import { formatRM } from "@/lib/utils-tc";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Pencil, ShieldCheck, ShieldAlert, FileText, Trash2, User } from "lucide-react";
 
-export default function ChildProfilePage({ params }: { params: { childId: string } }) {
+export default function ChildProfilePage({ params }: { params: Promise<{ childId: string }> }) {
   const { currentUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [child, setChild] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const resolvedParams = React.use(params);
 
   useEffect(() => {
     if (authLoading) return;
     if (!currentUser) return router.push("/login");
 
-    fetch(`/api/children/${params.childId}?parentId=${currentUser.id}`)
+    fetch(`/api/children/${resolvedParams.childId}?parentId=${currentUser.id}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (!data) throw new Error("Not found");

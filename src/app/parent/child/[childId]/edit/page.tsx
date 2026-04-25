@@ -5,16 +5,16 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Lock } from "lucide-react";
 
-export default function EditChildPage({ params }: { params: { childId: string } }) {
+export default function EditChildPage({ params }: { params: Promise<{ childId: string }> }) {
   const { currentUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [child, setChild] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const resolvedParams = React.use(params);
   
   const [form, setForm] = useState({
     nickname: "",
@@ -26,7 +26,7 @@ export default function EditChildPage({ params }: { params: { childId: string } 
     if (authLoading) return;
     if (!currentUser) return router.push("/login");
 
-    fetch(`/api/children/${params.childId}?parentId=${currentUser.id}`)
+    fetch(`/api/children/${resolvedParams.childId}?parentId=${currentUser.id}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (!data) throw new Error("Not found");
@@ -49,7 +49,7 @@ export default function EditChildPage({ params }: { params: { childId: string } 
     if (!currentUser) return;
     setSaving(true);
 
-    const res = await fetch(`/api/children/${params.childId}`, {
+    const res = await fetch(`/api/children/${resolvedParams.childId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ parentId: currentUser.id, data: form }),
@@ -57,7 +57,7 @@ export default function EditChildPage({ params }: { params: { childId: string } 
 
     if (res.ok) {
       toast.success("Profile updated!");
-      router.push(`/parent/child/${params.childId}/profile`);
+      router.push(`/parent/child/${resolvedParams.childId}/profile`);
     } else {
       const err = await res.json();
       toast.error(err.error || "Failed to update");

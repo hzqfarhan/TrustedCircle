@@ -2,17 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMockTable } from "@/lib/aws/mock-data";
 import { updateChildSchema } from "@/lib/validations/children";
 
-export async function GET(req: NextRequest, { params }: { params: { childId: string } }) {
-  const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === params.childId && c.status !== "removed");
+export async function GET(req: NextRequest, { params }: { params: Promise<{ childId: string }> }) {
+  const { childId } = await params;
+  const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === childId && c.status !== "removed");
   if (!child) return NextResponse.json({ error: "Child not found" }, { status: 404 });
   return NextResponse.json(child);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { childId: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ childId: string }> }) {
   try {
+    const { childId } = await params;
     const body = await req.json();
     const validated = updateChildSchema.parse(body.data);
-    const childId = params.childId;
     const parentId = body.parentId;
     
     const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === childId && c.parentId === parentId);
@@ -44,12 +45,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { childId: s
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { childId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ childId: string }> }) {
+  const { childId } = await params;
   const { searchParams } = new URL(req.url);
   const parentId = searchParams.get("parentId");
   if (!parentId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === params.childId && c.parentId === parentId);
+  const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === childId && c.parentId === parentId);
   if (!child) return NextResponse.json({ error: "Child not found" }, { status: 404 });
 
   child.status = "removed";
@@ -62,7 +64,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { childId: 
     actorId: parentId,
     action: "child_removed",
     entityType: "child_profile",
-    entityId: params.childId,
+    entityId: childId,
     createdAt: new Date().toISOString(),
   });
 

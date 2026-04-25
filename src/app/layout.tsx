@@ -12,6 +12,7 @@ import { Viewport } from "next";
 
 export const viewport: Viewport = {
   themeColor: "#ffffff",
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
@@ -20,10 +21,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "JuniorWallet",
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
   },
   icons: {
-    apple: "/icons/apple-touch-icon.png",
+    apple: "/assets/JRwallet-logo.png",
   },
 };
 
