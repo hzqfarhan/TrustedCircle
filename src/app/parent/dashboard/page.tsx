@@ -109,7 +109,7 @@ export default function ParentDashboardPage() {
             </div>
             <div className="space-y-3">
               {data.children.map((child: any) => (
-                <Link key={child.id} href={`/parent/child/${child.id}/profile`}>
+                <Link key={child.id} href={`/parent/child/${child.id}`}>
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}

@@ -11,7 +11,7 @@ import { getProfile } from '@/lib/data/profiles';
 import { v4 as uuid } from 'uuid';
 import type { ExtraAllowanceRequest } from '@/types';
 
-export async function submitExtraAllowanceRequest(amount: number, reason: string, childNote: string) {
+export async function SubmitExtraAllowanceRequest(amount: number, reason: string, childNote: string) {
   const user = await requireCurrentUser();
   const childProfileId = await assertIsChild(user);
 
@@ -46,7 +46,7 @@ export async function submitExtraAllowanceRequest(amount: number, reason: string
   return { success: true, requestId: request.id };
 }
 
-export async function approveExtraAllowanceRequestAction(requestId: string, approvedAmount: number, parentMessage?: string) {
+export async function ApproveExtraAllowanceRequestAction(requestId: string, approvedAmount: number, parentMessage?: string) {
   const user = await requireCurrentUser();
   const request = await getExtraRequest(requestId);
   if (!request) throw new Error('Request not found');
@@ -96,7 +96,7 @@ export async function approveExtraAllowanceRequestAction(requestId: string, appr
   return { success: true };
 }
 
-export async function rejectExtraAllowanceRequestAction(requestId: string, parentMessage?: string) {
+export async function RejectExtraAllowanceRequestAction(requestId: string, parentMessage?: string) {
   const user = await requireCurrentUser();
   const request = await getExtraRequest(requestId);
   if (!request) throw new Error('Request not found');
