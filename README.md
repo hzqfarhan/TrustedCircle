@@ -18,6 +18,13 @@ JuniorWallet includes a comprehensive and secure family management system:
 - **Privacy & Masking:** MyKid / NRIC numbers are dynamically masked in the UI (`******-**-0031`) and are strictly forbidden from being stored in raw format within audit logs.
 - **Mock Demo Data:** The system seeds a realistic mock child profile (`ibad`) with mock KYC records and blocked-transfer test cases.
 
+## Child Spending Limit
+- **Default limits**: Every child has a default spending limit of RM20 per transaction.
+- **Parent controls**: Parents can edit the per-transaction limit for each child independently.
+- **Child autonomy**: The limit applies to child spending transactions only (QR Scan, Pay Bills). Parent transfers and top-ups are not blocked.
+- **Demo flows**: QR Scan and Pay Bills demo flows respect the spending limit, showing a friendly blocked message when exceeded.
+- **Local ready**: Operates fully on local/mock data; no AWS Cognito or S3 is strictly required for testing limits.
+
 ## Multi-Cloud Architecture
 This application utilizes a multi-cloud design:
 - **AWS (Backend & Data Layer):** Next.js App Router, DynamoDB, Cognito Authentication, S3, IAM, and transactional workflows.

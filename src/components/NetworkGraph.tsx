@@ -192,7 +192,6 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
             >
               <div className="w-full h-full flex flex-col items-center justify-start">
                 <motion.div
-                  layoutId={`node-avatar-${n.id}`}
                   onPointerDown={(e) => handlePointerDown(e, n.id)}
                   onClick={(e) => handleNodeClick(e, n)}
                   className={ Cn(

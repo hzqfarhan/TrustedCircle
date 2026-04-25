@@ -5,7 +5,7 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { ScoreRing } from "@/components/ScoreRing";
 import { FormatRM } from "@/lib/utils-tc";
-import { ShieldAlert, ShieldCheck, Plus, Baby } from "lucide-react";
+import { ShieldAlert, ShieldCheck, Plus, Baby, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -84,34 +84,45 @@ export default function ChildAccountsListPage() {
         ) : (
           <div className="space-y-3">
             {children.map((child: any) => (
-              <Link key={child.id} href={`/parent/child/${child.id}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 active:bg-gray-50 transition-colors relative overflow-hidden"
+              <div key={child.id} className="relative group">
+                <Link href={`/parent/child/${child.id}`}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 active:bg-gray-50 transition-colors relative overflow-hidden"
+                  >
+                    <ScoreRing score={child.responsibilityScore} size={56} strokeWidth={5} showLabel={false} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold text-gray-900 truncate">{child.nickname || child.fullName}</p>
+                        {child.kycStatus === 'kyc_pending' || child.kycStatus === 'kyc_under_review' ? (
+                          <span className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">
+                            <ShieldAlert size={10} /> Pending KYC
+                          </span>
+                        ) : child.kycStatus === 'verified' ? (
+                          <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                            <ShieldCheck size={10} /> Verified
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="text-[11px] text-gray-400 truncate">{child.fullName}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-[11px] text-gray-500 font-medium">{child.ageGroup} · Age {child.dateOfBirth ? Math.floor((Date.now() - new Date(child.dateOfBirth).getTime()) / 31557600000) : '?'}</p>
+                        <p className="text-sm font-semibold text-blue-600 pr-10">{ FormatRM(child.currentBalance)}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+                
+                <Link 
+                  href={`/parent/child/${child.id}/transaction-limit`}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10"
                 >
-                  <ScoreRing score={child.responsibilityScore} size={56} strokeWidth={5} showLabel={false} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-gray-900 truncate">{child.nickname || child.fullName}</p>
-                      {child.kycStatus === 'kyc_pending' || child.kycStatus === 'kyc_under_review' ? (
-                        <span className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">
-                          <ShieldAlert size={10} /> Pending KYC
-                        </span>
-                      ) : child.kycStatus === 'verified' ? (
-                        <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                          <ShieldCheck size={10} /> Verified
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="text-[11px] text-gray-400 truncate">{child.fullName}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-[11px] text-gray-500 font-medium">{child.ageGroup} · Age {child.dateOfBirth ? Math.floor((Date.now() - new Date(child.dateOfBirth).getTime()) / 31557600000) : '?'}</p>
-                      <p className="text-sm font-semibold text-blue-600">{ FormatRM(child.currentBalance)}</p>
-                    </div>
+                  <div className="bg-blue-50 w-12 h-12 rounded-2xl flex items-center justify-center group-active:scale-95 transition-transform border border-blue-100 shadow-sm">
+                    <BarChart3 size={20} className="text-blue-600" />
                   </div>
-                </motion.div>
-              </Link>
+                </Link>
+              </div>
             ))}
           </div>
         )}

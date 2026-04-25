@@ -64,7 +64,7 @@ export default function ChildDetailPage() {
         <div className="grid grid-cols-4 gap-2 px-4 pt-4">
           {[
             { icon: Brain, label: "AI Rec", href: `/parent/child/${childId}/recommendation`, color: "text-purple-600", bg: "bg-purple-50" },
-            { icon: BarChart3, label: "Limits", href: `/parent/child/${childId}/limits`, color: "text-blue-600", bg: "bg-blue-50" },
+            { icon: BarChart3, label: "Limits", href: `/parent/child/${childId}/transaction-limit`, color: "text-blue-600", bg: "bg-blue-50" },
             { icon: Target, label: "Goals", href: `/parent/child/${childId}/goals`, color: "text-emerald-600", bg: "bg-emerald-50" },
             { icon: Zap, label: "Requests", href: `/parent/child/${childId}/requests`, color: "text-amber-600", bg: "bg-amber-50" },
           ].map((item) => (

@@ -12,8 +12,8 @@ export const MockDB: Record<string, any[]> = {
     { id: 'demo_child_ibad_user', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", role: 'child', walletBalance: 0, createdAt: now, updatedAt: now }
   ],
   "JuniorWallet-ChildProfiles": [
-    { id: 'cp_aiman', userId: 'demo_child', parentId: 'demo_parent', fullName: 'Aiman', ageGroup: 'Teen', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, status: 'active', createdAt: now, updatedAt: now },
-    { id: 'child_ibad_demo', userId: 'demo_child_ibad_user', parentId: 'demo_parent', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", nickname: 'ibad', email: 'ibad.junior@example.com', dateOfBirth: '2016-04-01', ageGroup: 'under_12', relationship: 'son', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, kycStatus: 'kyc_pending', status: 'pending_kyc', createdAt: now, updatedAt: now }
+    { id: 'cp_aiman', userId: 'demo_child', parentId: 'demo_parent', fullName: 'Aiman', ageGroup: 'Teen', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, perTransactionLimit: 50, status: 'active', createdAt: now, updatedAt: now },
+    { id: 'child_ibad_demo', userId: 'demo_child_ibad_user', parentId: 'demo_parent', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", nickname: 'ibad', email: 'ibad.junior@example.com', dateOfBirth: '2016-04-01', ageGroup: 'under_12', relationship: 'son', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, perTransactionLimit: 20, kycStatus: 'kyc_pending', status: 'pending_kyc', createdAt: now, updatedAt: now }
   ],
   "JuniorWallet-ParentChildLinks": [
     { id: 'link_1', parentId: 'demo_parent', childId: 'cp_aiman', relationship: 'father', createdAt: now },

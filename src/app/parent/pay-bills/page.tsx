@@ -4,13 +4,25 @@ import { MobileShell } from "@/components/MobileShell";
 import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { mockBillCategories } from "@/lib/mock/dashboard-actions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Receipt } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { PaymentBlockedCard } from "@/components/limits";
 
 export default function PayBillsPage() {
+  const { currentUser } = useAuth();
   const [selectedBill, setSelectedBill] = useState<string | null>(null);
+  const [childLimit, setChildLimit] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (currentUser?.role === 'child') {
+      fetch("/api/dashboard/child")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => { if (data?.childProfile) setChildLimit(data.childProfile.perTransactionLimit ?? 20); });
+    }
+  }, [currentUser]);
 
   const handlePay = () => {
     toast.success(`Payment Successful! Your ${selectedBill?.toLowerCase()} payment has been completed in demo mode.`);
@@ -69,12 +81,17 @@ export default function PayBillsPage() {
               </div>
             </div>
 
-            <button 
-              onClick={handlePay}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl transition-colors shadow-sm"
-            >
-              Pay Bill (RM45.00)
-            </button>
+            {(currentUser?.role === 'child' && childLimit !== null && 45.00 > childLimit) ? (
+              <PaymentBlockedCard limit={childLimit} />
+            ) : (
+              <button 
+                onClick={handlePay}
+                className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl transition-colors shadow-sm"
+              >
+                Pay Bill (RM45.00)
+              </button>
+            )}
+
             <button 
               onClick={() => setSelectedBill(null)}
               className="w-full mt-3 text-sm font-semibold text-gray-500 hover:text-gray-700 py-2"

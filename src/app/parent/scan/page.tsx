@@ -7,11 +7,16 @@ import { BottomNav } from "@/components/BottomNav";
 import { mockQrScanResult } from "@/lib/mock/qr-scan";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { ScanLine, CheckCircle2, CameraOff } from "lucide-react";
+import { ScanLine, CheckCircle2, CameraOff, AlertTriangle } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { PaymentBlockedCard } from "@/components/limits";
 
-type ScanState = "idle" | "requesting_camera" | "scanning" | "detected" | "confirmed" | "error";
+type ScanState = "idle" | "requesting_camera" | "scanning" | "detected" | "confirmed" | "error" | "blocked";
 
 export default function ScanPage() {
+  const { currentUser } = useAuth();
+  const [childData, setChildData] = useState<any>(null);
+  const [demoAmount, setDemoAmount] = useState(mockQrScanResult.amount);
   const [scanState, setScanState] = useState<ScanState>("idle");
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -40,17 +45,30 @@ export default function ScanPage() {
   };
 
   useEffect(() => {
+    if (currentUser?.role === 'child') {
+      fetch("/api/dashboard/child")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => { if (data?.childProfile) setChildData(data.childProfile); });
+    }
     return () => stopCamera();
-  }, []);
+  }, [currentUser]);
 
-  const handleSimulateScan = () => {
+  const handleSimulateScan = (highAmount = false) => {
+    setDemoAmount(highAmount ? 25.00 : mockQrScanResult.amount);
     setScanState("detected");
     stopCamera();
   };
 
   const handleConfirm = () => {
+    if (currentUser?.role === 'child' && childData) {
+      const limit = childData.perTransactionLimit ?? 20;
+      if (demoAmount > limit) {
+        setScanState("blocked");
+        return;
+      }
+    }
     setScanState("confirmed");
-    toast.success(`Demo Payment Successful. RM${mockQrScanResult.amount.toFixed(2)} payment preview completed.`);
+    toast.success(`Demo Payment Successful. RM${demoAmount.toFixed(2)} payment preview completed.`);
   };
 
   return (
@@ -132,12 +150,20 @@ export default function ScanPage() {
               </div>
               <p className="text-center text-xs font-medium text-gray-500 mt-6">Align QR code inside the frame</p>
               
-              <button 
-                onClick={handleSimulateScan}
-                className="w-full mt-6 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-2xl transition-colors shadow-sm"
-              >
-                Simulate QR Detected
-              </button>
+              <div className="flex gap-2 mt-6">
+                <button 
+                  onClick={() => handleSimulateScan(false)}
+                  className="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-2xl transition-colors shadow-sm text-sm"
+                >
+                  Normal Scan
+                </button>
+                <button 
+                  onClick={() => handleSimulateScan(true)}
+                  className="flex-1 bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-700 font-bold py-3 rounded-2xl transition-colors shadow-sm text-sm"
+                >
+                  High Amount Scan
+                </button>
+              </div>
             </motion.div>
           )}
 
@@ -154,7 +180,7 @@ export default function ScanPage() {
                 
                 <p className="text-sm text-gray-500 mb-1">Payment Amount</p>
                 <p className="text-3xl font-bold text-blue-600 mb-6">
-                  {mockQrScanResult.currency} {mockQrScanResult.amount.toFixed(2)}
+                  {mockQrScanResult.currency} {demoAmount.toFixed(2)}
                 </p>
 
                 <div className="bg-gray-50 rounded-xl p-3 flex justify-between items-center text-xs mb-2">
@@ -178,6 +204,18 @@ export default function ScanPage() {
             </motion.div>
           )}
 
+          {scanState === "blocked" && (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full">
+              <PaymentBlockedCard limit={childData?.perTransactionLimit ?? 20} />
+              <button 
+                onClick={() => window.location.href = '/child/dashboard'}
+                className="w-full mt-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3.5 rounded-2xl transition-colors"
+              >
+                Back to Home
+              </button>
+            </motion.div>
+          )}
+
           {scanState === "confirmed" && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full text-center mt-12">
               <div className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
@@ -185,7 +223,7 @@ export default function ScanPage() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">Payment Successful</h2>
               <p className="text-sm text-gray-500 mb-8 px-4 leading-relaxed">
-                RM{mockQrScanResult.amount.toFixed(2)} payment preview completed.<br/>
+                RM{demoAmount.toFixed(2)} payment preview completed.<br/>
                 No real money was transferred.
               </p>
               

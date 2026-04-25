@@ -22,6 +22,7 @@ export interface ChildProfile {
   responsibilityScore: number;
   currentBalance: number;
   monthlyAllowance: number;
+  perTransactionLimit?: number;
   status: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;

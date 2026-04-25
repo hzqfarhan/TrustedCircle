@@ -93,6 +93,20 @@ export default function ChildProfilePage({ params }: { params: Promise<{ childId
           </div>
         </div>
 
+        {/* Spending Limit Display */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-bold text-gray-900">Spending Limit</p>
+            <p className="text-[11px] text-gray-500 mt-0.5">RM{child.perTransactionLimit ?? 20} / transaction</p>
+            <p className="text-[10px] text-gray-400 mt-1 italic">Helps {child.nickname || 'your child'} spend safely.</p>
+          </div>
+          <Link href={`/parent/child/${child.id}/transaction-limit`}>
+            <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-1.5 px-3 rounded-lg transition-colors">
+              Edit Limit
+            </button>
+          </Link>
+        </div>
+
         {/* Actions */}
         <div className="space-y-2">
           <Link href={`/parent/child/${child.id}/edit`}>

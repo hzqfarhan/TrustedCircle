@@ -9,6 +9,7 @@ import { GoalCard } from "@/components/GoalCard";
 import { BadgeCard } from "@/components/BadgeCard";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { SpendingChart } from "@/components/SpendingChart";
+import { SpendingLimitCard } from "@/components/limits";
 import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { Wallet, Target, Award, Plus, Lightbulb, ChevronLeft } from "lucide-react";
 import Link from "next/link";
@@ -70,6 +71,11 @@ export default function ChildDashboardPage() {
           <p className="text-2xl font-bold text-gray-900">{ FormatRM(data.childProfile.currentBalance)}</p>
           <p className="text-[11px] text-gray-400 mt-0.5">Monthly: { FormatRM(data.childProfile.monthlyAllowance)}</p>
         </motion.div>
+
+        {/* Spending Limit */}
+        <div className="mx-4 mt-3">
+          <SpendingLimitCard limit={data.childProfile.perTransactionLimit ?? 20} />
+        </div>
 
         {/* Budget Progress */}
         <div className="mx-4 mt-3 rounded-2xl p-4 bg-white shadow-sm border border-gray-100">
