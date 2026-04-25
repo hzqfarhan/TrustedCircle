@@ -179,9 +179,16 @@ export default function ScanPage() {
                 </p>
                 
                 <p className="text-sm text-gray-500 mb-1">Payment Amount</p>
-                <p className="text-3xl font-bold text-blue-600 mb-6">
-                  {mockQrScanResult.currency} {demoAmount.toFixed(2)}
-                </p>
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <span className="text-2xl font-bold text-blue-600">RM</span>
+                  <input 
+                    type="number"
+                    value={demoAmount === 0 ? "" : demoAmount}
+                    onChange={(e) => setDemoAmount(parseFloat(e.target.value) || 0)}
+                    placeholder="0.00"
+                    className="w-36 text-3xl font-bold text-blue-600 bg-blue-50 rounded-xl px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-blue-100"
+                  />
+                </div>
 
                 <div className="bg-gray-50 rounded-xl p-3 flex justify-between items-center text-xs mb-2">
                   <span className="text-gray-500">Reference ID</span>

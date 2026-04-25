@@ -21,41 +21,57 @@ export default function ChildDetailPage() {
   const params = useParams();
   const childId = params.childId as string;
   const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
+    else setRefreshing(true);
+    
+    try {
+      const r = await fetch(`/api/dashboard/parent/${childId}`);
+      if (r.ok) {
+        const newData = await r.json();
+        setData(newData);
+      } else {
+        throw new Error("Failed to load");
+      }
+    } catch (err) {
+      toast.error("Failed to update dashboard");
+    } finally {
+      if (!isSilent) setLoading(false);
+      else setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     if (authLoading || !currentUser) return;
-    fetch(`/api/dashboard/parent/${childId}`)
-      .then((r) => r.ok ? r.json() : Promise.reject())
-      .then(setData)
-      .catch(() => toast.error("Failed to load"))
-      .finally(() => setLoading(false));
+    fetchData();
   }, [currentUser, authLoading, childId]);
 
-  if (authLoading || loading || !data) return <MobileShell><LoadingState /></MobileShell>;
-  const child = data.childProfile;
+  if (authLoading || (loading && !data)) return <MobileShell><LoadingState /></MobileShell>;
+  const child = data?.childProfile;
 
   return (
     <MobileShell>
       <WalletHeader 
         showBack 
-        title={child.fullName} 
+        title={child?.fullName || "Child Details"} 
         rightElement={
           <Link href={`/parent/child/${childId}/profile`} className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center active:bg-blue-100 transition-colors">
             <User size={16} className="text-blue-600" />
           </Link>
         }
       />
-      <div className="flex-1 overflow-y-auto">
+      <div className={`flex-1 overflow-y-auto transition-opacity ${refreshing ? 'opacity-70' : 'opacity-100'}`}>
         {/* Summary */}
         <div className="mx-4 mt-3 rounded-3xl p-5" style={{ background: "linear-gradient(135deg, #0B5CFF 0%, #002FA7 100%)" }}>
           <div className="flex items-center gap-4">
-            <ScoreRing score={child.responsibilityScore} size={80} strokeWidth={7} showLabel={false} />
+            <ScoreRing score={child?.responsibilityScore || 0} size={80} strokeWidth={7} showLabel={false} />
             <div>
-              <p className="text-white text-lg font-bold">{child.fullName}</p>
-              <p className="text-blue-200 text-xs">{child.ageGroup}</p>
-              <p className="text-white text-xl font-bold mt-1">{ FormatRM(child.currentBalance)}</p>
-              <p className="text-blue-200 text-[10px]">Monthly: { FormatRM(child.monthlyAllowance)}</p>
+              <p className="text-white text-lg font-bold">{child?.fullName}</p>
+              <p className="text-blue-200 text-xs">{child?.ageGroup}</p>
+              <p className="text-white text-xl font-bold mt-1">{ FormatRM(child?.currentBalance || 0)}</p>
+              <p className="text-blue-200 text-[10px]">Monthly: { FormatRM(child?.monthlyAllowance || 0)}</p>
             </div>
           </div>
         </div>
@@ -89,12 +105,12 @@ export default function ChildDetailPage() {
               onApprove={async (amount) => {
                 const res = await fetch("/api/allowance", { method: "POST", headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ action: "approve", recommendationId: data.currentRecommendation.id, approvedAmount: amount }) });
-                if (res.ok) { toast.success("Approved!"); window.location.reload(); }
+                if (res.ok) { toast.success("Approved!"); fetchData(true); }
               }}
               onReject={async () => {
                 await fetch("/api/allowance", { method: "POST", headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ action: "reject", recommendationId: data.currentRecommendation.id }) });
-                toast.success("Rejected"); window.location.reload();
+                toast.success("Rejected"); fetchData(true);
               }}
             />
           </div>
@@ -102,12 +118,18 @@ export default function ChildDetailPage() {
 
         {(!data.currentRecommendation || data.currentRecommendation.status !== "pending") && (
           <div className="px-4 pt-4">
-            <button onClick={async () => {
-              const res = await fetch("/api/allowance", { method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "generate", childId }) });
-              if (res.ok) { toast.success("Generated!"); window.location.reload(); }
-            }} className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition-colors">
-              <Brain size={16} /> Generate AI Recommendation
+            <button 
+              disabled={refreshing}
+              onClick={async () => {
+                const res = await fetch("/api/allowance", { method: "POST", headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ action: "generate", childId }) });
+                if (res.ok) { 
+                  toast.success("Generated!"); 
+                  fetchData(true); 
+                }
+              }} 
+              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white text-sm font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition-colors">
+              <Brain size={16} /> {refreshing ? "Generating..." : "Generate AI Recommendation"}
             </button>
           </div>
         )}

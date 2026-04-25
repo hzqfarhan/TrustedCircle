@@ -10,7 +10,7 @@ const parentNav = [
   { icon: Home, label: "Home", href: "/parent/dashboard" },
   { icon: Shield, label: "Circle", href: "/trusted-circle" },
   { icon: ScanLine, label: "Scan QR", href: "/parent/scan", isCenter: true },
-  { icon: CircleDollarSign, label: "GOfinance", href: "/parent/cash-flow" },
+  { icon: CircleDollarSign, label: "GOfinance", href: "/parent/gofinance" },
   { icon: Settings, label: "Settings", href: "/parent/settings" },
 ];
 
@@ -18,7 +18,7 @@ const childNav = [
   { icon: Home, label: "Home", href: "/child/dashboard" },
   { icon: Shield, label: "Circle", href: "/trusted-circle" },
   { icon: ScanLine, label: "Scan QR", href: "/parent/scan", isCenter: true },
-  { icon: CircleDollarSign, label: "GOfinance", href: "/parent/cash-flow" },
+  { icon: CircleDollarSign, label: "GOfinance", href: "/parent/gofinance" },
   { icon: Settings, label: "Settings", href: "/child/settings" },
 ];
 
@@ -26,7 +26,7 @@ const defaultNav = [
   { icon: Home, label: "Home", href: "/dashboard" },
   { icon: Shield, label: "Circle", href: "/trusted-circle" },
   { icon: ScanLine, label: "Scan QR", href: "/parent/scan", isCenter: true },
-  { icon: CircleDollarSign, label: "GOfinance", href: "/parent/cash-flow" },
+  { icon: CircleDollarSign, label: "GOfinance", href: "/parent/gofinance" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 

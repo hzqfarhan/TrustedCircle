@@ -30,6 +30,11 @@ export const MockDB: Record<string, any[]> = {
     { id: 'tx_8', childId: 'cp_aiman', amount: 8.00, merchant: 'Cafeteria', category: 'essential', classification: 'essential', needWant: 'need', transactionType: 'spend', riskFlag: false, createdAt: daysAgo(8) },
     { id: 'tx_9', childId: 'cp_aiman', amount: 120.00, merchant: 'Unknown Store', category: 'risky', classification: 'risky', needWant: 'want', transactionType: 'spend', riskFlag: true, note: 'Suspicious high amount', createdAt: daysAgo(10) },
     { id: 'tx_10', childId: 'cp_aiman', amount: 165.00, merchant: 'Monthly Allowance', category: 'essential', classification: 'essential', needWant: 'neutral', transactionType: 'topup', riskFlag: false, note: 'Monthly allowance', createdAt: daysAgo(30) },
+    // Ibad's Transactions
+    { id: 'tx_ibad_1', childId: 'child_ibad_demo', amount: 12.50, merchant: 'School Canteen', category: 'essential', classification: 'essential', needWant: 'need', transactionType: 'spend', riskFlag: false, note: 'Chicken Rice', createdAt: daysAgo(1) },
+    { id: 'tx_ibad_2', childId: 'child_ibad_demo', amount: 25.00, merchant: 'Toy World', category: 'discretionary', classification: 'discretionary', needWant: 'want', transactionType: 'spend', riskFlag: false, note: 'Lego Set', createdAt: daysAgo(2) },
+    { id: 'tx_ibad_3', childId: 'child_ibad_demo', amount: 15.00, merchant: 'Bookstore', category: 'educational', classification: 'educational', needWant: 'need', transactionType: 'spend', riskFlag: false, note: 'Notebooks', createdAt: daysAgo(3) },
+    { id: 'tx_ibad_4', childId: 'child_ibad_demo', amount: 8.00, merchant: 'Stationery', category: 'educational', classification: 'educational', needWant: 'need', transactionType: 'spend', riskFlag: false, createdAt: daysAgo(4) },
   ],
   "JuniorWallet-AllowanceRules": [
     { id: 'rule_1', childId: 'cp_aiman', category: 'discretionary', limitType: 'monthly', amount: 50, isActive: true, createdBy: 'demo_parent', createdAt: now, updatedAt: now },
