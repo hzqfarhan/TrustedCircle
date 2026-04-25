@@ -45,7 +45,7 @@ export const Tables = {
 // ─── Generic helpers ─────────────────────────
 
 export async function getItem<T>(table: string, key: Record<string, NativeAttributeValue>): Promise<T | null> {
-  if (process.env.USE_MOCK_DB === 'true') {
+  if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     const keyName = Object.keys(key)[0];
     const keyValue = key[keyName];
@@ -57,7 +57,7 @@ export async function getItem<T>(table: string, key: Record<string, NativeAttrib
 }
 
 export async function putItem(table: string, item: Record<string, NativeAttributeValue>): Promise<void> {
-  if (process.env.USE_MOCK_DB === 'true') {
+  if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     // Overwrite if exists, else push
     const idKey = item.id ? 'id' : Object.keys(item)[0];
@@ -89,7 +89,7 @@ export async function updateItem(
     values[attrVal] = v;
   });
 
-  if (process.env.USE_MOCK_DB === 'true') {
+  if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     const keyName = Object.keys(key)[0];
     const keyValue = key[keyName];
@@ -112,7 +112,7 @@ export async function updateItem(
 }
 
 export async function deleteItem(table: string, key: Record<string, NativeAttributeValue>): Promise<void> {
-  if (process.env.USE_MOCK_DB === 'true') {
+  if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     const keyName = Object.keys(key)[0];
     const keyValue = key[keyName];
@@ -137,7 +137,7 @@ export async function queryItems<T>(
     filterExpression?: string;
   }
 ): Promise<T[]> {
-  if (process.env.USE_MOCK_DB === 'true') {
+  if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     // Very basic query mock: assumes keyCondition uses the same keys as expressionValues without complex operators
     let results = mockTable.filter(item => {
@@ -179,7 +179,7 @@ export async function queryItems<T>(
 }
 
 export async function scanItems<T>(table: string, limit?: number): Promise<T[]> {
-  if (process.env.USE_MOCK_DB === 'true') {
+  if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     return limit ? (mockTable.slice(0, limit) as T[]) : (mockTable as T[]);
   }

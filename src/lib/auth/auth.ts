@@ -38,7 +38,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     if (profile) {
       return { sub: profile.id, email: `${profile.fullName.toLowerCase()}@example.com`, role: profile.role };
     }
-  } else if (process.env.USE_MOCK_DB === 'true') {
+  } else if (process.env.USE_MOCK_DB !== 'false') {
     // Auto-login bypass for local development if no cookie exists
     const profile = await getProfile('demo_parent');
     if (profile) {
