@@ -6,7 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Upload, FileText } from "lucide-react";
 
 export default function CreateChildPage() {
   const { currentUser } = useAuth();
@@ -15,13 +15,19 @@ export default function CreateChildPage() {
   const [spendingLimit, setSpendingLimit] = useState("200");
   const [limitType, setLimitType] = useState("WEEKLY");
   const [loading, setLoading] = useState(false);
+  const [idType, setIdType] = useState("MYKID");
+  const [idNumber, setIdNumber] = useState("");
+  const [fileName, setFileName] = useState("");
 
   const users: any[] = [];
   const childUsers = users.filter((u) => u.role === "CHILD");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser || !selectedChildId) return;
+    if (!currentUser || !selectedChildId || !idNumber) {
+      toast.error("Please fill in all required fields including KYC.");
+      return;
+    }
     setLoading(true);
 
     const res = await fetch("/api/child/create", {
@@ -53,9 +59,9 @@ export default function CreateChildPage() {
         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-4 flex gap-2.5">
           <ShieldCheck size={16} className="text-blue-600 mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-bold text-blue-900">Identity Verification</p>
+            <p className="text-sm font-bold text-blue-900">Identity Verification (KYC)</p>
             <p className="text-xs text-blue-700 mt-0.5">
-              In a production app, this would require MyKid / MyKad verification and guardian consent. For demo, select from seeded accounts.
+              To comply with regulations, please provide your child's MyKID or Birth Certificate for verification.
             </p>
           </div>
         </div>
@@ -87,6 +93,65 @@ export default function CreateChildPage() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <h3 className="text-sm font-bold text-gray-800 mb-3">KYC Verification</h3>
+            
+            <div className="mb-3">
+              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">ID Type *</label>
+              <div className="flex gap-2">
+                {["MYKID", "BIRTH_CERTIFICATE"].map((t) => (
+                  <button
+                    type="button"
+                    key={t}
+                    onClick={() => setIdType(t)}
+                    className={`flex-1 py-2.5 rounded-xl text-[11px] font-bold transition-colors ${
+                      idType === t ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {t === "MYKID" ? "MyKID" : "Birth Certificate"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">ID Number *</label>
+              <input
+                type="text"
+                placeholder={idType === "MYKID" ? "e.g. 120514-10-1234" : "e.g. CA123456"}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={idNumber}
+                onChange={(e) => setIdNumber(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Upload Document Proof *</label>
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden">
+                <input 
+                  type="file" 
+                  accept="image/*,.pdf" 
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={(e) => setFileName(e.target.files?.[0]?.name || "")}
+                />
+                {fileName ? (
+                  <>
+                    <FileText size={24} className="text-blue-500 mb-2" />
+                    <p className="text-xs font-semibold text-blue-600 text-center">{fileName}</p>
+                    <p className="text-[10px] text-gray-400 mt-1">Tap to change file</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={24} className="text-gray-400 mb-2" />
+                    <p className="text-xs font-medium text-gray-600">Tap to upload file</p>
+                    <p className="text-[10px] text-gray-400 mt-1">JPG, PNG or PDF (Max 5MB)</p>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
           <div>

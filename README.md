@@ -1,11 +1,22 @@
-# GoCircle (formerly Trusted Circle Wallet)
+# JuniorWallet (formerly GoCircle / Trusted Circle Wallet)
 
-GoCircle is an AI-powered Smart Allowance System inspired by Touch ’n Go eWallet. It helps parents guide child spending, allowance decisions, savings behavior, and financial responsibility through secure AWS-backed transactions and Alibaba Cloud-powered AI analytics.
-
-**Evolution Note:** This system evolved from the "Trusted Circle Wallet" concept. You may see `smart-wallet-*` in legacy table names, but all new branding is GoCircle.
+JuniorWallet is an AI-powered Smart Allowance System inspired by Touch ’n Go eWallet. It helps parents guide child spending, allowance decisions, savings behavior, and financial responsibility through secure AWS-backed transactions and Alibaba Cloud-powered AI analytics.
 
 ## Core Principle: "AI Recommends. Parent Decides."
 The system's AI evaluates a child's spending behavior (needs vs. wants, rule adherence, savings consistency) and generates an allowance recommendation. However, **the AI never automatically transfers money**. A parent must always review and approve the recommendation. The engine is deterministically designed so that it never rewards reckless spending.
+
+## Child KYC & Family Linking
+JuniorWallet includes a comprehensive and secure family management system:
+- **Parent Management:** Parents can add and manage multiple children.
+- **Child Email Access:** Children under 12 use email instead of a required phone number for account access.
+- **KYC Verification:** Parents must upload a valid MyKid or Birth Certificate to link a child account.
+- **Secure Document Handling:** Documents are stored in private S3 buckets (or safe local/mock adapters for development).
+- **KYC Statuses:** Child accounts move through `Draft`, `Pending Review`, `Verified`, or `Needs Resubmission` states.
+- **Safe Editing:** Parents can safely edit child nicknames without altering the locked legal names.
+- **Child Removals:** Parents can securely soft-delete/remove children while preserving audit history.
+- **Protected Transfers:** Child accounts can strictly only receive money from their linked parent or guardian. Unlinked transfers, open peer-to-peer transfers, and Money Packets (Ang Pao) are strictly blocked to protect children.
+- **Privacy & Masking:** MyKid / NRIC numbers are dynamically masked in the UI (`******-**-0031`) and are strictly forbidden from being stored in raw format within audit logs.
+- **Mock Demo Data:** The system seeds a realistic mock child profile (`ibad`) with mock KYC records and blocked-transfer test cases.
 
 ## Multi-Cloud Architecture
 This application utilizes a multi-cloud design:
@@ -62,3 +73,4 @@ Before any behavioral data is synced to Alibaba Cloud for analytics, the system 
 When running locally with the demo login buttons, you can easily test the UI flows without needing Cognito credentials:
 - **Demo Parent:** Paan
 - **Demo Child:** Aiman
+- **Demo Child (KYC):** ibad

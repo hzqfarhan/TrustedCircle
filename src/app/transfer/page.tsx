@@ -22,7 +22,7 @@ export default function TransferPage() {
   const router = useRouter();
 
   const [step, setStep] = useState<Step>("form");
-  const [form, setForm] = useState({ recipient: "", accountId: "", amount: "", note: "" });
+  const [form, setForm] = useState({ recipient: "", accountId: "", amount: "", note: "", transferType: "open_transfer" });
   const [risk, setRisk] = useState<any>(null);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,25 @@ export default function TransferPage() {
     if (!currentUser) return;
     setLoading(true);
 
+    // 1. Validation Guard for Child Accounts
+    const valRes = await fetch("/api/transfers/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        senderId: currentUser.id,
+        recipientChildId: form.accountId,
+        transferType: form.transferType || "open_transfer",
+      }),
+    });
+    
+    const valData = await valRes.json();
+    if (!valData.allowed) {
+      toast.error(valData.reason || "Transfer blocked by safety rules.");
+      setLoading(false);
+      return;
+    }
+
+    // 2. AI Risk Analysis
     const res = await fetch("/api/transfer/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,28 +125,44 @@ export default function TransferPage() {
             >
               <form onSubmit={handleAnalyze} className="flex flex-col gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Recipient Name *</label>
-                  <input
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. Ahmad Razif"
-                    value={form.recipient}
-                    onChange={(e) => setForm({ ...form, recipient: e.target.value })}
+                  <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Select Recipient *</label>
+                  <select
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                    value={form.accountId}
+                    onChange={(e) => {
+                      const selectedName = e.target.options[e.target.selectedIndex].text;
+                      setForm({ ...form, accountId: e.target.value, recipient: selectedName.split(" (")[0] });
+                    }}
                     required
-                  />
+                  >
+                    <option value="" disabled>Select a recipient...</option>
+                    {currentUser?.role === "child" ? (
+                      <option value="demo_parent">Paan (Parent)</option>
+                    ) : (
+                      <>
+                        <option value="cp_aiman">Aiman (Child)</option>
+                        <option value="SCAMMER_123">Unknown Account (Demo Risk Trigger)</option>
+                      </>
+                    )}
+                  </select>
+                  {currentUser?.role === "child" && (
+                    <p className="text-[10px] text-gray-400 mt-1">
+                      As a child account, you can only transfer to your linked parent.
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Account / Wallet ID *</label>
-                  <input
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. TC123456 or SCAMMER_123 (demo)"
-                    value={form.accountId}
-                    onChange={(e) => setForm({ ...form, accountId: e.target.value.toUpperCase() })}
-                    required
-                  />
-                  <p className="text-[10px] text-gray-400 mt-1">
-                    Demo: Type <code className="bg-gray-100 px-1 rounded">SCAMMER_123</code> to trigger high-risk flow
-                  </p>
+                  <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Transfer Type</label>
+                  <select
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                    value={form.transferType}
+                    onChange={(e) => setForm({ ...form, transferType: e.target.value })}
+                  >
+                    <option value="open_transfer">Standard Transfer</option>
+                    <option value="parent_allowance_transfer">Parent Allowance Transfer</option>
+                    <option value="money_packet">Money Packet (Ang Pao)</option>
+                  </select>
                 </div>
 
                 <div>

@@ -15,6 +15,17 @@ export const MockDB: Record<string, any[]> = {
   ],
   "juniorwallet-parent-child-links": [
     { Id: 'link_1', ParentId: 'demo_parent', ChildId: 'cp_aiman', Relationship: 'father', CreatedAt: now }
+    { id: 'demo_parent', fullName: 'Paan', role: 'parent', avatarUrl: '/pfp/paan.png', walletBalance: 2500, createdAt: now, updatedAt: now },
+    { id: 'demo_child', fullName: 'Aiman', role: 'child', avatarUrl: '/pfp/child.png', walletBalance: 0, createdAt: now, updatedAt: now },
+    { id: 'demo_child_ibad_user', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", role: 'child', walletBalance: 0, createdAt: now, updatedAt: now }
+  ],
+  "juniorwallet-child-profiles": [
+    { id: 'cp_aiman', userId: 'demo_child', parentId: 'demo_parent', fullName: 'Aiman', ageGroup: 'Teen', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, status: 'active', createdAt: now, updatedAt: now },
+    { id: 'child_ibad_demo', userId: 'demo_child_ibad_user', parentId: 'demo_parent', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", nickname: 'ibad', email: 'ibad.junior@example.com', dateOfBirth: '2016-04-01', ageGroup: 'under_12', relationship: 'son', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, kycStatus: 'kyc_pending', status: 'pending_kyc', createdAt: now, updatedAt: now }
+  ],
+  "juniorwallet-parent-child-links": [
+    { id: 'link_1', parentId: 'demo_parent', childId: 'cp_aiman', relationship: 'father', createdAt: now },
+    { id: 'link_ibad', parentId: 'demo_parent', childId: 'child_ibad_demo', relationship: 'father', createdAt: now }
   ],
   "juniorwallet-transactions": [
     { Id: 'tx_1', ChildId: 'cp_aiman', Amount: 8.50, Merchant: 'Kantin Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'Lunch', CreatedAt: daysAgo(1) },
@@ -61,7 +72,12 @@ export const MockDB: Record<string, any[]> = {
     { Id: 'alert_2', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'AI Recommendation Ready', Message: 'New monthly allowance recommendation for Aiman: RM165', Severity: 'info', Read: false, CreatedAt: now },
     { Id: 'alert_3', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'Gaming Limit Warning', Message: 'Aiman is approaching the RM50 gaming limit this month.', Severity: 'warning', Read: false, CreatedAt: daysAgo(5) }
   ],
-  "juniorwallet-audit-logs": []
+  "juniorwallet-audit-logs": [
+    { id: 'audit_child_ibad_created', actorId: 'demo_parent', action: 'child_created', entityType: 'child_profile', entityId: 'child_ibad_demo', newValue: { childId: 'child_ibad_demo', nickname: 'ibad', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", kycStatus: 'kyc_pending', documentNumberMasked: '******-**-0031' }, createdAt: now }
+  ],
+  "juniorwallet-child-kyc-documents": [
+    { id: 'kyc_ibad_demo_mykid', childId: 'child_ibad_demo', parentId: 'demo_parent', documentType: 'mykid', documentNumberMasked: '******-**-0031', documentNumberHash: 'hash_160401010031', documentFileKey: 'kyc-documents/demo_parent/child_ibad_demo/kyc_ibad_demo_mykid', status: 'pending', submittedAt: now, createdAt: now, updatedAt: now }
+  ]
 };
 
 // Also fallback to "smart-wallet-*" naming so it works regardless of .env configuration.

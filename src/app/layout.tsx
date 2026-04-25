@@ -11,7 +11,8 @@ const inter = Inter({ subsets: ["latin"] });
 import { Viewport } from "next";
 
 export const viewport: Viewport = {
-  themeColor: "#FECD00",
+  themeColor: "#ffffff",
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
@@ -20,10 +21,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "JuniorWallet",
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
   },
   icons: {
-    apple: "/icons/apple-touch-icon.png",
+    apple: "/assets/JRwallet-logo.png",
   },
 };
 

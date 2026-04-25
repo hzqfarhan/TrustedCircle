@@ -32,22 +32,24 @@ export function RecommendationCard({ recommendation, onApprove, onReject, isPare
       className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100"
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-purple-50 rounded-xl flex items-center justify-center">
-            <Brain size={18} className="text-purple-600" />
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center shrink-0">
+            <Brain size={20} className="text-purple-600" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-bold text-gray-900">AI Recommendation</p>
-              <AIProviderBadge provider={(recommendation as any).aiProvider} />
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <p className="text-sm font-bold text-gray-900 whitespace-nowrap">AI Recommendation</p>
+              <div className="flex items-center gap-1.5">
+                <AIProviderBadge provider={(recommendation as any).aiProvider} />
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${statusColors[recommendation.status]}`}>
+                  {recommendation.status.toUpperCase()}
+                </span>
+              </div>
             </div>
             <p className="text-[10px] text-gray-400">Based on spending analysis</p>
           </div>
         </div>
-        <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border ${statusColors[recommendation.status]}`}>
-          {recommendation.status.toUpperCase()}
-        </span>
       </div>
 
       {/* Suggested Amount */}

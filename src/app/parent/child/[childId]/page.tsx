@@ -10,7 +10,7 @@ import { CategoryBadge } from "@/components/CategoryBadge";
 import { GoalCard } from "@/components/GoalCard";
 import { WalletHeader } from "@/components/WalletHeader";
 import { formatRM, formatDate } from "@/lib/utils-tc";
-import { Brain, Target, Zap, BarChart3, ChevronRight } from "lucide-react";
+import { Brain, Target, Zap, BarChart3, ChevronRight, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -37,7 +37,15 @@ export default function ChildDetailPage() {
 
   return (
     <MobileShell>
-      <WalletHeader showBack title={child.fullName} />
+      <WalletHeader 
+        showBack 
+        title={child.fullName} 
+        rightElement={
+          <Link href={`/parent/child/${childId}/profile`} className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center active:bg-blue-100 transition-colors">
+            <User size={16} className="text-blue-600" />
+          </Link>
+        }
+      />
       <div className="flex-1 overflow-y-auto">
         {/* Summary */}
         <div className="mx-4 mt-3 rounded-3xl p-5" style={{ background: "linear-gradient(135deg, #0B5CFF 0%, #002FA7 100%)" }}>

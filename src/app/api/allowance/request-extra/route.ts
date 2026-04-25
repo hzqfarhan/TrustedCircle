@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { submitExtraAllowanceRequest, approveExtraAllowanceRequestAction, rejectExtraAllowanceRequestAction } from '@/lib/actions/request-actions';
+import { SubmitExtraAllowanceRequest, ApproveExtraAllowanceRequestAction, RejectExtraAllowanceRequestAction } from '@/lib/actions/request-actions';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,17 +7,17 @@ export async function POST(request: NextRequest) {
     const { action } = body;
 
     if (action === 'submit') {
-      const result = await submitExtraAllowanceRequest(body.amount, body.reason, body.childNote || '');
+      const result = await SubmitExtraAllowanceRequest(body.amount, body.reason, body.childNote || '');
       return NextResponse.json(result);
     }
 
     if (action === 'approve') {
-      const result = await approveExtraAllowanceRequestAction(body.requestId, body.approvedAmount, body.parentMessage);
+      const result = await ApproveExtraAllowanceRequestAction(body.requestId, body.approvedAmount, body.parentMessage);
       return NextResponse.json(result);
     }
 
     if (action === 'reject') {
-      const result = await rejectExtraAllowanceRequestAction(body.requestId, body.parentMessage);
+      const result = await RejectExtraAllowanceRequestAction(body.requestId, body.parentMessage);
       return NextResponse.json(result);
     }
 

@@ -40,6 +40,7 @@ export const Tables = {
   childBadges: process.env.DYNAMODB_CHILD_BADGES_TABLE || 'smart-wallet-child-badges',
   alerts: process.env.DYNAMODB_ALERTS_TABLE || 'smart-wallet-alerts',
   auditLogs: process.env.DYNAMODB_AUDIT_LOGS_TABLE || 'smart-wallet-audit-logs',
+  kycDocuments: process.env.DYNAMODB_CHILD_KYC_DOCUMENTS_TABLE || 'smart-wallet-child-kyc-documents',
 } as const;
 
 // ─── Case-conversion helpers ─────────────────

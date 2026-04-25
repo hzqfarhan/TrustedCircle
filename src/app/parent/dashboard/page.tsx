@@ -13,7 +13,7 @@ import { ScoreRing } from "@/components/ScoreRing";
 import { SpendingChart } from "@/components/SpendingChart";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { formatRM } from "@/lib/utils-tc";
-import { ChevronRight, ChevronLeft, Bell, Brain, AlertTriangle, Plus } from "lucide-react";
+import { ChevronRight, ChevronLeft, Bell, Brain, Plus, ShieldAlert, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -101,22 +101,40 @@ export default function ParentDashboardPage() {
           <div className="px-4 pt-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-bold text-gray-800">Child Accounts</p>
+              <Link href="/parent/child/add">
+                <button className="flex items-center gap-1 text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg active:bg-blue-100 transition-colors">
+                  <Plus size={12} /> Add Child
+                </button>
+              </Link>
             </div>
             <div className="space-y-3">
-              {data.children.map((child) => (
+              {data.children.map((child: any) => (
                 <Link key={child.id} href={`/parent/child/${child.id}`}>
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 active:bg-gray-50 transition-colors"
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 active:bg-gray-50 transition-colors relative overflow-hidden"
                   >
                     <ScoreRing score={child.responsibilityScore} size={56} strokeWidth={5} showLabel={false} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-900">{child.fullName}</p>
-                      <p className="text-[11px] text-gray-400">{child.ageGroup} · Score: {child.responsibilityScore}</p>
-                      <p className="text-sm font-semibold text-blue-600 mt-0.5">{formatRM(child.currentBalance)}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold text-gray-900 truncate">{child.nickname || child.fullName}</p>
+                        {child.kycStatus === 'kyc_pending' || child.kycStatus === 'kyc_under_review' ? (
+                          <span className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">
+                            <ShieldAlert size={10} /> Pending KYC
+                          </span>
+                        ) : child.kycStatus === 'verified' ? (
+                          <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                            <ShieldCheck size={10} /> Verified
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="text-[11px] text-gray-400 truncate">{child.fullName}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-[11px] text-gray-500 font-medium">{child.ageGroup} · Age {child.dateOfBirth ? Math.floor((Date.now() - new Date(child.dateOfBirth).getTime()) / 31557600000) : '?'}</p>
+                        <p className="text-sm font-semibold text-blue-600">{formatRM(child.currentBalance)}</p>
+                      </div>
                     </div>
-                    <ChevronRight size={18} className="text-gray-300" />
                   </motion.div>
                 </Link>
               ))}
