@@ -145,7 +145,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
 
   return (
     <div className="relative w-full aspect-square bg-blue-50 rounded-3xl border border-blue-100 overflow-hidden flex items-center justify-center p-4 shadow-sm">
-      <svg ref={svgRef} className="w-full h-full overflow-visible touch-none" viewBox="0 0 300 300">
+      <svg ref={svgRef} className="w-full h-full overflow-visible touch-none" viewBox="0 0 300 320">
         <AnimatePresence>
           {/* Edges */}
           {nodes.filter((n) => !n.isCenter).map((n) => {
@@ -159,7 +159,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
               y1={centerPos.y}
               x2={nPos.x}
               y2={nPos.y}
-              stroke="#cbd5e1" // slate-300
+              stroke="#cbd5e1"
               strokeWidth="2"
               strokeDasharray={edgeStyle === "dotted" ? "4 4" : edgeStyle === "dashed" ? "8 8" : "0"}
               initial={{ pathLength: 0, opacity: 0 }}
@@ -174,10 +174,11 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
         {nodes.map((n, i) => {
           const isCenter = n.isCenter;
           const nodeSize = isCenter ? 72 : 48;
-          const foWidth = 140; // Wider to accommodate text without wrapping
-          const foHeight = 140; // Taller for avatar + text
+          const foWidth = 140;
+          const foHeight = 120;
           
           const pos = positions[n.id] || n;
+          // Center the foreignObject so the avatar circle sits exactly on the node coordinate
           const foX = pos.x - foWidth / 2;
           const foY = pos.y - nodeSize / 2;
 
@@ -188,17 +189,17 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
               y={foY}
               width={foWidth}
               height={foHeight}
-              className="overflow-visible"
+              style={{ overflow: 'visible' }}
             >
-              <div className="w-full h-full flex flex-col items-center justify-start">
+              <div style={{ width: foWidth, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <motion.div
                   onPointerDown={(e) => handlePointerDown(e, n.id)}
                   onClick={(e) => handleNodeClick(e, n)}
                   className={ Cn(
-                    "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all shrink-0",
+                    "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all",
                     isCenter ? "border-blue-600 shadow-blue-500/40 shadow-xl z-20" : "border-white shadow-md hover:scale-110 z-10 hover:border-blue-200"
                   )}
-                  style={{ width: nodeSize, height: nodeSize }}
+                  style={{ width: nodeSize, height: nodeSize, flexShrink: 0 }}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20, delay: isCenter ? 0 : i * 0.05 }}
@@ -211,25 +212,35 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
                 </motion.div>
                 
                 {/* Name and Pill Badge */}
-                <motion.div 
-                  className="mt-1.5 flex flex-col items-center gap-1"
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: isCenter ? 0.2 : i * 0.05 + 0.2 }}
+                <div 
+                  style={{ marginTop: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
                 >
-                  <span className={ Cn(
-                    "font-bold text-gray-900 leading-none text-center tracking-tight",
-                    isCenter ? "text-[11px]" : "text-[9px]"
-                  )}>
+                  <span style={{ 
+                    fontWeight: 700, 
+                    color: '#111827', 
+                    fontSize: isCenter ? 11 : 9, 
+                    lineHeight: 1.1, 
+                    textAlign: 'center',
+                    letterSpacing: '-0.02em'
+                  }}>
                     {n.name} {n.id === currentUser.id && "(YOU)"}
                   </span>
-                  <span className={ Cn(
-                    "bg-[#1a4bba] text-white font-bold rounded-full text-center tracking-wide",
-                    isCenter ? "text-[8px] px-2.5 py-[3px]" : "text-[7px] px-2 py-[2px]"
-                  )}>
+                  <span style={{
+                    background: '#1a4bba',
+                    color: 'white',
+                    fontWeight: 700,
+                    borderRadius: 999,
+                    textAlign: 'center',
+                    letterSpacing: '0.03em',
+                    fontSize: isCenter ? 8 : 7,
+                    paddingLeft: isCenter ? 10 : 8,
+                    paddingRight: isCenter ? 10 : 8,
+                    paddingTop: isCenter ? 3 : 2,
+                    paddingBottom: isCenter ? 3 : 2,
+                  }}>
                     {ROLE_LABELS[n.role] || n.role}
                   </span>
-                </motion.div>
+                </div>
               </div>
             </foreignObject>
           );

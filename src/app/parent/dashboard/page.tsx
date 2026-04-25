@@ -130,33 +130,6 @@ export default function ParentDashboardPage() {
           </div>
         )}
 
-        {/* Child Spending Limits Quick Actions */}
-        {data.children.length > 0 && (
-          <div className="px-4 pt-5">
-            <p className="text-sm font-bold text-gray-800 mb-3">Spending Limits</p>
-            <div className="space-y-3">
-              {data.children.map((child: any) => (
-                <div key={`limit-${child.id}`} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between group">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 font-bold border border-blue-100">
-                      {child.nickname?.[0] || child.fullName[0]}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">{child.nickname || child.fullName}</p>
-                      <p className="text-[11px] text-gray-500">Tap to set transaction limit</p>
-                    </div>
-                  </div>
-                  <Link href={`/parent/child/${child.id}/transaction-limit`}>
-                    <div className="bg-blue-50 w-12 h-12 rounded-2xl flex items-center justify-center group-active:scale-95 transition-transform border border-blue-100 shadow-sm">
-                      <BarChart3 size={20} className="text-blue-600" />
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Pending Requests */}
         {data.pendingRequests.length > 0 && (
           <div className="px-4 pt-5">
