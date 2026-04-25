@@ -21,6 +21,7 @@ export default function ChildDetailPage() {
   const params = useParams();
   const childId = params.childId as string;
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async (isSilent = false) => {
@@ -48,7 +49,7 @@ export default function ChildDetailPage() {
     fetchData();
   }, [currentUser, authLoading, childId]);
 
-  if (authLoading || (loading && !data)) return <MobileShell><LoadingState /></MobileShell>;
+  if (authLoading || loading || !data) return <MobileShell><LoadingState /></MobileShell>;
   const child = data?.childProfile;
 
   return (
@@ -93,11 +94,11 @@ export default function ChildDetailPage() {
           ))}
         </div>
 
-        {data.spendingByCategory && Object.keys(data.spendingByCategory).length > 0 && (
+        {data?.spendingByCategory && Object.keys(data.spendingByCategory).length > 0 && (
           <div className="px-4 pt-5"><SpendingChart data={data.spendingByCategory} /></div>
         )}
 
-        {data.currentRecommendation && (
+        {data?.currentRecommendation && (
           <div className="px-4 pt-5">
             <RecommendationCard
               recommendation={data.currentRecommendation}
@@ -116,7 +117,7 @@ export default function ChildDetailPage() {
           </div>
         )}
 
-        {(!data.currentRecommendation || data.currentRecommendation.status !== "pending") && (
+        {(!data?.currentRecommendation || data.currentRecommendation.status !== "pending") && (
           <div className="px-4 pt-4">
             <button 
               disabled={refreshing}
@@ -134,7 +135,7 @@ export default function ChildDetailPage() {
           </div>
         )}
 
-        {data.goals?.length > 0 && (
+        {data?.goals?.length > 0 && (
           <div className="px-4 pt-5">
             <p className="text-sm font-bold text-gray-800 mb-3">Savings Goals</p>
             <div className="space-y-2">{data.goals.map((g: any, i: number) => <GoalCard key={g.id} goal={g} index={i} />)}</div>
@@ -144,7 +145,7 @@ export default function ChildDetailPage() {
         <div className="px-4 pt-5 pb-4">
           <p className="text-sm font-bold text-gray-800 mb-3">Recent Transactions</p>
           <div className="space-y-1">
-            {(data.transactions || []).slice(0, 5).map((tx: any) => (
+            {(data?.transactions || []).slice(0, 5).map((tx: any) => (
               <div key={tx.id} className="bg-white rounded-xl p-3 flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
