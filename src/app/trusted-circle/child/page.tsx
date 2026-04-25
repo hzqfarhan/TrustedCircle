@@ -4,10 +4,13 @@ import { MobileShell } from "@/components/MobileShell";
 import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { formatRM, formatDate } from "@/lib/utils-tc";
-import { Baby, ChevronRight, MapPin, AlertTriangle, Plus } from "lucide-react";
+import { Baby, ChevronRight, MapPin, AlertTriangle, Plus, Users, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { NetworkGraph } from "@/components/NetworkGraph";
+import { cn } from "@/lib/utils";
+import { ROLE_LABELS } from "@/lib/utils-tc";
 
 export default function ChildPage() {
   const { currentUser } = useAuth();
@@ -15,6 +18,17 @@ export default function ChildPage() {
   const [loading, setLoading] = useState(true);
   const isParent = currentUser?.role === "PARENT";
   const isChild = currentUser?.role === "CHILD";
+  const [viewMode, setViewMode] = useState<"list" | "network">("list");
+  const users = (currentUser as any)?.users || [];
+  
+  const customAvatarMap: Record<string, string> = {
+    u_akmal: "/pfp/akmal.png",
+    u_ibad: "/pfp/ibad.png",
+    u_paan: "/pfp/paan.png",
+    u_wafi: "/pfp/wafi.png",
+    u_abang: "/pfp/aizat.png",
+    u_child: "/pfp/child.png",
+  };
 
   useEffect(() => {
     if (!currentUser) return;
@@ -141,6 +155,70 @@ export default function ChildPage() {
                   <p className="text-purple-600 text-[10px] mt-0.5">Edit controls →</p>
                 </div>
               </Link>
+            </div>
+
+            {/* Network & Members List */}
+            <div className="mx-4 mt-3">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Circle Network</p>
+              <div className="flex bg-gray-100 p-1 rounded-xl mb-3">
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors",
+                    viewMode === "list" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                  )}
+                >
+                  <Users size={16} /> List
+                </button>
+                <button
+                  onClick={() => setViewMode("network")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors",
+                    viewMode === "network" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                  )}
+                >
+                  <Share2 size={16} /> Network
+                </button>
+              </div>
+
+              {viewMode === "network" ? (
+                <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-4">
+                  <NetworkGraph 
+                    users={users} 
+                    currentUser={currentUser} 
+                    edgeStyle="solid"
+                    customAvatarMap={customAvatarMap}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2 mb-4">
+                  {users.map((u: any) => {
+                    const isMe = u.id === currentUser?.id;
+                    const finalAvatar = u.avatar || customAvatarMap[u.id];
+
+                    return (
+                      <div key={u.id} className={cn("bg-white rounded-2xl p-3 border", isMe ? "border-blue-200" : "border-gray-100")}>
+                        <div className="flex items-center gap-3">
+                          {finalAvatar ? (
+                            <img src={finalAvatar} alt={u.name} className="w-10 h-10 rounded-xl object-cover shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0">
+                              {u.name[0]}
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold text-gray-900 text-sm">{u.name}</p>
+                              {isMe && <span className="bg-blue-100 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded-md">YOU</span>}
+                            </div>
+                            <p className="text-xs text-gray-500 capitalize">{ROLE_LABELS[u.role as keyof typeof ROLE_LABELS] || u.role.toLowerCase()}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Recent Transactions */}

@@ -11,11 +11,8 @@ import { motion } from "framer-motion";
 import { ROLE_LABELS } from "@/lib/utils-tc";
 
 const features = [
-  { icon: Wallet, label: "Shared Funds", desc: "Group tabung, goal tracking & withdrawal approval", href: "/trusted-circle/funds", color: "bg-blue-50 text-blue-600" },
   { icon: Baby, label: "Child Account", desc: "Spending limits, zones & cashflow monitor", href: "/trusted-circle/child", color: "bg-purple-50 text-purple-600" },
   { icon: Cpu, label: "AI Monitor", desc: "Behavioral risk detection & explanations", href: "/trusted-circle/ai-monitor", color: "bg-teal-50 text-teal-600" },
-  { icon: Users, label: "Members & Roles", desc: "Manage circle members & permissions", href: "/trusted-circle/members", color: "bg-amber-50 text-amber-600" },
-  { icon: Bell, label: "Alerts", desc: "Real-time risk & approval notifications", href: "/trusted-circle/alerts", color: "bg-red-50 text-red-500" },
   { icon: Settings2, label: "Roles & Permissions", desc: "Fine-tune trust levels per member", href: "/trusted-circle/roles", color: "bg-gray-100 text-gray-600" },
 ];
 

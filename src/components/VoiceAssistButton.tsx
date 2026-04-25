@@ -1,8 +1,8 @@
 "use client";
 import { Volume2, VolumeX } from "lucide-react";
 import { useState, useEffect } from "react";
-import { speak, isVoiceEnabled, setVoiceEnabled } from "@/lib/voice";
-import { cn } from "@/lib/utils";
+import { Speak, IsVoiceEnabled, SetVoiceEnabled } from "@/lib/voice";
+import { Cn } from "@/lib/utils";
 
 interface VoiceAssistButtonProps {
   text: string;
@@ -14,24 +14,24 @@ export function VoiceAssistButton({ text, className, variant = "full" }: VoiceAs
   const [voiceOn, setVoiceOn] = useState(false);
 
   useEffect(() => {
-    setVoiceOn(isVoiceEnabled());
+    setVoiceOn(IsVoiceEnabled());
   }, []);
 
   const handleToggle = () => {
     const next = !voiceOn;
     setVoiceOn(next);
-    setVoiceEnabled(next);
+    SetVoiceEnabled(next);
   };
 
   const handleSpeak = () => {
-    speak(text);
+    Speak(text);
   };
 
   if (variant === "icon") {
     return (
       <button
         onClick={handleSpeak}
-        className={cn("w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center active:bg-blue-100 transition-colors", className)}
+        className={Cn("w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center active:bg-blue-100 transition-colors", className)}
         aria-label="Play voice alert"
       >
         <Volume2 size={17} />
@@ -40,7 +40,7 @@ export function VoiceAssistButton({ text, className, variant = "full" }: VoiceAs
   }
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={Cn("flex items-center gap-2", className)}>
       <button
         onClick={handleSpeak}
         className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-2xl transition-colors active:bg-blue-800"

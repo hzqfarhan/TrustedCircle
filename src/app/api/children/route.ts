@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMockTable } from "@/lib/aws/mock-data";
-import { hashDocumentNumber, maskDocumentNumber, getAgeGroup, calculateAge } from "@/lib/utils-kyc";
+import { GetChildrenByParent, CreateChildProfile, CreateParentChildLink } from "@/lib/data/children";
+import { CreateAuditLog } from "@/lib/data/audit-logs";
+import { PutItem, Tables } from "@/lib/aws/dynamodb";
+import { HashDocumentNumber, MaskDocumentNumber, GetAgeGroup, CalculateAge } from "@/lib/utils-kyc";
 import { createChildSchema } from "@/lib/validations/children";
+import { v4 as uuid } from 'uuid';
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,16 +14,15 @@ export async function POST(req: NextRequest) {
 
     const validated = createChildSchema.parse(body.data);
 
-    const age = calculateAge(validated.dateOfBirth);
+    const age = CalculateAge(validated.dateOfBirth);
     if (age > 18) {
       return NextResponse.json({ error: "Child must be under 18" }, { status: 400 });
     }
 
-    const childId = `child_${Date.now()}`;
+    const childId = `child_${uuid()}`;
     const now = new Date().toISOString();
 
-    const childProfiles = getMockTable("juniorwallet-child-profiles");
-    childProfiles.push({
+    await CreateChildProfile({
       id: childId,
       userId: `user_${childId}`,
       parentId,
@@ -28,7 +30,8 @@ export async function POST(req: NextRequest) {
       nickname: validated.nickname,
       email: validated.email,
       dateOfBirth: validated.dateOfBirth,
-      ageGroup: getAgeGroup(age),
+      ageGroup: GetAgeGroup(age),
+
       relationship: validated.relationship,
       responsibilityScore: 100, // starting score
       currentBalance: 0,
@@ -39,38 +42,35 @@ export async function POST(req: NextRequest) {
       updatedAt: now,
     });
 
-    const links = getMockTable("juniorwallet-parent-child-links");
-    links.push({
-      id: `link_${Date.now()}`,
+    await CreateParentChildLink({
+      id: `link_${uuid()}`,
       parentId,
       childId,
       relationship: validated.relationship,
       createdAt: now,
     });
 
-    const kycDocs = getMockTable("juniorwallet-child-kyc-documents");
-    kycDocs.push({
-      id: `kyc_${Date.now()}`,
+    await PutItem(Tables.kycDocuments, {
+      id: `kyc_${uuid()}`,
       childId,
       parentId,
       documentType: validated.documentType,
-      documentNumberMasked: maskDocumentNumber(validated.documentNumber),
-      documentNumberHash: hashDocumentNumber(validated.documentNumber),
-      documentFileKey: "pending_upload",
+      documentNumberMasked: "FILE_UPLOADED",
+      documentNumberHash: "FILE_HASH_" + uuid(),
+      documentFileKey: validated.documentFile,
       status: "pending",
       submittedAt: now,
       createdAt: now,
       updatedAt: now,
     });
 
-    const auditLogs = getMockTable("juniorwallet-audit-logs");
-    auditLogs.push({
-      id: `audit_${Date.now()}`,
+    await CreateAuditLog({
+      id: `audit_${uuid()}`,
       actorId: parentId,
       action: "child_created",
       entityType: "child_profile",
       entityId: childId,
-      newValue: { childId, nickname: validated.nickname, fullName: validated.fullName, kycStatus: "kyc_pending", documentNumberMasked: maskDocumentNumber(validated.documentNumber) },
+      newValue: { childId, nickname: validated.nickname, fullName: validated.fullName, kycStatus: "kyc_pending", documentFile: validated.documentFile },
       createdAt: now,
     });
 
@@ -85,6 +85,7 @@ export async function GET(req: NextRequest) {
   const parentId = searchParams.get("parentId");
   if (!parentId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const children = getMockTable("juniorwallet-child-profiles").filter(c => c.parentId === parentId && c.status !== "removed");
-  return NextResponse.json(children);
+  const children = await GetChildrenByParent(parentId);
+  return NextResponse.json(children.filter(c => c.status !== "removed"));
 }
+

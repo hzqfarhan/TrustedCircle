@@ -2,35 +2,35 @@
 //  Authorization Guards — Server-side
 // ─────────────────────────────────────────────
 
-import { getProfile } from '@/lib/data/profiles';
-import { isParentOfChild, getChildProfile, getChildProfileByUserId } from '@/lib/data/children';
+import { GetProfile } from '@/lib/data/profiles';
+import { IsParentOfChild, GetChildProfile, GetChildProfileByUserId } from '@/lib/data/children';
 import type { AuthUser } from '@/lib/auth/auth';
 
-export async function assertParentCanAccessChild(parentId: string, childId: string): Promise<void> {
-  const isLinked = await isParentOfChild(parentId, childId);
+export async function AssertParentCanAccessChild(parentId: string, childId: string): Promise<void> {
+  const isLinked = await IsParentOfChild(parentId, childId);
   if (!isLinked) {
     throw new Error('Unauthorized: Parent is not linked to this child');
   }
 }
 
-export async function assertChildOwnsProfile(userId: string, childProfileId: string): Promise<void> {
-  const childProfile = await getChildProfile(childProfileId);
+export async function AssertChildOwnsProfile(userId: string, childProfileId: string): Promise<void> {
+  const childProfile = await GetChildProfile(childProfileId);
   if (!childProfile || childProfile.userId !== userId) {
     throw new Error('Unauthorized: Child does not own this profile');
   }
 }
 
-export async function assertCanReadChildData(user: AuthUser, childId: string): Promise<void> {
-  const profile = await getProfile(user.sub);
+export async function AssertCanReadChildData(user: AuthUser, childId: string): Promise<void> {
+  const profile = await GetProfile(user.sub);
   if (!profile) throw new Error('Unauthorized: Profile not found');
 
   if (profile.role === 'parent') {
-    await assertParentCanAccessChild(user.sub, childId);
+    await AssertParentCanAccessChild(user.sub, childId);
     return;
   }
 
   if (profile.role === 'child') {
-    const childProfile = await getChildProfile(childId);
+    const childProfile = await GetChildProfile(childId);
     if (!childProfile || childProfile.userId !== user.sub) {
       throw new Error('Unauthorized: Child can only access own data');
     }
@@ -40,26 +40,28 @@ export async function assertCanReadChildData(user: AuthUser, childId: string): P
   throw new Error('Unauthorized: Invalid role for this action');
 }
 
-export async function assertCanMutateChildData(user: AuthUser, childId: string): Promise<void> {
-  const profile = await getProfile(user.sub);
+export async function AssertCanMutateChildData(user: AuthUser, childId: string): Promise<void> {
+  const profile = await GetProfile(user.sub);
   if (!profile) throw new Error('Unauthorized: Profile not found');
 
   if (profile.role === 'parent') {
-    await assertParentCanAccessChild(user.sub, childId);
+    await AssertParentCanAccessChild(user.sub, childId);
     return;
   }
 
   throw new Error('Unauthorized: Only parents can mutate child data');
 }
 
-export async function assertIsChild(user: AuthUser): Promise<string> {
-  const profile = await getProfile(user.sub);
+export async function AssertIsChild(user: AuthUser): Promise<string> {
+  const profile = await GetProfile(user.sub);
   if (!profile || profile.role !== 'child') {
     throw new Error('Unauthorized: Requires child role');
   }
-  const childProfile = await getChildProfileByUserId(user.sub);
+  const childProfile = await GetChildProfileByUserId(user.sub);
   if (!childProfile) {
     throw new Error('Unauthorized: No child profile found');
   }
   return childProfile.id;
 }
+
+

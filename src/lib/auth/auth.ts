@@ -4,7 +4,7 @@
 
 import { cookies } from 'next/headers';
 import { jwtVerify, createRemoteJWKSet } from 'jose';
-import { getProfile } from '@/lib/data/profiles';
+import { GetProfile } from '@/lib/data/profiles';
 import type { Profile } from '@/types';
 
 const COGNITO_REGION = process.env.AWS_REGION || 'ap-southeast-1';
@@ -12,10 +12,11 @@ const USER_POOL_ID = process.env.COGNITO_USER_POOL_ID || '';
 const JWKS_URL = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json`;
 
 let jwks: ReturnType<typeof createRemoteJWKSet> | null = null;
-function getJWKS() {
+function GetJWKS() {
   if (!jwks) jwks = createRemoteJWKSet(new URL(JWKS_URL));
   return jwks;
 }
+
 
 export interface AuthUser {
   sub: string;
@@ -27,20 +28,20 @@ export interface AuthUser {
  * For MVP/demo: We support both Cognito JWT and simple demo token modes.
  * Demo mode uses a cookie `demo_user_id` for quick login without Cognito.
  */
-export async function getCurrentUser(): Promise<AuthUser | null> {
+export async function GetCurrentUser(): Promise<AuthUser | null> {
   const cookieStore = await cookies();
 
   // Check demo mode first (for development without Cognito)
   const demoUserId = cookieStore.get('demo_user_id')?.value;
   
   if (demoUserId) {
-    const profile = await getProfile(demoUserId);
+    const profile = await GetProfile(demoUserId);
     if (profile) {
       return { sub: profile.id, email: `${profile.fullName.toLowerCase()}@example.com`, role: profile.role };
     }
   } else if (process.env.USE_MOCK_DB !== 'false') {
     // Auto-login bypass for local development if no cookie exists
-    const profile = await getProfile('demo_parent');
+    const profile = await GetProfile('demo_parent');
     if (profile) {
       return { sub: profile.id, email: `${profile.fullName.toLowerCase()}@example.com`, role: profile.role };
     }
@@ -55,7 +56,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       // If no Cognito configured, skip JWT verification
       return null;
     }
-    const { payload } = await jwtVerify(token, getJWKS(), {
+    const { payload } = await jwtVerify(token, GetJWKS(), {
       issuer: `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${USER_POOL_ID}`,
     });
     return {
@@ -68,25 +69,25 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   }
 }
 
-export async function requireCurrentUser(): Promise<AuthUser> {
-  const user = await getCurrentUser();
+export async function RequireCurrentUser(): Promise<AuthUser> {
+  const user = await GetCurrentUser();
   if (!user) {
     throw new Error('Unauthorized: Not authenticated');
   }
   return user;
 }
 
-export async function requireRole(requiredRole: string): Promise<AuthUser> {
-  const user = await requireCurrentUser();
-  const profile = await getProfile(user.sub);
+export async function RequireRole(requiredRole: string): Promise<AuthUser> {
+  const user = await RequireCurrentUser();
+  const profile = await GetProfile(user.sub);
   if (!profile || profile.role !== requiredRole) {
     throw new Error(`Unauthorized: Requires ${requiredRole} role`);
   }
   return user;
 }
 
-export async function getCurrentUserProfile(): Promise<Profile | null> {
-  const user = await getCurrentUser();
+export async function GetCurrentUserProfile(): Promise<Profile | null> {
+  const user = await GetCurrentUser();
   if (!user) return null;
-  return getProfile(user.sub);
+  return GetProfile(user.sub);
 }

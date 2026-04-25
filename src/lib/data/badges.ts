@@ -1,20 +1,16 @@
-import { getItem, putItem, queryItems, scanItems, Tables } from '@/lib/aws/dynamodb';
+import { GetItem, PutItem, QueryItems, Tables, ScanItems } from '@/lib/aws/dynamodb';
 import type { Badge, ChildBadge } from '@/types';
 
-export async function getBadge(id: string): Promise<Badge | null> {
-  return getItem<Badge>(Tables.badges, { id });
+export async function GetAllBadges(): Promise<Badge[]> {
+  return ScanItems<Badge>(Tables.badges);
 }
 
-export async function getAllBadges(): Promise<Badge[]> {
-  return scanItems<Badge>(Tables.badges);
+export async function GetBadge(id: string): Promise<Badge | null> {
+  return GetItem<Badge>(Tables.badges, { id });
 }
 
-export async function createBadge(badge: Badge): Promise<void> {
-  await putItem(Tables.badges, badge as Record<string, unknown>);
-}
-
-export async function getChildBadges(childId: string): Promise<ChildBadge[]> {
-  return queryItems<ChildBadge>(
+export async function GetChildBadges(childId: string): Promise<ChildBadge[]> {
+  return QueryItems<ChildBadge>(
     Tables.childBadges,
     'childId-index',
     'childId = :childId',
@@ -22,20 +18,27 @@ export async function getChildBadges(childId: string): Promise<ChildBadge[]> {
   );
 }
 
-export async function awardBadge(childBadge: ChildBadge): Promise<void> {
-  await putItem(Tables.childBadges, childBadge as Record<string, unknown>);
+export async function GrantBadgeToChild(childId: string, badgeId: string): Promise<void> {
+  const id = `${childId}_${badgeId}`;
+  const exists = await GetItem<ChildBadge>(Tables.childBadges, { id });
+  if (exists) return;
+
+  await PutItem(Tables.childBadges, {
+    id,
+    childId,
+    badgeId,
+    unlockedAt: new Date().toISOString()
+  });
 }
 
-export async function getChildBadgesWithDetails(childId: string): Promise<(ChildBadge & { badge: Badge })[]> {
-  const childBadges = await getChildBadges(childId);
-  const allBadges = await getAllBadges();
-  const badgeMap = new Map(allBadges.map((b) => [b.id, b]));
+export async function GetChildBadgesWithDetails(childId: string): Promise<(ChildBadge & { badge: Badge })[]> {
+  const [earned, allBadges] = await Promise.all([
+    GetChildBadges(childId),
+    GetAllBadges()
+  ]);
 
-  return childBadges
-    .map((cb) => {
-      const badge = badgeMap.get(cb.badgeId);
-      if (!badge) return null;
-      return { ...cb, badge };
-    })
-    .filter(Boolean) as (ChildBadge & { badge: Badge })[];
+  return earned.map(e => ({
+    ...e,
+    badge: allBadges.find(b => b.id === e.badgeId)!
+  })).filter(b => !!b.badge);
 }

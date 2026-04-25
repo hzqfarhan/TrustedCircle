@@ -7,7 +7,7 @@ export const createChildSchema = z.object({
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format must be YYYY-MM-DD"),
   relationship: z.enum(["father", "mother", "guardian", "other"]),
   documentType: z.enum(["mykid", "birth_certificate"]),
-  documentNumber: z.string().min(5, "Document number required"),
+  documentFile: z.string().min(1, "Document file required"),
   consent: z.literal(true, {
     errorMap: () => ({ message: "Parent consent is required" })
   }),

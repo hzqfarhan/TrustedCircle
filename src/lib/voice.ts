@@ -1,6 +1,6 @@
 "use client";
 
-export function speak(text: string, rate = 0.95, pitch = 1.0) {
+export function Speak(text: string, rate = 0.95, pitch = 1.0) {
   if (typeof window === "undefined") return;
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
@@ -11,7 +11,7 @@ export function speak(text: string, rate = 0.95, pitch = 1.0) {
   window.speechSynthesis.speak(utterance);
 }
 
-export function buildRiskNarration(
+export function BuildRiskNarration(
   severity: string,
   reasons: string[],
   amount: number
@@ -36,12 +36,12 @@ export function buildRiskNarration(
   return intro + reasonText + outro;
 }
 
-export function isVoiceEnabled(): boolean {
+export function IsVoiceEnabled(): boolean {
   if (typeof window === "undefined") return false;
   return localStorage.getItem("tc_voice_enabled") === "true";
 }
 
-export function setVoiceEnabled(enabled: boolean) {
+export function SetVoiceEnabled(enabled: boolean) {
   if (typeof window === "undefined") return;
   localStorage.setItem("tc_voice_enabled", enabled ? "true" : "false");
 }

@@ -1,12 +1,12 @@
-import { getItem, putItem, updateItem, queryItems, Tables } from '@/lib/aws/dynamodb';
+import { GetItem, PutItem, UpdateItem, QueryItems, Tables } from '@/lib/aws/dynamodb';
 import type { AllowanceRule } from '@/types';
 
-export async function getRule(id: string): Promise<AllowanceRule | null> {
-  return getItem<AllowanceRule>(Tables.allowanceRules, { id });
+export async function GetRule(id: string): Promise<AllowanceRule | null> {
+  return GetItem<AllowanceRule>(Tables.allowanceRules, { id });
 }
 
-export async function getRulesByChild(childId: string): Promise<AllowanceRule[]> {
-  return queryItems<AllowanceRule>(
+export async function GetRulesByChild(childId: string): Promise<AllowanceRule[]> {
+  return QueryItems<AllowanceRule>(
     Tables.allowanceRules,
     'childId-index',
     'childId = :childId',
@@ -14,11 +14,11 @@ export async function getRulesByChild(childId: string): Promise<AllowanceRule[]>
   );
 }
 
-export async function createRule(rule: AllowanceRule): Promise<void> {
-  await putItem(Tables.allowanceRules, rule as Record<string, unknown>);
+export async function CreateRule(rule: AllowanceRule): Promise<void> {
+  await PutItem(Tables.allowanceRules, rule as Record<string, unknown>);
 }
 
-export async function updateRule(id: string, updates: Partial<AllowanceRule>): Promise<void> {
+export async function UpdateRule(id: string, updates: Partial<AllowanceRule>): Promise<void> {
   const clean = Object.fromEntries(Object.entries(updates).filter(([k]) => k !== 'id'));
-  await updateItem(Tables.allowanceRules, { id }, { ...clean, updatedAt: new Date().toISOString() });
+  await UpdateItem(Tables.allowanceRules, { id }, { ...clean, updatedAt: new Date().toISOString() });
 }

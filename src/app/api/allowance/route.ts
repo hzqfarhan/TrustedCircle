@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateRecommendationAction, approveRecommendationAction, rejectRecommendationAction } from '@/lib/actions/recommendation-actions';
+import { GenerateRecommendationAction, ApproveRecommendationAction, RejectRecommendationAction } from '@/lib/actions/recommendation-actions';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,19 +7,20 @@ export async function POST(request: NextRequest) {
     const { action, childId, recommendationId, approvedAmount } = body;
 
     if (action === 'generate') {
-      const rec = await generateRecommendationAction(childId);
+      const rec = await GenerateRecommendationAction(childId);
       return NextResponse.json(rec);
     }
 
     if (action === 'approve') {
-      const result = await approveRecommendationAction(recommendationId, approvedAmount);
+      const result = await ApproveRecommendationAction(recommendationId, approvedAmount);
       return NextResponse.json(result);
     }
 
     if (action === 'reject') {
-      const result = await rejectRecommendationAction(recommendationId);
+      const result = await RejectRecommendationAction(recommendationId);
       return NextResponse.json(result);
     }
+
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error: any) {

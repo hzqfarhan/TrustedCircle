@@ -5,8 +5,8 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { RiskScoreCard, AlertBanner } from "@/components/AlertBanner";
 import { VoiceAssistButton } from "@/components/VoiceAssistButton";
-import { buildRiskNarration } from "@/lib/voice";
-import { formatRM } from "@/lib/utils-tc";
+import { BuildRiskNarration } from "@/lib/voice";
+import { FormatRM } from "@/lib/utils-tc";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -107,7 +107,7 @@ export default function TransferPage() {
   };
 
   const narration = risk
-    ? buildRiskNarration(risk.severity, risk.reasons, parseFloat(form.amount))
+    ? BuildRiskNarration(risk.severity, risk.reasons, parseFloat(form.amount))
     : "";
 
   return (
@@ -228,7 +228,7 @@ export default function TransferPage() {
                 <p className="text-xs text-gray-400 mb-0.5">Transferring to</p>
                 <p className="font-bold text-gray-900">{form.recipient}</p>
                 <p className="text-gray-400 text-xs">{form.accountId}</p>
-                <p className="text-blue-700 font-black text-2xl mt-2">{formatRM(parseFloat(form.amount))}</p>
+                <p className="text-blue-700 font-black text-2xl mt-2">{FormatRM(parseFloat(form.amount))}</p>
               </div>
 
               <RiskScoreCard
@@ -342,7 +342,7 @@ export default function TransferPage() {
               </div>
               <p className="text-xl font-black text-gray-900 mb-1">Transfer Complete!</p>
               <p className="text-gray-400 text-sm mb-1">
-                {formatRM(parseFloat(form.amount))} sent to {form.recipient}
+                {FormatRM(parseFloat(form.amount))} sent to {form.recipient}
               </p>
               {risk && (
                 <p className="text-xs text-gray-400">Risk score: {risk.score} ({risk.severity})</p>

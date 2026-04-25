@@ -1,8 +1,8 @@
-export function formatRM(amount: number): string {
+export function FormatRM(amount: number): string {
   return `RM ${amount.toFixed(2)}`;
 }
 
-export function formatDate(date: Date | string): string {
+export function FormatDate(date: Date | string): string {
   return new Intl.DateTimeFormat("en-MY", {
     day: "numeric",
     month: "short",
@@ -11,7 +11,7 @@ export function formatDate(date: Date | string): string {
   }).format(new Date(date));
 }
 
-export function initials(name: string): string {
+export function Initials(name: string): string {
   return name
     .split(" ")
     .map((n) => n[0])
@@ -19,6 +19,7 @@ export function initials(name: string): string {
     .slice(0, 2)
     .toUpperCase();
 }
+
 
 export const ROLE_LABELS: Record<string, string> = {
   PARENT: "Parent",

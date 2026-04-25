@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getParentDashboardData } from '@/lib/actions/dashboard-actions';
+import { GetParentDashboardData } from '@/lib/actions/dashboard-actions';
 
 export async function GET() {
   try {
-    const data = await getParentDashboardData();
+    const data = await GetParentDashboardData();
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: error.message?.includes('Unauthorized') ? 403 : 500 });
   }
 }
+

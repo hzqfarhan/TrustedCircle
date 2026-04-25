@@ -1,10 +1,10 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { getProfile } from '@/lib/data/profiles';
+import { GetProfile } from '@/lib/data/profiles';
 
-export async function demoLoginAction(userId: string) {
-  const profile = await getProfile(userId);
+export async function DemoLoginAction(userId: string) {
+  const profile = await GetProfile(userId);
   if (!profile) throw new Error('Demo user not found');
 
   const cookieStore = await cookies();
@@ -19,9 +19,10 @@ export async function demoLoginAction(userId: string) {
   return { success: true, role: profile.role };
 }
 
-export async function logoutAction() {
+export async function LogoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete('demo_user_id');
   cookieStore.delete('auth_token');
   return { success: true };
 }
+

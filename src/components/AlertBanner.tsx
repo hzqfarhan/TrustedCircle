@@ -1,6 +1,6 @@
 "use client";
 import { AlertTriangle, Info, CheckCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 interface AlertBannerProps {
@@ -22,14 +22,14 @@ export function AlertBanner({ severity, message, className }: AlertBannerProps) 
     <motion.div
       initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
-      className={cn(
+      className={Cn(
         "flex items-start gap-2.5 px-3.5 py-3 rounded-2xl border text-sm",
         config.bg,
         config.text,
         className
       )}
     >
-      <Icon size={16} className={cn("mt-0.5 shrink-0", config.icon_color)} />
+      <Icon size={16} className={Cn("mt-0.5 shrink-0", config.icon_color)} />
       <p className="leading-snug">{message}</p>
     </motion.div>
   );

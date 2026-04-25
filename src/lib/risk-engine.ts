@@ -24,7 +24,7 @@ export interface RiskResult {
   recommendedActions: string[];
 }
 
-export function assessRisk(input: RiskInput): RiskResult {
+export function AssessRisk(input: RiskInput): RiskResult {
   let score = 0;
   const reasons: string[] = [];
   const actions: string[] = [];
@@ -124,13 +124,13 @@ export function assessRisk(input: RiskInput): RiskResult {
   };
 }
 
-export function formatSeverityColor(severity: string) {
+export function FormatSeverityColor(severity: string) {
   if (severity === "HIGH") return "text-red-500";
   if (severity === "MEDIUM") return "text-amber-500";
   return "text-emerald-500";
 }
 
-export function formatSeverityBg(severity: string) {
+export function FormatSeverityBg(severity: string) {
   if (severity === "HIGH") return "bg-red-50 border-red-200";
   if (severity === "MEDIUM") return "bg-amber-50 border-amber-200";
   return "bg-emerald-50 border-emerald-200";

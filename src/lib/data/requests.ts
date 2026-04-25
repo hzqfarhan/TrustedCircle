@@ -1,52 +1,46 @@
-import { getItem, putItem, updateItem, queryItems, Tables } from '@/lib/aws/dynamodb';
+import { GetItem, PutItem, UpdateItem, QueryItems, Tables } from '@/lib/aws/dynamodb';
 import type { ExtraAllowanceRequest } from '@/types';
 
-export async function getExtraRequest(id: string): Promise<ExtraAllowanceRequest | null> {
-  return getItem<ExtraAllowanceRequest>(Tables.extraRequests, { id });
+export async function GetExtraRequest(id: string): Promise<ExtraAllowanceRequest | null> {
+  return GetItem<ExtraAllowanceRequest>(Tables.extraRequests, { id });
 }
 
-export async function getRequestsByChild(childId: string, limit = 10): Promise<ExtraAllowanceRequest[]> {
-  return queryItems<ExtraAllowanceRequest>(
+export async function GetRequestsByChild(childId: string): Promise<ExtraAllowanceRequest[]> {
+  return QueryItems<ExtraAllowanceRequest>(
     Tables.extraRequests,
     'childId-createdAt-index',
     'childId = :childId',
     { ':childId': childId },
-    { scanForward: false, limit }
+    { scanForward: false }
   );
 }
 
-export async function getRequestsByParent(parentId: string, status?: string): Promise<ExtraAllowanceRequest[]> {
-  if (status) {
-    return queryItems<ExtraAllowanceRequest>(
-      Tables.extraRequests,
-      'parentId-status-index',
-      'parentId = :parentId AND #status = :status',
-      { ':parentId': parentId, ':status': status },
-      { expressionNames: { '#status': 'status' } }
-    );
-  }
-  return queryItems<ExtraAllowanceRequest>(
+export async function GetPendingRequestsByParent(parentId: string): Promise<ExtraAllowanceRequest[]> {
+  return QueryItems<ExtraAllowanceRequest>(
     Tables.extraRequests,
     'parentId-status-index',
-    'parentId = :parentId',
-    { ':parentId': parentId }
+    'parentId = :parentId AND #status = :status',
+    { ':parentId': parentId, ':status': 'pending' },
+    { expressionNames: { '#status': 'status' } }
   );
 }
 
-export async function createExtraRequest(req: ExtraAllowanceRequest): Promise<void> {
-  await putItem(Tables.extraRequests, req as Record<string, unknown>);
+export async function CreateExtraRequest(req: ExtraAllowanceRequest): Promise<void> {
+  await PutItem(Tables.extraRequests, req as Record<string, unknown>);
 }
 
-export async function resolveExtraRequest(
+export async function ResolveExtraRequest(
   id: string,
   status: 'approved' | 'rejected' | 'partially_approved',
   approvedAmount?: number,
   parentMessage?: string
 ): Promise<void> {
-  await updateItem(Tables.extraRequests, { id }, {
-    status,
-    ...(approvedAmount !== undefined && { approvedAmount }),
-    ...(parentMessage && { parentMessage }),
-    resolvedAt: new Date().toISOString(),
-  });
+  const updates: any = { 
+    status, 
+    resolvedAt: new Date().toISOString() 
+  };
+  if (approvedAmount !== undefined) updates.approvedAmount = approvedAmount;
+  if (parentMessage !== undefined) updates.parentMessage = parentMessage;
+
+  await UpdateItem(Tables.extraRequests, { id }, updates);
 }

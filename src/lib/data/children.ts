@@ -1,12 +1,12 @@
-import { getItem, putItem, updateItem, queryItems, Tables } from '@/lib/aws/dynamodb';
+import { GetItem, PutItem, UpdateItem, QueryItems, Tables } from '@/lib/aws/dynamodb';
 import type { ChildProfile, ParentChildLink } from '@/types';
 
-export async function getChildProfile(id: string): Promise<ChildProfile | null> {
-  return getItem<ChildProfile>(Tables.childProfiles, { id });
+export async function GetChildProfile(id: string): Promise<ChildProfile | null> {
+  return GetItem<ChildProfile>(Tables.childProfiles, { id });
 }
 
-export async function getChildProfileByUserId(userId: string): Promise<ChildProfile | null> {
-  const results = await queryItems<ChildProfile>(
+export async function GetChildProfileByUserId(userId: string): Promise<ChildProfile | null> {
+  const results = await QueryItems<ChildProfile>(
     Tables.childProfiles,
     'userId-index',
     'userId = :userId',
@@ -16,8 +16,8 @@ export async function getChildProfileByUserId(userId: string): Promise<ChildProf
   return results[0] || null;
 }
 
-export async function getChildrenByParent(parentId: string): Promise<ChildProfile[]> {
-  return queryItems<ChildProfile>(
+export async function GetChildrenByParent(parentId: string): Promise<ChildProfile[]> {
+  return QueryItems<ChildProfile>(
     Tables.childProfiles,
     'parentId-index',
     'parentId = :parentId',
@@ -25,18 +25,18 @@ export async function getChildrenByParent(parentId: string): Promise<ChildProfil
   );
 }
 
-export async function createChildProfile(child: ChildProfile): Promise<void> {
-  await putItem(Tables.childProfiles, child as Record<string, unknown>);
+export async function CreateChildProfile(child: ChildProfile): Promise<void> {
+  await PutItem(Tables.childProfiles, child as Record<string, unknown>);
 }
 
-export async function updateChildProfile(id: string, updates: Partial<ChildProfile>): Promise<void> {
+export async function UpdateChildProfile(id: string, updates: Partial<ChildProfile>): Promise<void> {
   const clean = Object.fromEntries(Object.entries(updates).filter(([k]) => k !== 'id'));
-  await updateItem(Tables.childProfiles, { id }, { ...clean, updatedAt: new Date().toISOString() });
+  await UpdateItem(Tables.childProfiles, { id }, { ...clean, updatedAt: new Date().toISOString() });
 }
 
 // Parent-Child Links
-export async function getParentChildLinks(parentId: string): Promise<ParentChildLink[]> {
-  return queryItems<ParentChildLink>(
+export async function GetParentChildLinks(parentId: string): Promise<ParentChildLink[]> {
+  return QueryItems<ParentChildLink>(
     Tables.parentChildLinks,
     'parentId-index',
     'parentId = :parentId',
@@ -44,8 +44,8 @@ export async function getParentChildLinks(parentId: string): Promise<ParentChild
   );
 }
 
-export async function getChildParentLink(childId: string): Promise<ParentChildLink | null> {
-  const results = await queryItems<ParentChildLink>(
+export async function GetChildParentLink(childId: string): Promise<ParentChildLink | null> {
+  const results = await QueryItems<ParentChildLink>(
     Tables.parentChildLinks,
     'childId-index',
     'childId = :childId',
@@ -55,11 +55,11 @@ export async function getChildParentLink(childId: string): Promise<ParentChildLi
   return results[0] || null;
 }
 
-export async function createParentChildLink(link: ParentChildLink): Promise<void> {
-  await putItem(Tables.parentChildLinks, link as Record<string, unknown>);
+export async function CreateParentChildLink(link: ParentChildLink): Promise<void> {
+  await PutItem(Tables.parentChildLinks, link as Record<string, unknown>);
 }
 
-export async function isParentOfChild(parentId: string, childId: string): Promise<boolean> {
-  const links = await getParentChildLinks(parentId);
+export async function IsParentOfChild(parentId: string, childId: string): Promise<boolean> {
+  const links = await GetParentChildLinks(parentId);
   return links.some((l) => l.childId === childId);
 }

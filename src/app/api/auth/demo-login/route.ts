@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getProfile } from '@/lib/data/profiles';
+import { GetProfile } from '@/lib/data/profiles';
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,10 +9,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'userId required' }, { status: 400 });
     }
 
-    const profile = await getProfile(userId);
+    const profile = await GetProfile(userId);
     if (!profile) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
 
     const cookieStore = await cookies();
     cookieStore.set('demo_user_id', userId, {

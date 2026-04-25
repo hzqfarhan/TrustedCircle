@@ -19,7 +19,7 @@ export default function AddChildPage() {
     dateOfBirth: "",
     relationship: "father",
     documentType: "mykid",
-    documentNumber: "",
+    documentFile: "",
     consent: false,
   });
 
@@ -146,16 +146,21 @@ export default function AddChildPage() {
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Document Number *</label>
+            <div className="mb-3">
+              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Upload Document *</label>
               <input
-                type="text"
-                placeholder={form.documentType === "mykid" ? "e.g. 120514101234" : "e.g. CA123456"}
+                type="file"
+                accept="image/*,.pdf"
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={form.documentNumber}
-                onChange={(e) => setForm({ ...form, documentNumber: e.target.value })}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setForm({ ...form, documentFile: file.name });
+                  }
+                }}
                 required
               />
+              <p className="text-[10px] text-gray-400 mt-1">Please upload a clear image or PDF of the child's ID.</p>
             </div>
           </div>
 

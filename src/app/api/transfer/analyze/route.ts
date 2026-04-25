@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { assessRisk } from "@/lib/risk-engine";
+import { AssessRisk } from "@/lib/risk-engine";
 
 export async function POST(req: NextRequest) {
   const { senderId, amount, recipientAccountId, recipientName } = await req.json();
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     (t) => t.note?.includes(recipientName) || t.note?.includes(recipientAccountId)
   );
 
-  const result = assessRisk({
+  const result = AssessRisk({
     amount,
     userAvgAmount: avg,
     isNewRecipient,

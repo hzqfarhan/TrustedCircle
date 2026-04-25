@@ -1,21 +1,21 @@
 'use server';
 
-import { requireCurrentUser } from '@/lib/auth/auth';
+import { RequireCurrentUser } from '@/lib/auth/auth';
 import { assertIsChild, assertCanMutateChildData } from '@/lib/auth/authorization';
-import { createExtraRequest, resolveExtraRequest, getExtraRequest } from '@/lib/data/requests';
-import { getChildProfile, updateChildProfile, getChildProfileByUserId } from '@/lib/data/children';
-import { createTransaction } from '@/lib/data/transactions';
-import { createAuditLog } from '@/lib/data/audit-logs';
-import { createAlert } from '@/lib/data/alerts';
-import { getProfile } from '@/lib/data/profiles';
+import { CreateExtraRequest, ResolveExtraRequest, GetExtraRequest } from '@/lib/data/requests';
+import { GetChildProfile, UpdateChildProfile, GetChildProfileByUserId } from '@/lib/data/children';
+import { CreateTransaction } from '@/lib/data/transactions';
+import { CreateAuditLog } from '@/lib/data/audit-logs';
+import { CreateAlert } from '@/lib/data/alerts';
+import { GetProfile } from '@/lib/data/profiles';
 import { v4 as uuid } from 'uuid';
 import type { ExtraAllowanceRequest } from '@/types';
 
 export async function SubmitExtraAllowanceRequest(amount: number, reason: string, childNote: string) {
-  const user = await requireCurrentUser();
+  const user = await RequireCurrentUser();
   const childProfileId = await assertIsChild(user);
 
-  const childProfile = await getChildProfile(childProfileId);
+  const childProfile = await GetChildProfile(childProfileId);
   if (!childProfile) throw new Error('Child profile not found');
 
   const request: ExtraAllowanceRequest = {
@@ -29,10 +29,10 @@ export async function SubmitExtraAllowanceRequest(amount: number, reason: string
     createdAt: new Date().toISOString(),
   };
 
-  await createExtraRequest(request);
+  await CreateExtraRequest(request);
 
   // Alert parent
-  await createAlert({
+  await CreateAlert({
     id: uuid(),
     childId: childProfileId,
     parentId: childProfile.parentId,
@@ -47,24 +47,24 @@ export async function SubmitExtraAllowanceRequest(amount: number, reason: string
 }
 
 export async function ApproveExtraAllowanceRequestAction(requestId: string, approvedAmount: number, parentMessage?: string) {
-  const user = await requireCurrentUser();
-  const request = await getExtraRequest(requestId);
+  const user = await RequireCurrentUser();
+  const request = await GetExtraRequest(requestId);
   if (!request) throw new Error('Request not found');
 
   await assertCanMutateChildData(user, request.childId);
 
   const status = approvedAmount >= request.amount ? 'approved' : 'partially_approved';
-  await resolveExtraRequest(requestId, status as 'approved' | 'partially_approved', approvedAmount, parentMessage);
+  await ResolveExtraRequest(requestId, status as 'approved' | 'partially_approved', approvedAmount, parentMessage);
 
   // Update child balance
-  const child = await getChildProfile(request.childId);
+  const child = await GetChildProfile(request.childId);
   if (child) {
-    await updateChildProfile(request.childId, {
+    await UpdateChildProfile(request.childId, {
       currentBalance: child.currentBalance + approvedAmount,
     });
 
     // Create transaction
-    await createTransaction({
+    await CreateTransaction({
       id: uuid(),
       childId: request.childId,
       amount: approvedAmount,
@@ -79,10 +79,18 @@ export async function ApproveExtraAllowanceRequestAction(requestId: string, appr
     });
   }
 
-  await createAuditLog(user.sub, 'APPROVE_EXTRA_REQUEST', 'extra_request', requestId, undefined, { approvedAmount });
+  await CreateAuditLog({
+    id: uuid(),
+    actorId: user.sub,
+    action: 'APPROVE_EXTRA_REQUEST',
+    entityType: 'extra_request',
+    entityId: requestId,
+    newValue: { approvedAmount },
+    createdAt: new Date().toISOString()
+  });
 
   // Alert child
-  await createAlert({
+  await CreateAlert({
     id: uuid(),
     childId: request.childId,
     parentId: user.sub,
@@ -97,16 +105,24 @@ export async function ApproveExtraAllowanceRequestAction(requestId: string, appr
 }
 
 export async function RejectExtraAllowanceRequestAction(requestId: string, parentMessage?: string) {
-  const user = await requireCurrentUser();
-  const request = await getExtraRequest(requestId);
+  const user = await RequireCurrentUser();
+  const request = await GetExtraRequest(requestId);
   if (!request) throw new Error('Request not found');
 
   await assertCanMutateChildData(user, request.childId);
 
-  await resolveExtraRequest(requestId, 'rejected', undefined, parentMessage);
-  await createAuditLog(user.sub, 'REJECT_EXTRA_REQUEST', 'extra_request', requestId);
+  await ResolveExtraRequest(requestId, 'rejected', undefined, parentMessage);
+  
+  await CreateAuditLog({
+    id: uuid(),
+    actorId: user.sub,
+    action: 'REJECT_EXTRA_REQUEST',
+    entityType: 'extra_request',
+    entityId: requestId,
+    createdAt: new Date().toISOString()
+  });
 
-  await createAlert({
+  await CreateAlert({
     id: uuid(),
     childId: request.childId,
     parentId: user.sub,
@@ -119,3 +135,4 @@ export async function RejectExtraAllowanceRequestAction(requestId: string, paren
 
   return { success: true };
 }
+

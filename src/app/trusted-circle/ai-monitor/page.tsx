@@ -5,12 +5,12 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { RiskScoreCard } from "@/components/AlertBanner";
 import { VoiceAssistButton } from "@/components/VoiceAssistButton";
-import { buildRiskNarration } from "@/lib/voice";
-import { formatRM, formatDate } from "@/lib/utils-tc";
+import { BuildRiskNarration } from "@/lib/voice";
+import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { useEffect, useState } from "react";
 import { Cpu, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
-import { assessRisk } from "@/lib/risk-engine";
+import { AssessRisk } from "@/lib/risk-engine";
 import { toast } from "sonner";
 
 const demoScenarios = [
@@ -68,7 +68,7 @@ export default function AIMonitorPage() {
 
   const runScenario = (i: number) => {
     const s = demoScenarios[i];
-    const r = assessRisk(s.params as any);
+    const r = AssessRisk(s.params as any);
     setResult(r);
     setActiveScenario(i);
     setActiveTransfer(s.transfer);
@@ -76,7 +76,7 @@ export default function AIMonitorPage() {
   };
 
   const narration = result && activeTransfer
-    ? buildRiskNarration(result.severity, result.reasons, activeTransfer.amount)
+    ? BuildRiskNarration(result.severity, result.reasons, activeTransfer.amount)
     : "";
 
   return (
@@ -116,7 +116,7 @@ export default function AIMonitorPage() {
                   <div className={`w-2 h-2 rounded-full ${activeScenario === i ? "bg-blue-500" : "bg-gray-200"}`} />
                 </div>
                 <p className="text-[11px] text-gray-400 mt-0.5">
-                  {formatRM(s.transfer.amount)} → {s.transfer.to}
+                  {FormatRM(s.transfer.amount)} → {s.transfer.to}
                 </p>
               </button>
             ))}

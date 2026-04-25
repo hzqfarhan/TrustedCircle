@@ -1,25 +1,27 @@
-import { getItem, putItem, updateItem, queryItems, Tables } from '@/lib/aws/dynamodb';
+import { GetItem, PutItem, UpdateItem, QueryItems, Tables } from '@/lib/aws/dynamodb';
 import type { AllowanceRecommendation } from '@/types';
 
-export async function getRecommendation(id: string): Promise<AllowanceRecommendation | null> {
-  return getItem<AllowanceRecommendation>(Tables.recommendations, { id });
+export async function GetRecommendation(id: string): Promise<AllowanceRecommendation | null> {
+  return GetItem<AllowanceRecommendation>(Tables.recommendations, { id });
 }
 
-export async function getRecommendationsByChild(
-  childId: string,
-  limit = 5
-): Promise<AllowanceRecommendation[]> {
-  return queryItems<AllowanceRecommendation>(
+export async function GetRecommendationsByChild(childId: string): Promise<AllowanceRecommendation[]> {
+  return QueryItems<AllowanceRecommendation>(
     Tables.recommendations,
     'childId-createdAt-index',
     'childId = :childId',
     { ':childId': childId },
-    { scanForward: false, limit }
+    { scanForward: false }
   );
 }
 
-export async function getPendingRecommendations(): Promise<AllowanceRecommendation[]> {
-  return queryItems<AllowanceRecommendation>(
+export async function GetLatestRecommendation(childId: string): Promise<AllowanceRecommendation | null> {
+  const recs = await GetRecommendationsByChild(childId);
+  return recs[0] || null;
+}
+
+export async function GetPendingRecommendations(): Promise<AllowanceRecommendation[]> {
+  return QueryItems<AllowanceRecommendation>(
     Tables.recommendations,
     'status-index',
     '#status = :status',
@@ -28,26 +30,22 @@ export async function getPendingRecommendations(): Promise<AllowanceRecommendati
   );
 }
 
-export async function createRecommendation(rec: AllowanceRecommendation): Promise<void> {
-  await putItem(Tables.recommendations, rec as Record<string, unknown>);
+export async function CreateRecommendation(rec: AllowanceRecommendation): Promise<void> {
+  await PutItem(Tables.recommendations, rec as Record<string, unknown>);
 }
 
-export async function approveRecommendation(
+export async function UpdateRecommendationStatus(
   id: string,
-  approvedAmount: number,
-  approvedBy: string
+  status: AllowanceRecommendation['status'],
+  approvedAmount?: number,
+  approvedBy?: string
 ): Promise<void> {
-  await updateItem(Tables.recommendations, { id }, {
-    status: 'approved',
-    approvedAmount,
-    approvedBy,
-    resolvedAt: new Date().toISOString(),
-  });
-}
+  const updates: any = { 
+    status, 
+    resolvedAt: new Date().toISOString() 
+  };
+  if (approvedAmount !== undefined) updates.approvedAmount = approvedAmount;
+  if (approvedBy !== undefined) updates.approvedBy = approvedBy;
 
-export async function rejectRecommendation(id: string): Promise<void> {
-  await updateItem(Tables.recommendations, { id }, {
-    status: 'rejected',
-    resolvedAt: new Date().toISOString(),
-  });
+  await UpdateItem(Tables.recommendations, { id }, updates);
 }
