@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireCurrentUser } from "@/lib/auth/auth";
 import { anonymizeChildAnalyticsPayload } from "@/lib/alibaba/sync";
-import { getAuditLogsTable } from "@/lib/data/audit-logs";
+import { createAuditLog } from "@/lib/data/audit-logs";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
@@ -29,15 +29,14 @@ export async function POST(request: Request) {
     const isAlibabaConfigured = !!process.env.ALIBABA_OSS_BUCKET;
 
     // Log the sync action
-    await getAuditLogsTable().create({
-      id: `log_${uuidv4()}`,
-      actorId: user.id,
-      action: "AI_SYNC_TO_ALIBABA",
-      entityType: "childProfile",
-      entityId: childId,
-      newValue: JSON.stringify({ anonymizedId: payload.anonymizedChildId, status: isAlibabaConfigured ? "synced" : "skipped_no_config" }),
-      createdAt: new Date().toISOString()
-    });
+    await createAuditLog(
+      user.sub,
+      "AI_SYNC_TO_ALIBABA",
+      "childProfile",
+      childId,
+      undefined,
+      { anonymizedId: payload.anonymizedChildId, status: isAlibabaConfigured ? "synced" : "skipped_no_config" }
+    );
 
     return NextResponse.json({ 
       success: true, 
