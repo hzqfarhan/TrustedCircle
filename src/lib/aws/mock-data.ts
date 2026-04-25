@@ -8,13 +8,16 @@ const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString()
 export const MockDB: Record<string, any[]> = {
   "juniorwallet-profiles": [
     { id: 'demo_parent', fullName: 'Paan', role: 'parent', avatarUrl: '/pfp/paan.png', walletBalance: 2500, createdAt: now, updatedAt: now },
-    { id: 'demo_child', fullName: 'Aiman', role: 'child', avatarUrl: '/pfp/child.png', walletBalance: 0, createdAt: now, updatedAt: now }
+    { id: 'demo_child', fullName: 'Aiman', role: 'child', avatarUrl: '/pfp/child.png', walletBalance: 0, createdAt: now, updatedAt: now },
+    { id: 'demo_child_ibad_user', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", role: 'child', walletBalance: 0, createdAt: now, updatedAt: now }
   ],
   "juniorwallet-child-profiles": [
-    { id: 'cp_aiman', userId: 'demo_child', parentId: 'demo_parent', fullName: 'Aiman', ageGroup: 'Teen', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, status: 'active', createdAt: now, updatedAt: now }
+    { id: 'cp_aiman', userId: 'demo_child', parentId: 'demo_parent', fullName: 'Aiman', ageGroup: 'Teen', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, status: 'active', createdAt: now, updatedAt: now },
+    { id: 'child_ibad_demo', userId: 'demo_child_ibad_user', parentId: 'demo_parent', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", nickname: 'ibad', email: 'ibad.junior@example.com', dateOfBirth: '2016-04-01', ageGroup: 'under_12', relationship: 'son', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, kycStatus: 'kyc_pending', status: 'pending_kyc', createdAt: now, updatedAt: now }
   ],
   "juniorwallet-parent-child-links": [
-    { id: 'link_1', parentId: 'demo_parent', childId: 'cp_aiman', relationship: 'father', createdAt: now }
+    { id: 'link_1', parentId: 'demo_parent', childId: 'cp_aiman', relationship: 'father', createdAt: now },
+    { id: 'link_ibad', parentId: 'demo_parent', childId: 'child_ibad_demo', relationship: 'father', createdAt: now }
   ],
   "juniorwallet-transactions": [
     { id: 'tx_1', childId: 'cp_aiman', amount: 8.50, merchant: 'Kantin Sekolah', category: 'essential', classification: 'essential', needWant: 'need', transactionType: 'spend', riskFlag: false, note: 'Lunch', createdAt: daysAgo(1) },
@@ -61,7 +64,12 @@ export const MockDB: Record<string, any[]> = {
     { id: 'alert_2', childId: 'cp_aiman', parentId: 'demo_parent', title: 'AI Recommendation Ready', message: 'New monthly allowance recommendation for Aiman: RM165', severity: 'info', read: false, createdAt: now },
     { id: 'alert_3', childId: 'cp_aiman', parentId: 'demo_parent', title: 'Gaming Limit Warning', message: 'Aiman is approaching the RM50 gaming limit this month.', severity: 'warning', read: false, createdAt: daysAgo(5) }
   ],
-  "juniorwallet-audit-logs": []
+  "juniorwallet-audit-logs": [
+    { id: 'audit_child_ibad_created', actorId: 'demo_parent', action: 'child_created', entityType: 'child_profile', entityId: 'child_ibad_demo', newValue: { childId: 'child_ibad_demo', nickname: 'ibad', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", kycStatus: 'kyc_pending', documentNumberMasked: '******-**-0031' }, createdAt: now }
+  ],
+  "juniorwallet-child-kyc-documents": [
+    { id: 'kyc_ibad_demo_mykid', childId: 'child_ibad_demo', parentId: 'demo_parent', documentType: 'mykid', documentNumberMasked: '******-**-0031', documentNumberHash: 'hash_160401010031', documentFileKey: 'kyc-documents/demo_parent/child_ibad_demo/kyc_ibad_demo_mykid', status: 'pending', submittedAt: now, createdAt: now, updatedAt: now }
+  ]
 };
 
 // Also fallback to "smart-wallet-*" naming so it works regardless of .env configuration.

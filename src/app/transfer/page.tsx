@@ -22,7 +22,7 @@ export default function TransferPage() {
   const router = useRouter();
 
   const [step, setStep] = useState<Step>("form");
-  const [form, setForm] = useState({ recipient: "", accountId: "", amount: "", note: "" });
+  const [form, setForm] = useState({ recipient: "", accountId: "", amount: "", note: "", transferType: "open_transfer" });
   const [risk, setRisk] = useState<any>(null);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,25 @@ export default function TransferPage() {
     if (!currentUser) return;
     setLoading(true);
 
+    // 1. Validation Guard for Child Accounts
+    const valRes = await fetch("/api/transfers/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        senderId: currentUser.id,
+        recipientChildId: form.accountId,
+        transferType: form.transferType || "open_transfer",
+      }),
+    });
+    
+    const valData = await valRes.json();
+    if (!valData.allowed) {
+      toast.error(valData.reason || "Transfer blocked by safety rules.");
+      setLoading(false);
+      return;
+    }
+
+    // 2. AI Risk Analysis
     const res = await fetch("/api/transfer/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -131,6 +150,19 @@ export default function TransferPage() {
                       As a child account, you can only transfer to your linked parent.
                     </p>
                   )}
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Transfer Type</label>
+                  <select
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                    value={form.transferType}
+                    onChange={(e) => setForm({ ...form, transferType: e.target.value })}
+                  >
+                    <option value="open_transfer">Standard Transfer</option>
+                    <option value="parent_allowance_transfer">Parent Allowance Transfer</option>
+                    <option value="money_packet">Money Packet (Ang Pao)</option>
+                  </select>
                 </div>
 
                 <div>
