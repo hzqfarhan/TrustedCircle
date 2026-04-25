@@ -1,23 +1,29 @@
 import pandas as pd
 import pickle
+from sklearn.cluster import KMeans
 from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import StandardScaler
+
+
+DATASET_PATH = r"C:\Users\user\Desktop\coding\Finhack\allowance_data.csv"
+
+KMEANS_MODEL_PATH = "kmeans_household_model.pkl"
+ANOMALY_MODEL_PATH = "allowance_anomaly_model.pkl"
+SCALER_PATH = "feature_scaler.pkl"
 
 
 # =========================
 # 1. Load Dataset
 # =========================
 
-datasetPath = "allowance_data.csv"
-modelPath = "allowance_anomaly_model.pkl"
-
-df = pd.read_csv(r"C:\Users\user\Desktop\coding\Finhack\allowance_data.csv")
+df = pd.read_csv(DATASET_PATH)
 
 
 # =========================
-# 2. Basic Validation
+# 2. Validate Columns
 # =========================
 
-requiredColumns = [
+required_columns = [
     "monthlyAllowance",
     "food",
     "transport",
@@ -29,79 +35,135 @@ requiredColumns = [
     "extraAllowanceRequests"
 ]
 
-missingColumns = [col for col in requiredColumns if col not in df.columns]
+missing_columns = [col for col in required_columns if col not in df.columns]
 
-if missingColumns:
-    raise ValueError(f"Missing required columns: {missingColumns}")
+if missing_columns:
+    raise ValueError(f"Missing required columns: {missing_columns}")
 
 
 # =========================
-# 3. Data Cleaning
+# 3. Clean Data
 # =========================
 
-# Fill missing values with 0 for MVP simplicity
 df = df.fillna(0)
 
-# Avoid division by zero
 df["monthlyAllowance"] = df["monthlyAllowance"].replace(0, 1)
 
 
 # =========================
-# 4. Feature Engineering
+# 4. Create Parent/Lifestyle Baselines
+# For dataset training, we estimate category limits from allowance.
+# In real app, parent will provide these limits.
 # =========================
 
-df["savingsRatio"] = df["savings"] / df["monthlyAllowance"]
-
-# Cap savingsRatio between 0 and 1
-df["savingsRatio"] = df["savingsRatio"].clip(lower=0, upper=1)
+df["foodLimit"] = df["monthlyAllowance"] * 0.45
+df["transportLimit"] = df["monthlyAllowance"] * 0.20
+df["educationLimit"] = df["monthlyAllowance"] * 0.15
+df["shoppingLimit"] = df["monthlyAllowance"] * 0.20
+df["entertainmentLimit"] = df["monthlyAllowance"] * 0.15
+df["savingsTarget"] = df["monthlyAllowance"] * 0.10
 
 
 # =========================
-# 5. Select Training Features
-# IMPORTANT: This order must match index.py
+# 5. Ratio-Based Features
+# This makes the model flexible for different households.
 # =========================
 
-featureColumns = [
-    "monthlyAllowance",
-    "food",
-    "transport",
-    "schoolItems",
-    "shopping",
-    "entertainment",
-    "savingsRatio",
-    "extraAllowanceRequests",
-    "schoolHolidayDays"
+df["food_ratio"] = df["food"] / df["foodLimit"]
+df["transport_ratio"] = df["transport"] / df["transportLimit"]
+df["education_ratio"] = df["schoolItems"] / df["educationLimit"]
+df["shopping_ratio"] = df["shopping"] / df["shoppingLimit"]
+df["entertainment_ratio"] = df["entertainment"] / df["entertainmentLimit"]
+df["savings_progress"] = df["savings"] / df["savingsTarget"]
+
+ratio_columns = [
+    "food_ratio",
+    "transport_ratio",
+    "education_ratio",
+    "shopping_ratio",
+    "entertainment_ratio",
+    "savings_progress"
 ]
 
-trainingData = df[featureColumns]
+df[ratio_columns] = df[ratio_columns].replace([float("inf"), -float("inf")], 0)
+df[ratio_columns] = df[ratio_columns].fillna(0)
 
 
 # =========================
-# 6. Train IsolationForest Model
+# 6. KMeans Clustering
+# Groups children/households by allowance lifestyle pattern.
 # =========================
 
-model = IsolationForest(
-    n_estimators=100,
+cluster_features = df[[
+    "monthlyAllowance",
+    "food_ratio",
+    "transport_ratio",
+    "education_ratio",
+    "shopping_ratio",
+    "entertainment_ratio",
+    "savings_progress"
+]]
+
+scaler = StandardScaler()
+cluster_features_scaled = scaler.fit_transform(cluster_features)
+
+kmeans = KMeans(
+    n_clusters=3,
+    random_state=42,
+    n_init=10
+)
+
+df["household_cluster"] = kmeans.fit_predict(cluster_features_scaled)
+
+
+# =========================
+# 7. IsolationForest Anomaly Model
+# Uses cluster as an additional feature.
+# =========================
+
+anomaly_features = df[[
+    "monthlyAllowance",
+    "food_ratio",
+    "transport_ratio",
+    "education_ratio",
+    "shopping_ratio",
+    "entertainment_ratio",
+    "savings_progress",
+    "extraAllowanceRequests",
+    "schoolHolidayDays",
+    "household_cluster"
+]]
+
+anomaly_model = IsolationForest(
+    n_estimators=150,
     contamination=0.2,
     random_state=42
 )
 
-model.fit(trainingData)
+anomaly_model.fit(anomaly_features)
 
 
 # =========================
-# 7. Save Model
+# 8. Save Models
 # =========================
 
-with open(modelPath, "wb") as file:
-    pickle.dump(model, file)
+with open(KMEANS_MODEL_PATH, "wb") as f:
+    pickle.dump(kmeans, f)
+
+with open(ANOMALY_MODEL_PATH, "wb") as f:
+    pickle.dump(anomaly_model, f)
+
+with open(SCALER_PATH, "wb") as f:
+    pickle.dump(scaler, f)
 
 
 # =========================
-# 8. Output Summary
+# 9. Summary
 # =========================
 
-print("Model trained successfully using allowance_data.csv")
-print(f"Rows used for training: {len(trainingData)}")
-print(f"Features used: {featureColumns}")
-print(f"Model saved as: {modelPath}")
+print("Models trained successfully.")
+print(f"KMeans model saved as: {KMEANS_MODEL_PATH}")
+print(f"IsolationForest model saved as: {ANOMALY_MODEL_PATH}")
+print(f"Scaler saved as: {SCALER_PATH}")
+print("Cluster distribution:")
+print(df["household_cluster"].value_counts())
