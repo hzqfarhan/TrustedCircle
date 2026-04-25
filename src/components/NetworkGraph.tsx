@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cn } from "@/lib/utils";
 import { ROLE_LABELS } from "@/lib/utils-tc";
@@ -26,9 +26,9 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
   const others = users.filter((u) => u.id !== currentUser?.id);
 
   // Layout calculation
-  const centerX = 150;
-  const centerY = 150;
-  const radius = 110;
+  const parentX = 150;
+  const parentY = 80;
+  const childrenY = 230;
 
   const nodes = useMemo(() => {
     if (!activeUser) return [];
@@ -36,50 +36,129 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
     const result = [];
     result.push({
       ...activeUser,
-      x: centerX,
-      y: centerY,
+      x: parentX,
+      y: parentY,
       isCenter: true,
     });
 
-    const angleStep = (2 * Math.PI) / others.length;
-    others.forEach((u, i) => {
-      const angle = i * angleStep - Math.PI / 2; // Start from top
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
-      result.push({
-        ...u,
-        x,
-        y,
-        isCenter: false,
+    const padding = 70; // padding from left and right edges
+    const totalWidth = 300 - padding * 2;
+    
+    if (others.length === 1) {
+      result.push({ ...others[0], x: 150, y: childrenY, isCenter: false });
+    } else {
+      const step = totalWidth / (others.length - 1);
+      others.forEach((u, i) => {
+        const x = padding + i * step;
+        result.push({
+          ...u,
+          x,
+          y: childrenY,
+          isCenter: false,
+        });
       });
-    });
+    }
 
     return result;
   }, [activeUser, others]);
 
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [positions, setPositions] = useState<Record<string, { x: number, y: number }>>({});
+  const draggedNodeRef = useRef<string | null>(null);
+  const isDraggingRef = useRef(false);
+  const dragStartPos = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    setPositions(prev => {
+      let changed = false;
+      const next = { ...prev };
+      nodes.forEach(n => {
+        if (!next[n.id]) {
+          next[n.id] = { x: n.x, y: n.y };
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [nodes]);
+
+  useEffect(() => {
+    const handleMove = (e: PointerEvent) => {
+      if (draggedNodeRef.current && svgRef.current) {
+        const dx = e.clientX - dragStartPos.current.x;
+        const dy = e.clientY - dragStartPos.current.y;
+        
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          isDraggingRef.current = true;
+        }
+
+        if (isDraggingRef.current) {
+          const CTM = svgRef.current.getScreenCTM();
+          if (CTM) {
+            const x = (e.clientX - CTM.e) / CTM.a;
+            const y = (e.clientY - CTM.f) / CTM.d;
+            setPositions(prev => ({
+              ...prev,
+              [draggedNodeRef.current!]: { x, y }
+            }));
+          }
+        }
+      }
+    };
+
+    const handleUp = () => {
+      if (draggedNodeRef.current) {
+        setTimeout(() => {
+          draggedNodeRef.current = null;
+        }, 50);
+      }
+    };
+
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+    };
+  }, []);
+
+  const handlePointerDown = (e: React.PointerEvent, id: string) => {
+    // Removed e.preventDefault() to allow onClick to fire
+    e.stopPropagation();
+    draggedNodeRef.current = id;
+    isDraggingRef.current = false;
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleNodeClick = (e: React.MouseEvent, user: any) => {
+    if (isDraggingRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      isDraggingRef.current = false;
+      return;
+    }
+    onNodeClick && onNodeClick(user);
+  };
+
   if (!currentUser) return null;
 
   return (
-    <div className="relative w-full aspect-square bg-white rounded-3xl border border-blue-100 overflow-hidden flex items-center justify-center p-4 shadow-sm">
-      {/* Background Grid Pattern */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          backgroundImage: "radial-gradient(circle at 2px 2px, #cbd5e1 2px, transparent 0)",
-          backgroundSize: "24px 24px"
-        }}
-      />
-
-      <svg className="w-full h-full overflow-visible" viewBox="0 0 300 300">
+    <div className="relative w-full aspect-square bg-blue-50 rounded-3xl border border-blue-100 overflow-hidden flex items-center justify-center p-4 shadow-sm">
+      <svg ref={svgRef} className="w-full h-full overflow-visible touch-none" viewBox="0 0 300 300">
         <AnimatePresence>
           {/* Edges */}
-          {nodes.filter((n) => !n.isCenter).map((n) => (
+          {nodes.filter((n) => !n.isCenter).map((n) => {
+            const centerNode = nodes.find(x => x.isCenter);
+            const centerPos = centerNode ? (positions[centerNode.id] || centerNode) : { x: parentX, y: parentY };
+            const nPos = positions[n.id] || n;
+            return (
             <motion.line
               key={`edge-${currentUser.id}-${n.id}`}
-              x1={centerX}
-              y1={centerY}
-              x2={n.x}
-              y2={n.y}
+              x1={centerPos.x}
+              y1={centerPos.y}
+              x2={nPos.x}
+              y2={nPos.y}
               stroke="#cbd5e1" // slate-300
               strokeWidth="2"
               strokeDasharray={edgeStyle === "dotted" ? "4 4" : edgeStyle === "dashed" ? "8 8" : "0"}
@@ -88,7 +167,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
               exit={{ opacity: 0 }}
               transition={{ duration: 0.8 }}
             />
-          ))}
+          )})}
         </AnimatePresence>
 
         {/* Nodes overlay via foreignObject */}
@@ -97,8 +176,10 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
           const nodeSize = isCenter ? 72 : 48;
           const foWidth = 140; // Wider to accommodate text without wrapping
           const foHeight = 140; // Taller for avatar + text
-          const foX = n.x - foWidth / 2;
-          const foY = n.y - nodeSize / 2;
+          
+          const pos = positions[n.id] || n;
+          const foX = pos.x - foWidth / 2;
+          const foY = pos.y - nodeSize / 2;
 
           return (
             <foreignObject
@@ -112,7 +193,8 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
               <div className="w-full h-full flex flex-col items-center justify-start">
                 <motion.div
                   layoutId={`node-avatar-${n.id}`}
-                  onClick={() => onNodeClick && onNodeClick(n)}
+                  onPointerDown={(e) => handlePointerDown(e, n.id)}
+                  onClick={(e) => handleNodeClick(e, n)}
                   className={ Cn(
                     "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all shrink-0",
                     isCenter ? "border-blue-600 shadow-blue-500/40 shadow-xl z-20" : "border-white shadow-md hover:scale-110 z-10 hover:border-blue-200"

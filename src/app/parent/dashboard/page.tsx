@@ -13,7 +13,8 @@ import { ScoreRing } from "@/components/ScoreRing";
 import { SpendingChart } from "@/components/SpendingChart";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { FormatRM } from "@/lib/utils-tc";
-import { ChevronRight, ChevronLeft, Bell, Brain, Plus, ShieldAlert, ShieldCheck } from "lucide-react";
+import { ChevronRight, ChevronLeft, Bell, Brain, Plus, ShieldAlert, ShieldCheck, AlertTriangle } from "lucide-react";
+import { NetworkGraph } from "@/components/NetworkGraph";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -99,85 +100,33 @@ export default function ParentDashboardPage() {
         {/* Children Section */}
         {data.children.length > 0 && (
           <div className="px-4 pt-5">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 relative z-10">
               <p className="text-sm font-bold text-gray-800">Child Accounts</p>
-              <Link href="/parent/child/add">
-                <button className="flex items-center gap-1 text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg active:bg-blue-100 transition-colors">
-                  <Plus size={12} /> Add Child
-                </button>
+              <Link href="/parent/child/add" className="flex items-center gap-1 text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg active:bg-blue-100 transition-colors">
+                <Plus size={12} /> Add Child
               </Link>
             </div>
-            <div className="space-y-3">
-              {data.children.map((child: any) => (
-                <Link key={child.id} href={`/parent/child/${child.id}`}>
-                  <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 active:bg-gray-50 transition-colors relative overflow-hidden"
-                  >
-                    <ScoreRing score={child.responsibilityScore} size={56} strokeWidth={5} showLabel={false} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold text-gray-900 truncate">{child.nickname || child.fullName}</p>
-                        {child.kycStatus === 'kyc_pending' || child.kycStatus === 'kyc_under_review' ? (
-                          <span className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">
-                            <ShieldAlert size={10} /> Pending KYC
-                          </span>
-                        ) : child.kycStatus === 'verified' ? (
-                          <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                            <ShieldCheck size={10} /> Verified
-                          </span>
-                        ) : null}
-                      </div>
-                      <p className="text-[11px] text-gray-400 truncate">{child.fullName}</p>
-                      <div className="flex items-center justify-between mt-1">
-                        <p className="text-[11px] text-gray-500 font-medium">{child.ageGroup} · Age {child.dateOfBirth ? Math.floor((Date.now() - new Date(child.dateOfBirth).getTime()) / 31557600000) : '?'}</p>
-                        <p className="text-sm font-semibold text-blue-600">{ FormatRM(child.currentBalance)}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pending Recommendations */}
-        {data.pendingRecommendations.length > 0 && (
-          <div className="px-4 pt-5">
-            <p className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-1.5">
-              <Brain size={15} className="text-purple-500" /> AI Recommendations
-            </p>
-            {data.pendingRecommendations.map((rec) => (
-              <RecommendationCard
-                key={rec.id}
-                recommendation={rec}
-                isParent
-                onApprove={async (amount) => {
-                  const res = await fetch("/api/allowance", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: "approve", recommendationId: rec.id, approvedAmount: amount }),
-                  });
-                  if (res.ok) {
-                    toast.success(`Approved RM${amount} allowance`);
-                    // Refresh
-                    window.location.reload();
-                  }
-                }}
-                onReject={async () => {
-                  const res = await fetch("/api/allowance", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: "reject", recommendationId: rec.id }),
-                  });
-                  if (res.ok) {
-                    toast.success("Recommendation rejected");
-                    window.location.reload();
-                  }
-                }}
-              />
-            ))}
+            <NetworkGraph
+              users={[
+                { id: currentUser.id, name: data.profile.fullName || "You", role: "PARENT", avatar: data.profile.avatarUrl },
+                ...data.children.map((c: any) => ({
+                  id: c.id,
+                  name: c.nickname || c.fullName,
+                  role: "CHILD",
+                  avatar: c.avatarUrl || (c.nickname ? `/pfp/${c.nickname.toLowerCase()}.png` : undefined)
+                }))
+              ]}
+              currentUser={{ id: currentUser.id, name: data.profile.fullName || "You", role: "PARENT", avatar: data.profile.avatarUrl }}
+              customAvatarMap={{
+                'cp_aiman': '/pfp/wafi.png',
+                'child_ibad_demo': '/pfp/ibad.png'
+              }}
+              onNodeClick={(user) => {
+                if (user.id !== currentUser.id) {
+                  router.push(`/parent/child/${user.id}`);
+                }
+              }}
+            />
           </div>
         )}
 
@@ -234,36 +183,7 @@ export default function ParentDashboardPage() {
           </div>
         )}
 
-        {/* Recent Alerts */}
-        {data.alerts.length > 0 && (
-          <div className="px-4 pt-5">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-bold text-gray-800">Recent Alerts</p>
-              <Link href="/parent/alerts" className="text-blue-600 text-xs font-medium flex items-center gap-0.5">
-                View all <ChevronRight size={13} />
-              </Link>
-            </div>
-            <div className="space-y-1.5">
-              {data.alerts.slice(0, 3).map((a) => {
-                const colors = {
-                  info: "bg-blue-50 border-blue-100 text-blue-700",
-                  warning: "bg-amber-50 border-amber-100 text-amber-700",
-                  critical: "bg-red-50 border-red-100 text-red-700",
-                  success: "bg-emerald-50 border-emerald-100 text-emerald-700",
-                };
-                return (
-                  <div key={a.id} className={`flex items-start gap-2.5 p-3 rounded-2xl text-sm border ${colors[a.severity]}`}>
-                    <Bell size={14} className="mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold">{a.title}</p>
-                      <p className="text-[11px] opacity-80">{a.message}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+
 
         {/* Bottom spacer */}
         <div className="h-6" />

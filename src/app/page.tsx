@@ -1,20 +1,10 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-
-export default function LandingPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // We already have SplashScreen in layout.tsx, so we just redirect
-    router.replace("/login");
-  }, [router]);
-
+export default function RootPage() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-white min-h-screen">
-      {/* Empty loading state, since Splash Screen covers it or we redirect instantly */}
-    </div>
+    <>
+      <script dangerouslySetInnerHTML={{ __html: 'window.location.href = "/login";' }} />
+      <div className="flex-1 flex items-center justify-center bg-white min-h-screen">
+        <p className="text-gray-400 text-sm">Redirecting to login...</p>
+      </div>
+    </>
   );
 }
-

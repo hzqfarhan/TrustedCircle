@@ -2,6 +2,8 @@
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
+import { toast } from "sonner";
 import { FormatRM } from "@/lib/utils-tc";
 
 interface WalletBalanceCardProps {
@@ -54,13 +56,16 @@ export function WalletBalanceCard({ name, balance, role }: WalletBalanceCardProp
         </div>
 
         <div className="mt-3 pt-3 border-t border-white/10 flex gap-3">
-          <button className="flex-1 bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold py-2 rounded-2xl flex items-center justify-center gap-1.5">
+          <Link href="/parent/top-up" className="flex-1 bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-semibold py-2 rounded-2xl flex items-center justify-center gap-1.5">
             <Plus size={15} />
             Top Up
-          </button>
-          <button className="flex-1 bg-white text-blue-700 hover:bg-blue-50 transition-colors text-sm font-semibold py-2 rounded-2xl">
-            Pay / Send
-          </button>
+          </Link>
+          <Link 
+            href="/parent/transactions"
+            className="flex-1 bg-white text-blue-700 hover:bg-blue-50 transition-colors text-sm font-semibold py-2 rounded-2xl flex items-center justify-center"
+          >
+            Transactions
+          </Link>
         </div>
       </div>
     </motion.div>

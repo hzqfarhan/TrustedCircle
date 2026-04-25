@@ -33,7 +33,7 @@ export default function RemoveChildPage({ params }: { params: Promise<{ childId:
         router.push("/parent/dashboard");
       })
       .finally(() => setLoading(false));
-  }, [currentUser, authLoading, params.childId, router]);
+  }, [currentUser, authLoading, resolvedParams.childId, router]);
 
   const handleRemove = async () => {
     if (!currentUser) return;

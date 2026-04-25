@@ -30,8 +30,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     rule === "ALL"
       ? totalApprovers
       : rule === "2_OF_3"
-      ? 2
-      : 1;
+        ? 2
+        : 1;
 
   if (approvedCount >= requiredCount) {
     // Release funds — mark completed

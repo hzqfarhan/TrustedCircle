@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import { Shield, ChevronRight, Users, Wallet, Baby, Cpu } from "lucide-react";
+import { Shield, ChevronRight, Users, PiggyBank, Baby, Cpu } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
-  { icon: Wallet, label: "Shared Funds", desc: "Group tabung & withdrawals", href: "/trusted-circle/funds" },
+  { icon: PiggyBank, label: "Tabung", desc: "Save together for family goals", href: "/parent/tabung" },
   { icon: Baby, label: "Child Account", desc: "Parental controls & limits", href: "/trusted-circle/child" },
   { icon: Cpu, label: "AI Monitor", desc: "Smart risk detection", href: "/trusted-circle/ai-monitor" },
   { icon: Users, label: "Members", desc: "Manage circle & roles", href: "/trusted-circle/members" },
