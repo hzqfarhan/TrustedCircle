@@ -3,12 +3,28 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { Toaster } from "@/components/ui/sonner";
+import { PWARegister } from "@/components/PWARegister";
+import { SplashScreen } from "@/components/SplashScreen";
 
 const inter = Inter({ subsets: ["latin"] });
 
+import { Viewport } from "next";
+
+export const viewport: Viewport = {
+  themeColor: "#FECD00",
+};
+
 export const metadata: Metadata = {
-  title: "JuniorWallet | Smart Allowance System",
-  description: "Your family's smart allowance management system. AI-powered recommendations, parental controls, and financial literacy for kids.",
+  title: "JuniorWallet",
+  description: "The Smart Allowance Wallet",
+  appleWebApp: {
+    capable: true,
+    title: "JuniorWallet",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Toaster position="top-center" />
         </AuthProvider>
+        <PWARegister />
+        <SplashScreen />
       </body>
     </html>
   );
