@@ -108,11 +108,25 @@ export function NetworkGraph({
           const borderW = isCenter ? 3.5 : 3;
 
           return (
-            <g
+            <motion.g
               key={user.id}
-              onClick={() => onNodeClick?.(user)}
-              className="cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onNodeClick?.(user);
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ cursor: 'pointer' }}
+              className="group"
             >
+              {/* Invisible Hit Area (larger than the avatar for easier tapping) */}
+              <circle 
+                cx={cx} cy={cy} r={r + 15} 
+                fill="transparent" 
+                style={{ pointerEvents: 'all' }} 
+              />
+
               {/* Avatar background circle + border */}
               <motion.circle
                 cx={cx} cy={cy} r={r + borderW}
@@ -201,7 +215,7 @@ export function NetworkGraph({
                   {ROLE_LABELS[user.role] || user.role}
                 </text>
               </motion.g>
-            </g>
+            </motion.g>
           );
         })}
       </svg>
