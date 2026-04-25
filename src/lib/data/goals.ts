@@ -40,3 +40,4 @@ export async function UpdateGoalProgress(id: string, amount: number): Promise<vo
 
   await UpdateItem(Tables.goals, { id }, updates);
 }
+

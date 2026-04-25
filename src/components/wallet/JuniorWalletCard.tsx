@@ -59,3 +59,4 @@ export function JuniorWalletCard({ alertCount }: { alertCount?: number }) {
     </motion.div>
   );
 }
+

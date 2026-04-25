@@ -9,7 +9,7 @@ import { GoalCard } from "@/components/GoalCard";
 import { BadgeCard } from "@/components/BadgeCard";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { SpendingChart } from "@/components/SpendingChart";
-import { formatRM, formatDate } from "@/lib/utils-tc";
+import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { Wallet, Target, Award, Plus, Lightbulb, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -67,8 +67,8 @@ export default function ChildDashboardPage() {
             </div>
             <p className="text-xs text-gray-500">Your Allowance Balance</p>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{formatRM(data.childProfile.currentBalance)}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Monthly: {formatRM(data.childProfile.monthlyAllowance)}</p>
+          <p className="text-2xl font-bold text-gray-900">{ FormatRM(data.childProfile.currentBalance)}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Monthly: { FormatRM(data.childProfile.monthlyAllowance)}</p>
         </motion.div>
 
         {/* Budget Progress */}
@@ -76,14 +76,14 @@ export default function ChildDashboardPage() {
           <p className="text-sm font-bold text-gray-800 mb-3">Weekly Budget</p>
           <div className="flex justify-between text-xs text-gray-500 mb-1">
             <span>Spent this week</span>
-            <span>{formatRM(data.weeklySpent)}</span>
+            <span>{ FormatRM(data.weeklySpent)}</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-2">
             <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all"
               style={{ width: `${Math.min((data.weeklySpent / (data.childProfile.monthlyAllowance / 4)) * 100, 100)}%` }} />
           </div>
           <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3 mt-2">
-            <p className="text-xs text-emerald-700 font-semibold">💡 Daily safe spend: {formatRM(data.dailySafeSpend)}</p>
+            <p className="text-xs text-emerald-700 font-semibold">💡 Daily safe spend: { FormatRM(data.dailySafeSpend)}</p>
             <p className="text-[10px] text-emerald-600 mt-0.5">Stay within this to keep your budget on track!</p>
           </div>
         </div>
@@ -149,10 +149,10 @@ export default function ChildDashboardPage() {
                     <p className="text-sm font-semibold text-gray-800 truncate">{tx.merchant}</p>
                     <CategoryBadge category={tx.category} />
                   </div>
-                  <p className="text-[11px] text-gray-400">{formatDate(tx.createdAt)}</p>
+                  <p className="text-[11px] text-gray-400">{ FormatDate(tx.createdAt)}</p>
                 </div>
                 <p className={`text-sm font-bold ${tx.transactionType === "topup" ? "text-emerald-600" : "text-gray-800"}`}>
-                  {tx.transactionType === "topup" ? "+" : "-"}{formatRM(tx.amount)}
+                  {tx.transactionType === "topup" ? "+" : "-"}{ FormatRM(tx.amount)}
                 </p>
               </div>
             ))}
@@ -164,3 +164,4 @@ export default function ChildDashboardPage() {
     </MobileShell>
   );
 }
+

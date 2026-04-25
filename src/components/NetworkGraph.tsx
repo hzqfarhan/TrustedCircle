@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { Cn } from "@/lib/utils";
 import { ROLE_LABELS } from "@/lib/utils-tc";
 
 interface NetworkGraphProps {
@@ -113,7 +113,7 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
                 <motion.div
                   layoutId={`node-avatar-${n.id}`}
                   onClick={() => onNodeClick && onNodeClick(n)}
-                  className={cn(
+                  className={ Cn(
                     "relative cursor-pointer rounded-full bg-white flex items-center justify-center border-4 transition-all shrink-0",
                     isCenter ? "border-blue-600 shadow-blue-500/40 shadow-xl z-20" : "border-white shadow-md hover:scale-110 z-10 hover:border-blue-200"
                   )}
@@ -136,13 +136,13 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: isCenter ? 0.2 : i * 0.05 + 0.2 }}
                 >
-                  <span className={cn(
+                  <span className={ Cn(
                     "font-bold text-gray-900 leading-none text-center tracking-tight",
                     isCenter ? "text-[11px]" : "text-[9px]"
                   )}>
                     {n.name} {n.id === currentUser.id && "(YOU)"}
                   </span>
-                  <span className={cn(
+                  <span className={ Cn(
                     "bg-[#1a4bba] text-white font-bold rounded-full text-center tracking-wide",
                     isCenter ? "text-[8px] px-2.5 py-[3px]" : "text-[7px] px-2 py-[2px]"
                   )}>
@@ -158,3 +158,4 @@ export function NetworkGraph({ users, currentUser, edgeStyle = "solid", customAv
     </div>
   );
 }
+

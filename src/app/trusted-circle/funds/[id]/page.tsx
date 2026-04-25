@@ -5,7 +5,7 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { ApprovalTracker } from "@/components/ApprovalTracker";
 import { MemberAvatarGroup } from "@/components/MemberAvatarGroup";
-import { formatRM, formatDate, APPROVAL_RULE_LABELS } from "@/lib/utils-tc";
+import { FormatRM, FormatDate, APPROVAL_RULE_LABELS } from "@/lib/utils-tc";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowDownLeft, Plus, Users } from "lucide-react";
@@ -78,7 +78,7 @@ export default function FundDetailPage({ params }: { params: { id: string } }) {
           style={{ background: "linear-gradient(135deg, #0068FF 0%, #0044CC 100%)" }}
         >
           <p className="text-blue-200 text-xs">{fund.description || "Shared Fund"}</p>
-          <p className="text-white text-3xl font-black mt-1">{formatRM(fund.balance)}</p>
+          <p className="text-white text-3xl font-black mt-1">{ FormatRM(fund.balance)}</p>
           {fund.goalAmount && (
             <>
               <div className="mt-3 h-2 bg-white/20 rounded-full overflow-hidden">
@@ -91,7 +91,7 @@ export default function FundDetailPage({ params }: { params: { id: string } }) {
               </div>
               <div className="flex justify-between mt-1">
                 <p className="text-blue-200 text-[10px]">{progress?.toFixed(0)}% of goal</p>
-                <p className="text-blue-200 text-[10px]">Goal: {formatRM(fund.goalAmount)}</p>
+                <p className="text-blue-200 text-[10px]">Goal: { FormatRM(fund.goalAmount)}</p>
               </div>
             </>
           )}
@@ -162,7 +162,7 @@ export default function FundDetailPage({ params }: { params: { id: string } }) {
               {pendingWithdrawals.map((w: any) => (
                 <div key={w.id} className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
                   <div className="flex justify-between mb-2">
-                    <p className="text-sm font-semibold text-amber-900">{formatRM(w.amount)}</p>
+                    <p className="text-sm font-semibold text-amber-900">{ FormatRM(w.amount)}</p>
                     <span className="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium">
                       PENDING
                     </span>

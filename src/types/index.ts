@@ -191,3 +191,4 @@ export interface ChildDashboardData {
   dailySafeSpend: number;
   spendingByCategory: Record<string, number>;
 }
+

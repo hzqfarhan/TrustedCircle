@@ -48,3 +48,4 @@ export async function UpdateTransactionCategory(
 ): Promise<void> {
   await UpdateItem(Tables.transactions, { id }, { category, classification, needWant });
 }
+

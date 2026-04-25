@@ -4,8 +4,8 @@ import { useAuth } from "@/lib/auth-context";
 import { MobileShell } from "@/components/MobileShell";
 import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
-import { ROLE_LABELS, ROLE_COLORS, initials } from "@/lib/utils-tc";
-import { cn } from "@/lib/utils";
+import { ROLE_LABELS, ROLE_COLORS, Initials } from "@/lib/utils-tc";
+import { Cn } from "@/lib/utils";
 import { NetworkGraph } from "@/components/NetworkGraph";
 import { Users, Share2, UserPlus, Fingerprint, CheckCircle2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -87,7 +87,7 @@ export default function MembersPage() {
         <div className="flex bg-gray-100 p-1 rounded-xl mb-4">
           <button
             onClick={() => setViewMode("list")}
-            className={cn(
+            className={ Cn(
               "flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors",
               viewMode === "list" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
             )}
@@ -96,7 +96,7 @@ export default function MembersPage() {
           </button>
           <button
             onClick={() => setViewMode("network")}
-            className={cn(
+            className={ Cn(
               "flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors",
               viewMode === "network" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
             )}
@@ -133,18 +133,18 @@ export default function MembersPage() {
             const finalAvatar = u.avatar || customAvatarMap[u.id];
 
             return (
-              <div key={u.id} className={cn("bg-white rounded-2xl p-4 border", isMe ? "border-blue-200" : "border-gray-100")}>
+              <div key={u.id} className={ Cn("bg-white rounded-2xl p-4 border", isMe ? "border-blue-200" : "border-gray-100")}>
                 <div className="flex items-center gap-3 mb-3">
                   {finalAvatar ? (
                     <img src={finalAvatar} alt={u.name} className="w-11 h-11 rounded-2xl object-cover shrink-0" />
                   ) : (
                     <div
-                      className={cn(
+                      className={ Cn(
                         "w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0",
                         ROLE_COLORS[u.role] || "bg-gray-100 text-gray-700"
                       )}
                     >
-                      {initials(u.name)}
+                      { Initials(u.name)}
                     </div>
                   )}
                   <div className="flex-1">
@@ -156,7 +156,7 @@ export default function MembersPage() {
                     </div>
                     <p className="text-xs text-gray-400">{ROLE_LABELS[u.role] || u.role}</p>
                   </div>
-                  <span className={cn("text-[10px] font-semibold px-2 py-1 rounded-full", ROLE_COLORS[u.role])}>
+                  <span className={ Cn("text-[10px] font-semibold px-2 py-1 rounded-full", ROLE_COLORS[u.role])}>
                     {u.role}
                   </span>
                 </div>
@@ -319,13 +319,13 @@ export default function MembersPage() {
                 {(selectedUser.avatar || customAvatarMap[selectedUser.id]) ? (
                   <img src={selectedUser.avatar || customAvatarMap[selectedUser.id]} alt={selectedUser.name} className="w-16 h-16 rounded-3xl object-cover shrink-0 shadow-sm" />
                 ) : (
-                  <div className={cn("w-16 h-16 rounded-3xl flex items-center justify-center text-xl font-bold shrink-0 shadow-sm", ROLE_COLORS[selectedUser.role] || "bg-gray-100 text-gray-700")}>
-                    {initials(selectedUser.name)}
+                  <div className={ Cn("w-16 h-16 rounded-3xl flex items-center justify-center text-xl font-bold shrink-0 shadow-sm", ROLE_COLORS[selectedUser.role] || "bg-gray-100 text-gray-700")}>
+                    { Initials(selectedUser.name)}
                   </div>
                 )}
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 tracking-tight">{selectedUser.name}</h2>
-                  <span className={cn("text-[10px] font-bold px-2.5 py-1 rounded-full inline-block mt-1.5 shadow-sm", ROLE_COLORS[selectedUser.role])}>
+                  <span className={ Cn("text-[10px] font-bold px-2.5 py-1 rounded-full inline-block mt-1.5 shadow-sm", ROLE_COLORS[selectedUser.role])}>
                     {ROLE_LABELS[selectedUser.role] || selectedUser.role}
                   </span>
                 </div>
@@ -357,3 +357,4 @@ export default function MembersPage() {
     </MobileShell>
   );
 }
+

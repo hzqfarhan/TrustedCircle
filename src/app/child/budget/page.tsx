@@ -5,7 +5,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { SpendingChart } from "@/components/SpendingChart";
 import { LoadingState } from "@/components/LoadingState";
 import { useAuth } from "@/lib/auth-context";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import { useEffect, useState } from "react";
 
 export default function ChildBudgetPage() {
@@ -31,14 +31,14 @@ export default function ChildBudgetPage() {
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
           <p className="text-sm font-bold text-gray-800 mb-3">Weekly Budget</p>
           <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Spent: {formatRM(data.weeklySpent)}</span>
-            <span>Budget: {formatRM(weeklyBudget)}</span>
+            <span>Spent: { FormatRM(data.weeklySpent)}</span>
+            <span>Budget: { FormatRM(weeklyBudget)}</span>
           </div>
           <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
             <div className={`h-full rounded-full transition-all ${pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-blue-500"}`}
               style={{ width: `${Math.min(pct, 100)}%` }} />
           </div>
-          <p className="text-[11px] text-gray-400 mt-2">Daily safe spend: <span className="font-semibold text-emerald-600">{formatRM(data.dailySafeSpend)}</span></p>
+          <p className="text-[11px] text-gray-400 mt-2">Daily safe spend: <span className="font-semibold text-emerald-600">{ FormatRM(data.dailySafeSpend)}</span></p>
         </div>
 
         {/* Category Rules */}
@@ -53,7 +53,7 @@ export default function ChildBudgetPage() {
                   <div key={rule.id}>
                     <div className="flex justify-between text-xs mb-1">
                       <span className="text-gray-600 capitalize font-medium">{rule.category}</span>
-                      <span className="text-gray-400">{formatRM(spent)} / {formatRM(rule.amount)}</span>
+                      <span className="text-gray-400">{ FormatRM(spent)} / { FormatRM(rule.amount)}</span>
                     </div>
                     <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div className={`h-full rounded-full ${limitPct > 90 ? "bg-red-400" : "bg-blue-400"}`}
@@ -73,3 +73,4 @@ export default function ChildBudgetPage() {
     </MobileShell>
   );
 }
+

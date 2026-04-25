@@ -6,7 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import { ArrowDownLeft } from "lucide-react";
 
 export default function WithdrawPage({ params }: { params: { id: string } }) {
@@ -57,7 +57,7 @@ export default function WithdrawPage({ params }: { params: { id: string } }) {
             {/* Fund Summary */}
             <div className="bg-blue-600 rounded-3xl p-4 mb-5 text-white">
               <p className="text-blue-200 text-xs mb-1">Available in Fund</p>
-              <p className="text-2xl font-black">{formatRM(fund.balance)}</p>
+              <p className="text-2xl font-black">{ FormatRM(fund.balance)}</p>
               <p className="text-blue-200 text-xs mt-1">{fund.name}</p>
             </div>
 

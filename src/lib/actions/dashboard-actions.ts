@@ -106,8 +106,8 @@ export async function GetChildDetailData(childId: string) {
   if (!profile) throw new Error('Profile not found');
 
   // Import inline to avoid circular
-  const { assertCanReadChildData } = await import('@/lib/auth/authorization');
-  await assertCanReadChildData(user, childId);
+  const { AssertCanReadChildData } = await import('@/lib/auth/authorization');
+  await AssertCanReadChildData(user, childId);
 
   const childProfile = await GetChildProfile(childId);
   if (!childProfile) throw new Error('Child not found');
@@ -138,4 +138,5 @@ export async function GetChildDetailData(childId: string) {
     totalSpent: spendTx.reduce((s, t) => s + t.amount, 0),
   };
 }
+
 

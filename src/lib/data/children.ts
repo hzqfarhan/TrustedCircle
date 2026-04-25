@@ -63,3 +63,4 @@ export async function IsParentOfChild(parentId: string, childId: string): Promis
   const links = await GetParentChildLinks(parentId);
   return links.some((l) => l.childId === childId);
 }
+

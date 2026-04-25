@@ -30,3 +30,4 @@ export const HybridProvider: AllowanceAIProvider = {
     return LocalProvider.generateExplanation(input);
   }
 };
+

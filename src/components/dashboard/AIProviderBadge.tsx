@@ -28,3 +28,4 @@ export function AIProviderBadge({ provider }: { provider?: string }) {
     </div>
   );
 }
+

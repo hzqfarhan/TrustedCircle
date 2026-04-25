@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────
 
 import type { Transaction, AllowanceRecommendation, PredictedSpending, RiskFlag, AllowanceRule, Goal, ExtraAllowanceRequest } from '@/types';
-import { calculateResponsibilityScore } from './scoring';
+import { CalculateResponsibilityScore } from './scoring';
 import { v4 as uuid } from 'uuid';
 
 interface RecommendationInput {
@@ -16,7 +16,7 @@ interface RecommendationInput {
   currentAllowance: number;
 }
 
-export function generateAllowanceRecommendation(input: RecommendationInput): AllowanceRecommendation {
+export function GenerateAllowanceRecommendation(input: RecommendationInput): AllowanceRecommendation {
   const { childId, transactions, rules, goals, extraRequests, currentScore, currentAllowance } = input;
 
   // Categorize spending
@@ -96,7 +96,7 @@ export function generateAllowanceRecommendation(input: RecommendationInput): All
   suggestedAmount = Math.max(50, Math.round(suggestedAmount));
 
   // Calculate responsibility score
-  const scoring = calculateResponsibilityScore({
+  const scoring = CalculateResponsibilityScore({
     transactions,
     rules,
     goals,
@@ -152,3 +152,4 @@ export function generateAllowanceRecommendation(input: RecommendationInput): All
     createdAt: new Date().toISOString(),
   };
 }
+

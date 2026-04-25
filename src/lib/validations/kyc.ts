@@ -11,3 +11,4 @@ export const uploadChildKycSchema = z.object({
 });
 
 export const resubmitChildKycSchema = uploadChildKycSchema;
+

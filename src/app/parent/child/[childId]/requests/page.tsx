@@ -6,7 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
 import { EmptyState } from "@/components/EmptyState";
 import { useAuth } from "@/lib/auth-context";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import { Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ export default function ChildRequestsPage() {
             {requests.map((req: any) => (
               <div key={req.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
                 <div className="flex justify-between mb-2">
-                  <p className="text-sm font-semibold text-gray-900">{formatRM(req.amount)}</p>
+                  <p className="text-sm font-semibold text-gray-900">{ FormatRM(req.amount)}</p>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200">PENDING</span>
                 </div>
                 <p className="text-xs text-gray-600 mb-1">{req.reason}</p>

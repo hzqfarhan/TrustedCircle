@@ -44,3 +44,4 @@ export function BadgeCard({ badge, unlocked, unlockedAt, index = 0 }: BadgeCardP
     </motion.div>
   );
 }
+

@@ -17,7 +17,7 @@ interface ScoringResult {
   breakdown: { label: string; impact: number; positive: boolean }[];
 }
 
-export function calculateResponsibilityScore(input: ScoringInput): ScoringResult {
+export function CalculateResponsibilityScore(input: ScoringInput): ScoringResult {
   let score = input.currentScore || 70;
   const breakdown: ScoringResult['breakdown'] = [];
 
@@ -62,7 +62,7 @@ export function calculateResponsibilityScore(input: ScoringInput): ScoringResult
   }
 
   // +5 if child stayed within limits
-  const withinLimits = checkWithinLimits(input.transactions, input.rules);
+  const withinLimits = CheckWithinLimits(input.transactions, input.rules);
   if (withinLimits) {
     score += 5;
     breakdown.push({ label: 'Stayed within limits', impact: 5, positive: true });
@@ -101,7 +101,7 @@ export function calculateResponsibilityScore(input: ScoringInput): ScoringResult
   return { score, breakdown };
 }
 
-function checkWithinLimits(transactions: Transaction[], rules: AllowanceRule[]): boolean {
+function CheckWithinLimits(transactions: Transaction[], rules: AllowanceRule[]): boolean {
   if (rules.length === 0) return true;
 
   for (const rule of rules) {
@@ -114,7 +114,7 @@ function checkWithinLimits(transactions: Transaction[], rules: AllowanceRule[]):
   return true;
 }
 
-export function getScoreLabel(score: number): string {
+export function GetScoreLabel(score: number): string {
   if (score >= 90) return 'Excellent';
   if (score >= 75) return 'Good';
   if (score >= 60) return 'Fair';
@@ -122,10 +122,11 @@ export function getScoreLabel(score: number): string {
   return 'Poor';
 }
 
-export function getScoreColor(score: number): string {
+export function GetScoreColor(score: number): string {
   if (score >= 90) return '#10b981';
   if (score >= 75) return '#3b82f6';
   if (score >= 60) return '#f59e0b';
   if (score >= 40) return '#f97316';
   return '#ef4444';
 }
+

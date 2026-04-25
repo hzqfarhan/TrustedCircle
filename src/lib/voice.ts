@@ -8,7 +8,7 @@ export function Speak(text: string, rate = 0.95, pitch = 1.0) {
   utterance.lang = "en-MY";
   utterance.rate = rate;
   utterance.pitch = pitch;
-  window.speechSynthesis.speak(utterance);
+  window.speechSynthesis.Speak(utterance);
 }
 
 export function BuildRiskNarration(
@@ -45,3 +45,4 @@ export function SetVoiceEnabled(enabled: boolean) {
   if (typeof window === "undefined") return;
   localStorage.setItem("tc_voice_enabled", enabled ? "true" : "false");
 }
+

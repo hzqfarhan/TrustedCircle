@@ -23,15 +23,14 @@ export function VoiceAssistButton({ text, className, variant = "full" }: VoiceAs
     SetVoiceEnabled(next);
   };
 
-  const handleSpeak = () => {
-    Speak(text);
+  const handleSpeak = () => { Speak(text);
   };
 
   if (variant === "icon") {
     return (
       <button
         onClick={handleSpeak}
-        className={Cn("w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center active:bg-blue-100 transition-colors", className)}
+        className={ Cn("w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center active:bg-blue-100 transition-colors", className)}
         aria-label="Play voice alert"
       >
         <Volume2 size={17} />
@@ -40,7 +39,7 @@ export function VoiceAssistButton({ text, className, variant = "full" }: VoiceAs
   }
 
   return (
-    <div className={Cn("flex items-center gap-2", className)}>
+    <div className={ Cn("flex items-center gap-2", className)}>
       <button
         onClick={handleSpeak}
         className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-2xl transition-colors active:bg-blue-800"
@@ -58,3 +57,4 @@ export function VoiceAssistButton({ text, className, variant = "full" }: VoiceAs
     </div>
   );
 }
+

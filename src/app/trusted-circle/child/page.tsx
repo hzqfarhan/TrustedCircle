@@ -3,13 +3,13 @@ import { useAuth } from "@/lib/auth-context";
 import { MobileShell } from "@/components/MobileShell";
 import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
-import { formatRM, formatDate } from "@/lib/utils-tc";
+import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { Baby, ChevronRight, MapPin, AlertTriangle, Plus, Users, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { NetworkGraph } from "@/components/NetworkGraph";
-import { cn } from "@/lib/utils";
+import { Cn } from "@/lib/utils";
 import { ROLE_LABELS } from "@/lib/utils-tc";
 
 export default function ChildPage() {
@@ -89,12 +89,12 @@ export default function ChildPage() {
                 </div>
               </div>
               <p className="text-purple-200 text-xs">Available Balance</p>
-              <p className="text-white text-3xl font-black">{formatRM(wallet?.balance ?? 0)}</p>
+              <p className="text-white text-3xl font-black">{ FormatRM(wallet?.balance ?? 0)}</p>
 
               <div className="mt-3 pt-3 border-t border-white/10 flex justify-between text-sm">
                 <div>
                   <p className="text-purple-200 text-[10px]">Spending Limit</p>
-                  <p className="text-white font-semibold">{formatRM(child.spendingLimit ?? 0)} / {child.limitType?.toLowerCase()}</p>
+                  <p className="text-white font-semibold">{ FormatRM(child.spendingLimit ?? 0)} / {child.limitType?.toLowerCase()}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-purple-200 text-[10px]">Zones Active</p>
@@ -163,7 +163,7 @@ export default function ChildPage() {
               <div className="flex bg-gray-100 p-1 rounded-xl mb-3">
                 <button
                   onClick={() => setViewMode("list")}
-                  className={cn(
+                  className={ Cn(
                     "flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors",
                     viewMode === "list" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                   )}
@@ -172,7 +172,7 @@ export default function ChildPage() {
                 </button>
                 <button
                   onClick={() => setViewMode("network")}
-                  className={cn(
+                  className={ Cn(
                     "flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors",
                     viewMode === "network" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                   )}
@@ -197,7 +197,7 @@ export default function ChildPage() {
                     const finalAvatar = u.avatar || customAvatarMap[u.id];
 
                     return (
-                      <div key={u.id} className={cn("bg-white rounded-2xl p-3 border", isMe ? "border-blue-200" : "border-gray-100")}>
+                      <div key={u.id} className={ Cn("bg-white rounded-2xl p-3 border", isMe ? "border-blue-200" : "border-gray-100")}>
                         <div className="flex items-center gap-3">
                           {finalAvatar ? (
                             <img src={finalAvatar} alt={u.name} className="w-10 h-10 rounded-xl object-cover shrink-0" />
@@ -232,10 +232,10 @@ export default function ChildPage() {
                   <div key={tx.id} className="bg-white rounded-xl p-3 flex items-center justify-between text-sm border border-gray-100">
                     <div>
                       <p className="font-medium text-gray-800">{tx.note || tx.category}</p>
-                      <p className="text-[11px] text-gray-400">{formatDate(tx.createdAt)}</p>
+                      <p className="text-[11px] text-gray-400">{ FormatDate(tx.createdAt)}</p>
                     </div>
                     <p className={`font-bold ${tx.status === "BLOCKED" ? "text-red-500" : "text-gray-800"}`}>
-                      {tx.status === "BLOCKED" ? "BLOCKED" : `-${formatRM(tx.amount)}`}
+                      {tx.status === "BLOCKED" ? "BLOCKED" : `-${ FormatRM(tx.amount)}`}
                     </p>
                   </div>
                 ))}
@@ -256,3 +256,4 @@ export default function ChildPage() {
     </MobileShell>
   );
 }
+

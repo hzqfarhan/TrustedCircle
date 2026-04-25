@@ -7,7 +7,7 @@ import { CategoryBadge } from "@/components/CategoryBadge";
 import { LoadingState } from "@/components/LoadingState";
 import { EmptyState } from "@/components/EmptyState";
 import { useAuth } from "@/lib/auth-context";
-import { formatRM, formatDate } from "@/lib/utils-tc";
+import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { Receipt } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -38,12 +38,12 @@ export default function ChildTransactionsPage() {
                     <p className="text-sm font-semibold text-gray-800 truncate">{tx.merchant}</p>
                     <CategoryBadge category={tx.category} />
                   </div>
-                  <p className="text-[11px] text-gray-400">{formatDate(tx.createdAt)}</p>
+                  <p className="text-[11px] text-gray-400">{ FormatDate(tx.createdAt)}</p>
                   {tx.note && <p className="text-[10px] text-gray-400">{tx.note}</p>}
                 </div>
                 <div className="text-right">
                   <p className={`text-sm font-bold ${tx.transactionType === "topup" ? "text-emerald-600" : "text-gray-800"}`}>
-                    {tx.transactionType === "topup" ? "+" : "-"}{formatRM(tx.amount)}
+                    {tx.transactionType === "topup" ? "+" : "-"}{ FormatRM(tx.amount)}
                   </p>
                   {tx.riskFlag && <span className="text-[9px] text-red-500 font-semibold">⚠ RISK</span>}
                 </div>

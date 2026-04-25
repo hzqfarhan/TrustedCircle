@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/lib/utils";
+import { Cn } from "@/lib/utils";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -41,7 +41,7 @@ export function ApprovalTracker({ approvers, rule }: { approvers: Approver[]; ru
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: i * 0.1 }}
-            className={cn(
+            className={ Cn(
               "h-1.5 flex-1 rounded-full",
               i < approved ? "bg-emerald-500" : "bg-gray-200"
             )}
@@ -69,7 +69,7 @@ export function ApprovalTracker({ approvers, rule }: { approvers: Approver[]; ru
               <Icon size={15} className={color} />
               <span className="text-sm text-gray-700">{a.name}</span>
               <span
-                className={cn(
+                className={ Cn(
                   "ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full",
                   a.status === "APPROVED"
                     ? "bg-emerald-50 text-emerald-700"
@@ -95,3 +95,4 @@ export function ApprovalTracker({ approvers, rule }: { approvers: Approver[]; ru
     </div>
   );
 }
+

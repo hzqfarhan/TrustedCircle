@@ -1,6 +1,6 @@
 "use client";
-import { initials, ROLE_COLORS } from "@/lib/utils-tc";
-import { cn } from "@/lib/utils";
+import { Initials, ROLE_COLORS } from "@/lib/utils-tc";
+import { Cn } from "@/lib/utils";
 
 interface Member {
   id: string;
@@ -21,12 +21,12 @@ export function MemberAvatarGroup({ members, max = 4 }: { members: Member[]; max
             <img src={m.avatar} alt={m.name} className="w-8 h-8 rounded-full border-2 border-white object-cover" />
           ) : (
             <div
-              className={cn(
+              className={ Cn(
                 "w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold",
                 ROLE_COLORS[m.role] || "bg-gray-100 text-gray-600"
               )}
             >
-              {initials(m.name)}
+              { Initials(m.name)}
             </div>
           )}
         </div>
@@ -39,3 +39,4 @@ export function MemberAvatarGroup({ members, max = 4 }: { members: Member[]; max
     </div>
   );
 }
+

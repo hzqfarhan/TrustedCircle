@@ -10,3 +10,4 @@ export function CategoryBadge({ category }: { category: TransactionCategory }) {
     </span>
   );
 }
+

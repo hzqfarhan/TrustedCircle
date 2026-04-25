@@ -14,3 +14,4 @@ export async function GetAuditLogsByActor(actorId: string): Promise<AuditLog[]> 
     { scanForward: false }
   );
 }
+

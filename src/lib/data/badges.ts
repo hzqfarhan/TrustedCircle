@@ -42,3 +42,4 @@ export async function GetChildBadgesWithDetails(childId: string): Promise<(Child
     badge: allBadges.find(b => b.id === e.badgeId)!
   })).filter(b => !!b.badge);
 }
+

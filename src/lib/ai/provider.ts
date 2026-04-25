@@ -69,3 +69,4 @@ export function getAIProvider(): AllowanceAIProvider {
   
   return require("./providers/local-provider").LocalProvider;
 }
+

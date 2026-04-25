@@ -1,7 +1,7 @@
 'use server';
 
 import { RequireCurrentUser } from '@/lib/auth/auth';
-import { assertCanMutateChildData, assertCanReadChildData } from '@/lib/auth/authorization';
+import { AssertCanMutateChildData, AssertCanReadChildData } from '@/lib/auth/authorization';
 import { GetRecommendation, UpdateRecommendationStatus, CreateRecommendation } from '@/lib/data/recommendations';
 import { GetChildProfile, UpdateChildProfile } from '@/lib/data/children';
 import { GetTransactionsByChild } from '@/lib/data/transactions';
@@ -17,7 +17,7 @@ import { v4 as uuid } from 'uuid';
 
 export async function GenerateRecommendationAction(childId: string) {
   const user = await RequireCurrentUser();
-  await assertCanMutateChildData(user, childId);
+  await AssertCanMutateChildData(user, childId);
 
   const childProfile = await GetChildProfile(childId);
   if (!childProfile) throw new Error('Child profile not found');
@@ -46,7 +46,7 @@ export async function ApproveRecommendationAction(recommendationId: string, appr
   const rec = await GetRecommendation(recommendationId);
   if (!rec) throw new Error('Recommendation not found');
 
-  await assertCanMutateChildData(user, rec.childId);
+  await AssertCanMutateChildData(user, rec.childId);
 
   // Approve the recommendation
   await UpdateRecommendationStatus(recommendationId, 'approved', approvedAmount, user.sub);
@@ -109,7 +109,7 @@ export async function RejectRecommendationAction(recommendationId: string) {
   const rec = await GetRecommendation(recommendationId);
   if (!rec) throw new Error('Recommendation not found');
 
-  await assertCanMutateChildData(user, rec.childId);
+  await AssertCanMutateChildData(user, rec.childId);
   await UpdateRecommendationStatus(recommendationId, 'rejected');
 
   await CreateAuditLog({
@@ -123,4 +123,5 @@ export async function RejectRecommendationAction(recommendationId: string) {
 
   return { success: true };
 }
+
 

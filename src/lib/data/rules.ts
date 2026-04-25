@@ -22,3 +22,4 @@ export async function UpdateRule(id: string, updates: Partial<AllowanceRule>): P
   const clean = Object.fromEntries(Object.entries(updates).filter(([k]) => k !== 'id'));
   await UpdateItem(Tables.allowanceRules, { id }, { ...clean, updatedAt: new Date().toISOString() });
 }
+

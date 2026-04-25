@@ -79,3 +79,4 @@ export function SpendingChart({ data }: SpendingChartProps) {
     </div>
   );
 }
+

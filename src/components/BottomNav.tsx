@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Send, Shield, Bell, Settings } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 
@@ -46,7 +46,7 @@ export function BottomNav() {
           <Link
             key={href}
             href={href}
-            className={cn(
+            className={ Cn(
               "flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors",
               active ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
             )}
@@ -68,3 +68,4 @@ export function BottomNav() {
     </nav>
   );
 }
+

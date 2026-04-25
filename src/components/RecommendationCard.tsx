@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Brain, Check, X, Edit3, AlertTriangle, TrendingDown, TrendingUp } from "lucide-react";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import type { AllowanceRecommendation } from "@/types";
 import { useState } from "react";
 import { AIProviderBadge } from "./dashboard/AIProviderBadge";
@@ -55,7 +55,7 @@ export function RecommendationCard({ recommendation, onApprove, onReject, isPare
       {/* Suggested Amount */}
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-4 mb-4">
         <p className="text-xs text-gray-500 mb-1">Suggested Monthly Allowance</p>
-        <p className="text-3xl font-bold text-blue-700">{formatRM(recommendation.suggestedAmount)}</p>
+        <p className="text-3xl font-bold text-blue-700">{ FormatRM(recommendation.suggestedAmount)}</p>
       </div>
 
       {/* Breakdown */}
@@ -144,8 +144,9 @@ function BreakdownRow({ icon, label, amount, positive }: { icon: React.ReactNode
         <span className="text-xs text-gray-600">{label}</span>
       </div>
       <span className={`text-xs font-semibold ${positive ? "text-gray-800" : "text-red-500"}`}>
-        {positive ? "+" : ""}{formatRM(Math.abs(amount))}
+        {positive ? "+" : ""}{ FormatRM(Math.abs(amount))}
       </span>
     </div>
   );
 }
+

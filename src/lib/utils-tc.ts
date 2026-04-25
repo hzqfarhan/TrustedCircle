@@ -43,3 +43,4 @@ export const APPROVAL_RULE_LABELS: Record<string, string> = {
   SELECTED: "Selected Party Only",
   PARENT_ONLY: "Parent + Companion",
 };
+

@@ -91,3 +91,4 @@ export async function GetCurrentUserProfile(): Promise<Profile | null> {
   if (!user) return null;
   return GetProfile(user.sub);
 }
+

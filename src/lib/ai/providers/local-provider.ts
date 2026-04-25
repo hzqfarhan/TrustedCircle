@@ -7,7 +7,7 @@ export const LocalProvider: AllowanceAIProvider = {
   async generateRecommendation(input: RecommendationInput): Promise<RecommendationResult> {
     // The existing recommendation engine uses deterministic logic.
     // We adapt its output to the new interface.
-    const result = await generateAllowanceRecommendation({
+    const result = await GenerateAllowanceRecommendation({
       childId: input.childId,
       monthlyAllowance: input.monthlyAllowance,
       recentTransactions: input.recentTransactions,
@@ -59,3 +59,4 @@ export const LocalProvider: AllowanceAIProvider = {
     };
   }
 };
+

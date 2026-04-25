@@ -12,7 +12,7 @@ import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { ScoreRing } from "@/components/ScoreRing";
 import { SpendingChart } from "@/components/SpendingChart";
 import { RecommendationCard } from "@/components/RecommendationCard";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import { ChevronRight, ChevronLeft, Bell, Brain, Plus, ShieldAlert, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -132,7 +132,7 @@ export default function ParentDashboardPage() {
                       <p className="text-[11px] text-gray-400 truncate">{child.fullName}</p>
                       <div className="flex items-center justify-between mt-1">
                         <p className="text-[11px] text-gray-500 font-medium">{child.ageGroup} · Age {child.dateOfBirth ? Math.floor((Date.now() - new Date(child.dateOfBirth).getTime()) / 31557600000) : '?'}</p>
-                        <p className="text-sm font-semibold text-blue-600">{formatRM(child.currentBalance)}</p>
+                        <p className="text-sm font-semibold text-blue-600">{ FormatRM(child.currentBalance)}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -191,7 +191,7 @@ export default function ParentDashboardPage() {
               <div key={req.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-2">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{formatRM(req.amount)} requested</p>
+                    <p className="text-sm font-semibold text-gray-900">{ FormatRM(req.amount)} requested</p>
                     <p className="text-xs text-gray-500">{req.reason}</p>
                   </div>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200">
@@ -213,7 +213,7 @@ export default function ParentDashboardPage() {
                     }}
                     className="flex-1 bg-emerald-500 text-white text-xs font-semibold py-2 rounded-xl hover:bg-emerald-600 transition-colors"
                   >
-                    Approve {formatRM(req.amount)}
+                    Approve { FormatRM(req.amount)}
                   </button>
                   <button
                     onClick={async () => {
@@ -273,3 +273,4 @@ export default function ParentDashboardPage() {
     </MobileShell>
   );
 }
+

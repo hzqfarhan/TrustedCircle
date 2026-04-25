@@ -228,7 +228,7 @@ export default function TransferPage() {
                 <p className="text-xs text-gray-400 mb-0.5">Transferring to</p>
                 <p className="font-bold text-gray-900">{form.recipient}</p>
                 <p className="text-gray-400 text-xs">{form.accountId}</p>
-                <p className="text-blue-700 font-black text-2xl mt-2">{FormatRM(parseFloat(form.amount))}</p>
+                <p className="text-blue-700 font-black text-2xl mt-2">{ FormatRM(parseFloat(form.amount))}</p>
               </div>
 
               <RiskScoreCard
@@ -342,7 +342,7 @@ export default function TransferPage() {
               </div>
               <p className="text-xl font-black text-gray-900 mb-1">Transfer Complete!</p>
               <p className="text-gray-400 text-sm mb-1">
-                {FormatRM(parseFloat(form.amount))} sent to {form.recipient}
+                { FormatRM(parseFloat(form.amount))} sent to {form.recipient}
               </p>
               {risk && (
                 <p className="text-xs text-gray-400">Risk score: {risk.score} ({risk.severity})</p>
@@ -361,3 +361,4 @@ export default function TransferPage() {
     </MobileShell>
   );
 }
+

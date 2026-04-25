@@ -1,5 +1,5 @@
 "use client";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import Link from "next/link";
 import { Target, Users } from "lucide-react";
 import { motion } from "framer-motion";
@@ -32,9 +32,9 @@ export function SharedFundCard({ fund, index = 0 }: { fund: FundData; index?: nu
               )}
             </div>
             <div className="text-right">
-              <p className="text-blue-700 font-bold text-sm">{formatRM(fund.balance)}</p>
+              <p className="text-blue-700 font-bold text-sm">{ FormatRM(fund.balance)}</p>
               {fund.goalAmount && (
-                <p className="text-gray-400 text-[10px]">/ {formatRM(fund.goalAmount)}</p>
+                <p className="text-gray-400 text-[10px]">/ { FormatRM(fund.goalAmount)}</p>
               )}
             </div>
           </div>
@@ -71,3 +71,4 @@ export function SharedFundCard({ fund, index = 0 }: { fund: FundData; index?: nu
     </motion.div>
   );
 }
+

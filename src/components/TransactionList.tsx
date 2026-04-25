@@ -1,5 +1,5 @@
 "use client";
-import { formatRM, formatDate } from "@/lib/utils-tc";
+import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Receipt } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -67,7 +67,7 @@ export function TransactionList({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800 truncate">{label}</p>
-              <p className="text-[11px] text-gray-400">{formatDate(tx.createdAt)}</p>
+              <p className="text-[11px] text-gray-400">{ FormatDate(tx.createdAt)}</p>
             </div>
             <div className="text-right">
               <p
@@ -76,7 +76,7 @@ export function TransactionList({
                 }`}
               >
                 {tx.transactionType === "topup" ? "+" : isSender ? "-" : "+"}
-                {formatRM(tx.amount)}
+                { FormatRM(tx.amount)}
               </p>
               {tx.status && (
                 <span
@@ -98,3 +98,4 @@ export function TransactionList({
     </div>
   );
 }
+

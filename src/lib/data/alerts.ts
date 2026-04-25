@@ -38,3 +38,4 @@ export async function MarkAllAlertsAsRead(parentId: string): Promise<void> {
   const unread = alerts.filter(a => !a.read);
   await Promise.all(unread.map(a => MarkAlertAsRead(a.id)));
 }
+

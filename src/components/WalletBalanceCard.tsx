@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { useState } from "react";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 
 interface WalletBalanceCardProps {
   name: string;
@@ -41,7 +41,7 @@ export function WalletBalanceCard({ name, balance, role }: WalletBalanceCardProp
             <p className="text-blue-200 text-xs mb-0.5">Available Balance</p>
             <div className="flex items-center gap-2">
               <p className="text-white text-3xl font-bold tracking-tight">
-                {hidden ? "RM ••••••" : formatRM(balance)}
+                {hidden ? "RM ••••••" : FormatRM(balance)}
               </p>
               <button
                 onClick={() => setHidden(!hidden)}
@@ -66,3 +66,4 @@ export function WalletBalanceCard({ name, balance, role }: WalletBalanceCardProp
     </motion.div>
   );
 }
+

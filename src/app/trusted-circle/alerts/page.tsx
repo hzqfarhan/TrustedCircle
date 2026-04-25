@@ -4,7 +4,7 @@ import { MobileShell } from "@/components/MobileShell";
 import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { VoiceAssistButton } from "@/components/VoiceAssistButton";
-import { formatDate } from "@/lib/utils-tc";
+import { FormatDate } from "@/lib/utils-tc";
 import { AlertTriangle, CheckCircle2, Info, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -99,7 +99,7 @@ export default function AlertsPage() {
                 <div className="flex-1 min-w-0">
                   <p className={`text-sm leading-snug ${textMap[a.severity] || "text-gray-700"}`}>{a.message}</p>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <p className="text-[10px] text-gray-400">{formatDate(a.createdAt)}</p>
+                    <p className="text-[10px] text-gray-400">{ FormatDate(a.createdAt)}</p>
                     {!a.isRead && (
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     )}
@@ -125,3 +125,4 @@ export default function AlertsPage() {
     </MobileShell>
   );
 }
+

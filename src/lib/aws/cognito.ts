@@ -70,3 +70,4 @@ export async function cognitoCreateUser(email: string, password: string, attribu
 }
 
 export { cognitoClient, USER_POOL_ID, CLIENT_ID };
+

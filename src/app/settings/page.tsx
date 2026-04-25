@@ -4,7 +4,7 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { VoiceAssistButton } from "@/components/VoiceAssistButton";
 import { useState, useEffect } from "react";
-import { isVoiceEnabled, setVoiceEnabled } from "@/lib/voice";
+import { IsVoiceEnabled, SetVoiceEnabled } from "@/lib/voice";
 import Link from "next/link";
 import { ChevronRight, Volume2, Shield, AlertTriangle, Settings } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -16,14 +16,14 @@ export default function SettingsPage() {
   const [threshold, setThreshold] = useState("1000");
 
   useEffect(() => {
-    setVoiceOn(isVoiceEnabled());
+    setVoiceOn(IsVoiceEnabled());
     setLargeText(localStorage.getItem("tc_large_text") === "true");
     setThreshold(localStorage.getItem("tc_threshold") || "1000");
   }, []);
 
   const handleVoiceToggle = (v: boolean) => {
     setVoiceOn(v);
-    setVoiceEnabled(v);
+    SetVoiceEnabled(v);
     toast.success(v ? "Voice alerts enabled" : "Voice alerts disabled");
   };
 
@@ -145,3 +145,4 @@ export default function SettingsPage() {
     </MobileShell>
   );
 }
+

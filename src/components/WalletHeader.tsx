@@ -50,3 +50,4 @@ export function WalletHeader({
     </header>
   );
 }
+

@@ -9,7 +9,7 @@ import { RecommendationCard } from "@/components/RecommendationCard";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { GoalCard } from "@/components/GoalCard";
 import { WalletHeader } from "@/components/WalletHeader";
-import { formatRM, formatDate } from "@/lib/utils-tc";
+import { FormatRM, FormatDate } from "@/lib/utils-tc";
 import { Brain, Target, Zap, BarChart3, ChevronRight, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -54,8 +54,8 @@ export default function ChildDetailPage() {
             <div>
               <p className="text-white text-lg font-bold">{child.fullName}</p>
               <p className="text-blue-200 text-xs">{child.ageGroup}</p>
-              <p className="text-white text-xl font-bold mt-1">{formatRM(child.currentBalance)}</p>
-              <p className="text-blue-200 text-[10px]">Monthly: {formatRM(child.monthlyAllowance)}</p>
+              <p className="text-white text-xl font-bold mt-1">{ FormatRM(child.currentBalance)}</p>
+              <p className="text-blue-200 text-[10px]">Monthly: { FormatRM(child.monthlyAllowance)}</p>
             </div>
           </div>
         </div>
@@ -129,10 +129,10 @@ export default function ChildDetailPage() {
                     <p className="text-sm font-semibold text-gray-800 truncate">{tx.merchant}</p>
                     <CategoryBadge category={tx.category} />
                   </div>
-                  <p className="text-[11px] text-gray-400">{formatDate(tx.createdAt)}</p>
+                  <p className="text-[11px] text-gray-400">{ FormatDate(tx.createdAt)}</p>
                 </div>
                 <p className={`text-sm font-bold ${tx.transactionType === "topup" ? "text-emerald-600" : "text-gray-800"}`}>
-                  {tx.transactionType === "topup" ? "+" : "-"}{formatRM(tx.amount)}
+                  {tx.transactionType === "topup" ? "+" : "-"}{ FormatRM(tx.amount)}
                 </p>
               </div>
             ))}

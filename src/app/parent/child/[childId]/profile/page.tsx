@@ -4,7 +4,7 @@ import { MobileShell } from "@/components/MobileShell";
 import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -85,7 +85,7 @@ export default function ChildProfilePage({ params }: { params: Promise<{ childId
           </div>
           <div className="flex justify-between items-center">
             <p className="text-xs text-gray-400 font-medium">Current Balance</p>
-            <p className="text-sm font-bold text-blue-600">{formatRM(child.currentBalance)}</p>
+            <p className="text-sm font-bold text-blue-600">{ FormatRM(child.currentBalance)}</p>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-xs text-gray-400 font-medium">Responsibility Score</p>

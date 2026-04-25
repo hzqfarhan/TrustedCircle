@@ -49,3 +49,4 @@ export async function UpdateRecommendationStatus(
 
   await UpdateItem(Tables.recommendations, { id }, updates);
 }
+

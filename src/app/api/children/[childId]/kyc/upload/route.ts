@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMockTable } from "@/lib/aws/mock-data";
+import { GetMockTable } from "@/lib/aws/mock-data";
 import { uploadChildKycSchema } from "@/lib/validations/kyc";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ childId: string }> }) {
@@ -9,10 +9,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ chi
     const validated = uploadChildKycSchema.parse(body.data);
     const parentId = body.parentId;
 
-    const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === childId && c.parentId === parentId);
+    const child = GetMockTable("juniorwallet-child-profiles").find((c: any) => c.id === childId && c.parentId === parentId);
     if (!child) return NextResponse.json({ error: "Child not found or unauthorized" }, { status: 404 });
 
-    const kycDocs = getMockTable("juniorwallet-child-kyc-documents");
+    const kycDocs = GetMockTable("juniorwallet-child-kyc-documents");
     const docId = `kyc_${Date.now()}`;
     const now = new Date().toISOString();
 
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ chi
     child.kycStatus = "kyc_under_review";
     child.updatedAt = now;
 
-    const auditLogs = getMockTable("juniorwallet-audit-logs");
+    const auditLogs = GetMockTable("juniorwallet-audit-logs");
     auditLogs.push({
       id: `audit_${Date.now()}`,
       actorId: parentId,

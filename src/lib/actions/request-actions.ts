@@ -1,7 +1,7 @@
 'use server';
 
 import { RequireCurrentUser } from '@/lib/auth/auth';
-import { assertIsChild, assertCanMutateChildData } from '@/lib/auth/authorization';
+import { AssertIsChild, AssertCanMutateChildData } from '@/lib/auth/authorization';
 import { CreateExtraRequest, ResolveExtraRequest, GetExtraRequest } from '@/lib/data/requests';
 import { GetChildProfile, UpdateChildProfile, GetChildProfileByUserId } from '@/lib/data/children';
 import { CreateTransaction } from '@/lib/data/transactions';
@@ -13,7 +13,7 @@ import type { ExtraAllowanceRequest } from '@/types';
 
 export async function SubmitExtraAllowanceRequest(amount: number, reason: string, childNote: string) {
   const user = await RequireCurrentUser();
-  const childProfileId = await assertIsChild(user);
+  const childProfileId = await AssertIsChild(user);
 
   const childProfile = await GetChildProfile(childProfileId);
   if (!childProfile) throw new Error('Child profile not found');
@@ -51,7 +51,7 @@ export async function ApproveExtraAllowanceRequestAction(requestId: string, appr
   const request = await GetExtraRequest(requestId);
   if (!request) throw new Error('Request not found');
 
-  await assertCanMutateChildData(user, request.childId);
+  await AssertCanMutateChildData(user, request.childId);
 
   const status = approvedAmount >= request.amount ? 'approved' : 'partially_approved';
   await ResolveExtraRequest(requestId, status as 'approved' | 'partially_approved', approvedAmount, parentMessage);
@@ -109,7 +109,7 @@ export async function RejectExtraAllowanceRequestAction(requestId: string, paren
   const request = await GetExtraRequest(requestId);
   if (!request) throw new Error('Request not found');
 
-  await assertCanMutateChildData(user, request.childId);
+  await AssertCanMutateChildData(user, request.childId);
 
   await ResolveExtraRequest(requestId, 'rejected', undefined, parentMessage);
   
@@ -135,4 +135,5 @@ export async function RejectExtraAllowanceRequestAction(requestId: string, paren
 
   return { success: true };
 }
+
 

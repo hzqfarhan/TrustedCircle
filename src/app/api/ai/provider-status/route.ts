@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { requireCurrentUser } from "@/lib/auth/auth";
+import { RequireCurrentUser } from "@/lib/auth/auth";
 
 export async function GET() {
   try {
-    const user = await requireCurrentUser();
+    const user = await RequireCurrentUser();
     
     // Determine which AI provider is currently active
     const provider = process.env.AI_PROVIDER || "local";
@@ -28,3 +28,4 @@ export async function GET() {
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
+

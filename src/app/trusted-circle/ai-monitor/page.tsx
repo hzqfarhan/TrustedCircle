@@ -116,7 +116,7 @@ export default function AIMonitorPage() {
                   <div className={`w-2 h-2 rounded-full ${activeScenario === i ? "bg-blue-500" : "bg-gray-200"}`} />
                 </div>
                 <p className="text-[11px] text-gray-400 mt-0.5">
-                  {FormatRM(s.transfer.amount)} → {s.transfer.to}
+                  { FormatRM(s.transfer.amount)} → {s.transfer.to}
                 </p>
               </button>
             ))}
@@ -172,3 +172,4 @@ export default function AIMonitorPage() {
     </MobileShell>
   );
 }
+

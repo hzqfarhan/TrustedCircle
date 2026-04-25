@@ -58,3 +58,4 @@ export function anonymizeChildAnalyticsPayload(input: {
     timestamp: new Date().toISOString()
   };
 }
+

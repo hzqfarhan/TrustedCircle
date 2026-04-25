@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Target } from "lucide-react";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import type { Goal } from "@/types";
 
 export function GoalCard({ goal, index = 0 }: { goal: Goal; index?: number }) {
@@ -34,8 +34,8 @@ export function GoalCard({ goal, index = 0 }: { goal: Goal; index?: number }) {
 
       <div className="mt-3">
         <div className="flex justify-between text-[11px] mb-1">
-          <span className="text-gray-500">{formatRM(goal.currentAmount)}</span>
-          <span className="text-gray-400">{formatRM(goal.targetAmount)}</span>
+          <span className="text-gray-500">{ FormatRM(goal.currentAmount)}</span>
+          <span className="text-gray-400">{ FormatRM(goal.targetAmount)}</span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <motion.div
@@ -50,3 +50,4 @@ export function GoalCard({ goal, index = 0 }: { goal: Goal; index?: number }) {
     </motion.div>
   );
 }
+

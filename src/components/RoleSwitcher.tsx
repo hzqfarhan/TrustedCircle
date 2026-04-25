@@ -1,9 +1,9 @@
 "use client";
 import { useAuth } from "@/lib/auth-context";
-import { ROLE_COLORS, ROLE_LABELS, initials } from "@/lib/utils-tc";
+import { ROLE_COLORS, ROLE_LABELS, Initials } from "@/lib/utils-tc";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { Cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function RoleSwitcher() {
@@ -22,11 +22,11 @@ export function RoleSwitcher() {
           <img src={currentUser.avatarUrl} alt={currentUser.fullName} className="w-5 h-5 rounded-full object-cover border border-white/20" />
         ) : (
           <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold bg-white/80 text-blue-800">
-            {initials(currentUser.fullName)}
+            { Initials(currentUser.fullName)}
           </div>
         )}
         <span className="text-xs font-medium">{currentUser.fullName}</span>
-        <ChevronDown size={12} className={cn("transition-transform", open && "rotate-180")} />
+        <ChevronDown size={12} className={ Cn("transition-transform", open && "rotate-180")} />
       </button>
 
       <AnimatePresence>
@@ -46,7 +46,7 @@ export function RoleSwitcher() {
                 <img src={currentUser.avatarUrl} alt={currentUser.fullName} className="w-8 h-8 rounded-full object-cover" />
               ) : (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-100 text-blue-700">
-                  {initials(currentUser.fullName)}
+                  { Initials(currentUser.fullName)}
                 </div>
               )}
               <div>
@@ -60,3 +60,4 @@ export function RoleSwitcher() {
     </div>
   );
 }
+

@@ -6,7 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { LoadingState } from "@/components/LoadingState";
 import { EmptyState } from "@/components/EmptyState";
 import { useAuth } from "@/lib/auth-context";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 import { BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -49,8 +49,8 @@ export default function ChildLimitsPage() {
                     </span>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>Spent: {formatRM(spent)}</span>
-                    <span>Limit: {formatRM(rule.amount)}</span>
+                    <span>Spent: { FormatRM(spent)}</span>
+                    <span>Limit: { FormatRM(rule.amount)}</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div className={`h-full rounded-full ${pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-blue-500"}`}

@@ -7,3 +7,4 @@ export async function PATCH(req: NextRequest) {
   await prisma.alert.updateMany({ where: { userId }, data: { isRead: true } });
   return NextResponse.json({ ok: true });
 }
+

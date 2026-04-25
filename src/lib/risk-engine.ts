@@ -135,3 +135,4 @@ export function FormatSeverityBg(severity: string) {
   if (severity === "MEDIUM") return "bg-amber-50 border-amber-200";
   return "bg-emerald-50 border-emerald-200";
 }
+

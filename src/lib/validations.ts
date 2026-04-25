@@ -71,3 +71,4 @@ export type CreateRuleInput = z.infer<typeof createRuleSchema>;
 export type ApproveRecommendationInput = z.infer<typeof approveRecommendationSchema>;
 export type ExtraAllowanceRequestInput = z.infer<typeof extraAllowanceRequestSchema>;
 export type CreateGoalInput = z.infer<typeof createGoalSchema>;
+

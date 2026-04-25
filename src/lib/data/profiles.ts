@@ -27,3 +27,4 @@ export async function UpdateProfile(id: string, updates: Partial<Profile>): Prom
 export async function UpdateWalletBalance(id: string, newBalance: number): Promise<void> {
   await UpdateItem(Tables.profiles, { id }, { walletBalance: newBalance, updatedAt: new Date().toISOString() });
 }
+

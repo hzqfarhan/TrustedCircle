@@ -7,3 +7,4 @@ export async function POST() {
   cookieStore.delete('auth_token');
   return NextResponse.json({ success: true });
 }
+

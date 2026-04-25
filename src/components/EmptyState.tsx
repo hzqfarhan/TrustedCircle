@@ -18,3 +18,4 @@ export function EmptyState({ icon, title, description }: EmptyStateProps) {
     </div>
   );
 }
+

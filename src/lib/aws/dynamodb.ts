@@ -175,3 +175,4 @@ export async function ScanItems<T>(table: string, limit?: number): Promise<T[]> 
   const result = await docClient.send(new ScanCommand({ TableName: table, Limit: limit }));
   return (result.Items || []) as T[];
 }
+

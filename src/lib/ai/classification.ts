@@ -81,3 +81,4 @@ export function getCategoryColor(category: TransactionCategory): { bg: string; t
   };
   return colors[category] || colors.discretionary;
 }
+

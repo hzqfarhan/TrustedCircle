@@ -27,3 +27,4 @@ export async function addMemberToCircle(name: string, role: string) {
     return { success: false, error: "Failed to add member to the Trusted Circle." };
   }
 }
+

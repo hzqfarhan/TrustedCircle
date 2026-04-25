@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requireCurrentUser } from "@/lib/auth/auth";
+import { RequireCurrentUser } from "@/lib/auth/auth";
 import { anonymizeChildAnalyticsPayload } from "@/lib/alibaba/sync";
-import { createAuditLog } from "@/lib/data/audit-logs";
+import { CreateAuditLog } from "@/lib/data/audit-logs";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
   try {
-    const user = await requireCurrentUser();
+    const user = await RequireCurrentUser();
     
     // Only parents (or an internal cron role) should trigger a sync
     if (user.role !== "parent" && user.role !== "system") {
@@ -29,14 +29,15 @@ export async function POST(request: Request) {
     const isAlibabaConfigured = !!process.env.ALIBABA_OSS_BUCKET;
 
     // Log the sync action
-    await createAuditLog(
-      user.sub,
-      "AI_SYNC_TO_ALIBABA",
-      "childProfile",
-      childId,
-      undefined,
-      { anonymizedId: payload.anonymizedChildId, status: isAlibabaConfigured ? "synced" : "skipped_no_config" }
-    );
+    await CreateAuditLog({
+      id: uuidv4(),
+      actorId: user.sub,
+      action: "AI_SYNC_TO_ALIBABA",
+      entityType: "childProfile",
+      entityId: childId,
+      newValue: { anonymizedId: payload.anonymizedChildId, status: isAlibabaConfigured ? "synced" : "skipped_no_config" },
+      createdAt: new Date().toISOString(),
+    });
 
     return NextResponse.json({ 
       success: true, 
@@ -49,3 +50,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
+

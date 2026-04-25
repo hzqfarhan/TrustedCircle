@@ -12,7 +12,7 @@ export function ScoreRing({ score, size = 120, strokeWidth = 10, showLabel = tru
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = getScoreColor(score);
+  const color = GetScoreColor(score);
 
   return (
     <div className="flex flex-col items-center gap-1">
@@ -43,10 +43,11 @@ export function ScoreRing({ score, size = 120, strokeWidth = 10, showLabel = tru
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-2xl font-bold" style={{ color }}>{score}</span>
           {showLabel && (
-            <span className="text-[10px] text-gray-400 font-medium">{getScoreLabel(score)}</span>
+            <span className="text-[10px] text-gray-400 font-medium">{GetScoreLabel(score)}</span>
           )}
         </div>
       </div>
     </div>
   );
 }
+

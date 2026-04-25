@@ -5,7 +5,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useEffect, useState } from "react";
 import { MapPin, ShieldCheck, DollarSign } from "lucide-react";
 import { toast } from "sonner";
-import { formatRM } from "@/lib/utils-tc";
+import { FormatRM } from "@/lib/utils-tc";
 
 const DEMO_ZONES = ["Home Area", "School Zone", "Nearby Mall", "Hospital Zone"];
 
