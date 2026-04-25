@@ -66,15 +66,15 @@ export default function TrustedCirclePage() {
         {/* Current user info */}
         {currentUser && (
           <div className="mx-4 mt-3 bg-white rounded-2xl p-3 flex items-center gap-3 border border-gray-100">
-            {currentUser.avatar ? (
-              <img src={currentUser.avatar} alt={currentUser.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
+            {currentUser.avatarUrl ? (
+              <img src={currentUser.avatarUrl} alt={currentUser.fullName} className="w-9 h-9 rounded-full object-cover shrink-0" />
             ) : (
               <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-xs shrink-0">
-                {currentUser.name[0]}
+                {currentUser.fullName[0]}
               </div>
             )}
             <div>
-              <p className="text-sm font-semibold text-gray-900">{currentUser.name}</p>
+              <p className="text-sm font-semibold text-gray-900">{currentUser.fullName}</p>
               <p className="text-xs text-gray-400">
                 Active as <span className="text-blue-600 font-medium">{ROLE_LABELS[currentUser.role] || currentUser.role}</span>
               </p>

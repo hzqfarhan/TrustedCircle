@@ -27,7 +27,7 @@ export function WalletBalanceCard({ name, balance, role }: WalletBalanceCardProp
         <div className="flex justify-between items-start">
           <div>
             <p className="text-blue-200 text-xs font-medium uppercase tracking-wider mb-0.5">
-              Trusted Circle Wallet
+              JUNIOR WALLET
             </p>
             <p className="text-white/90 text-sm font-medium">{name}</p>
           </div>

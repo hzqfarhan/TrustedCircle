@@ -1,13 +1,19 @@
 "use client";
-import { SharedFund } from "@prisma/client";
 import { formatRM } from "@/lib/utils-tc";
 import Link from "next/link";
 import { Target, Users } from "lucide-react";
 import { motion } from "framer-motion";
 
-type FundWithCount = SharedFund & { _count?: { members: number } };
+interface FundData {
+  id: string;
+  name: string;
+  description?: string | null;
+  balance: number;
+  goalAmount?: number | null;
+  _count?: { members: number };
+}
 
-export function SharedFundCard({ fund, index = 0 }: { fund: FundWithCount; index?: number }) {
+export function SharedFundCard({ fund, index = 0 }: { fund: FundData; index?: number }) {
   const progress = fund.goalAmount ? (fund.balance / fund.goalAmount) * 100 : null;
 
   return (

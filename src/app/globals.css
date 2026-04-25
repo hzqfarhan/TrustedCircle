@@ -2,7 +2,16 @@
 
 @theme {
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --color-blue-primary: #0068FF;
+  --color-blue-primary: #0B5CFF;
+  --color-blue-deep: #1237B5;
+  --color-blue-royal: #123FD8;
+  --color-blue-card: #143EDB;
+  --color-navy-dark: #182033;
+  --color-bg-app: #F4F7FB;
+  --color-text-muted: #7A8499;
+  --color-success-mint: #E8FFF7;
+  --color-warning-cream: #FFF8DF;
+  --color-purple-soft: #F8EDFF;
 }
 
 * {
@@ -10,7 +19,7 @@
 }
 
 html, body {
-  background: #f3f4f6;
+  background: #F4F7FB;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -25,3 +34,8 @@ html, body {
 }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+/* Score ring animation */
+@keyframes score-fill {
+  from { stroke-dashoffset: 251.2; }
+}

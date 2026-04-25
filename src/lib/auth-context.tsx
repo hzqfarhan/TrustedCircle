@@ -1,50 +1,70 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { User, Wallet } from "@prisma/client";
-
-type UserWithWallet = User & { wallet: Wallet | null };
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import type { Profile } from "@/types";
 
 interface AuthContextType {
-  currentUser: UserWithWallet | null;
-  setCurrentUserId: (id: string) => void;
-  users: UserWithWallet[];
+  currentUser: Profile | null;
   isLoading: boolean;
+  login: (userId: string) => Promise<void>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   currentUser: null,
-  setCurrentUserId: () => {},
-  users: [],
   isLoading: true,
+  login: async () => {},
+  logout: async () => {},
+  refreshUser: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
-export function AuthProvider({ children, initialUsers }: { children: React.ReactNode; initialUsers: UserWithWallet[] }) {
-  const [userId, setUserId] = useState<string | null>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // try loading from localstorage
-    const stored = localStorage.getItem("demo_user_id");
-    if (stored && initialUsers.find((u) => u.id === stored)) {
-      setUserId(stored);
-    } else if (initialUsers.length > 0) {
-      setUserId(initialUsers[0].id); // default to first user (Akmal)
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUser(data.user);
+      } else {
+        setCurrentUser(null);
+      }
+    } catch {
+      setCurrentUser(null);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, [initialUsers]);
+  }, []);
 
-  const handleSetUser = (id: string) => {
-    setUserId(id);
-    localStorage.setItem("demo_user_id", id);
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const login = async (userId: string) => {
+    setIsLoading(true);
+    const res = await fetch("/api/auth/demo-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    if (!res.ok) throw new Error("Login failed");
+    await fetchUser();
   };
 
-  const currentUser = initialUsers.find((u) => u.id === userId) || null;
+  const logout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setCurrentUser(null);
+  };
+
+  const refreshUser = fetchUser;
 
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUserId: handleSetUser, users: initialUsers, isLoading }}>
+    <AuthContext.Provider value={{ currentUser, isLoading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

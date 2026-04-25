@@ -69,17 +69,17 @@ export default function LandingPage() {
           >
             Welcome to,
             <br />
-            Trusted Circle
+            JuniorWallet
           </h1>
           <p className="text-blue-200/80 text-lg mt-1.5 font-medium italic">
-            #JanjiTrusted
+            #JuniorWallet
           </p>
         </div>
 
         {/* CTA Button */}
         <div className="animate-btn relative z-10 px-7 mt-5">
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/login")}
             id="get-started-btn"
             className="group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-full font-bold text-[1.05rem] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
             style={{
@@ -104,7 +104,7 @@ export default function LandingPage() {
           <div className="relative w-full">
             <Image
               src="/trusted-family.png"
-              alt="Family protected by Trusted Circle"
+              alt="Family protected by JuniorWallet"
               width={860}
               height={860}
               className="w-full h-auto block"

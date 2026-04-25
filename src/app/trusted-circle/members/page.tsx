@@ -12,7 +12,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { addMemberToCircle } from "../actions";
 
 export default function MembersPage() {
-  const { users, currentUser } = useAuth();
+  const { currentUser } = useAuth();
+  const users = (currentUser as any)?.users || [];
   const [viewMode, setViewMode] = useState<"list" | "network">("list");
 
   const [selectedUser, setSelectedUser] = useState<any>(null);

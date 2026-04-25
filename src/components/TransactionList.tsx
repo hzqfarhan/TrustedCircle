@@ -1,5 +1,4 @@
 "use client";
-import { Transaction } from "@prisma/client";
 import { formatRM, formatDate } from "@/lib/utils-tc";
 import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Receipt } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,18 +8,31 @@ const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg:
   MERCHANT: { icon: <ShoppingCart size={15} />, color: "text-purple-600", bg: "bg-purple-50" },
   BILL: { icon: <Receipt size={15} />, color: "text-amber-600", bg: "bg-amber-50" },
   WITHDRAWAL: { icon: <ArrowDownLeft size={15} />, color: "text-red-500", bg: "bg-red-50" },
+  essential: { icon: <ShoppingCart size={15} />, color: "text-emerald-600", bg: "bg-emerald-50" },
+  educational: { icon: <Receipt size={15} />, color: "text-blue-600", bg: "bg-blue-50" },
+  savings: { icon: <ArrowDownLeft size={15} />, color: "text-purple-600", bg: "bg-purple-50" },
+  discretionary: { icon: <ShoppingCart size={15} />, color: "text-amber-600", bg: "bg-amber-50" },
+  risky: { icon: <ArrowDownLeft size={15} />, color: "text-red-500", bg: "bg-red-50" },
 };
 
-type TxWithNames = Transaction & {
+interface TxItem {
+  id: string;
+  amount: number;
+  createdAt: string;
+  senderId?: string | null;
+  category?: string;
+  status?: string;
+  merchant?: string;
   sender?: { name: string } | null;
   receiver?: { name: string } | null;
-};
+  transactionType?: string;
+}
 
 export function TransactionList({
   transactions,
   currentUserId,
 }: {
-  transactions: TxWithNames[];
+  transactions: TxItem[];
   currentUserId: string;
 }) {
   if (transactions.length === 0) {
@@ -35,10 +47,10 @@ export function TransactionList({
     <div className="flex flex-col gap-0.5">
       {transactions.map((tx, i) => {
         const isSender = tx.senderId === currentUserId;
-        const cfg = categoryConfig[tx.category] || categoryConfig.TRANSFER;
-        const label = isSender
+        const cfg = categoryConfig[tx.category || "TRANSFER"] || categoryConfig.TRANSFER;
+        const label = tx.merchant || (isSender
           ? tx.receiver?.name || "Unknown"
-          : tx.sender?.name || "Unknown";
+          : tx.sender?.name || "Unknown");
 
         return (
           <motion.div
@@ -60,23 +72,25 @@ export function TransactionList({
             <div className="text-right">
               <p
                 className={`text-sm font-bold ${
-                  isSender ? "text-gray-800" : "text-emerald-600"
+                  tx.transactionType === "topup" ? "text-emerald-600" : isSender ? "text-gray-800" : "text-emerald-600"
                 }`}
               >
-                {isSender ? "-" : "+"}
+                {tx.transactionType === "topup" ? "+" : isSender ? "-" : "+"}
                 {formatRM(tx.amount)}
               </p>
-              <span
-                className={`text-[10px] font-medium ${
-                  tx.status === "BLOCKED"
-                    ? "text-red-500"
-                    : tx.status === "PENDING"
-                    ? "text-amber-500"
-                    : "text-gray-400"
-                }`}
-              >
-                {tx.status}
-              </span>
+              {tx.status && (
+                <span
+                  className={`text-[10px] font-medium ${
+                    tx.status === "BLOCKED"
+                      ? "text-red-500"
+                      : tx.status === "PENDING"
+                      ? "text-amber-500"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {tx.status}
+                </span>
+              )}
             </div>
           </motion.div>
         );

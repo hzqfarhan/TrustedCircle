@@ -1,27 +1,21 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { prisma } from "@/lib/db";
 import { AuthProvider } from "@/lib/auth-context";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Trusted Circle | #JanjiTrusted",
-  description: "Your family's digital financial safety layer. Shared funds, child accounts, AI risk monitoring.",
+  title: "JuniorWallet | Smart Allowance System",
+  description: "Your family's smart allowance management system. AI-powered recommendations, parental controls, and financial literacy for kids.",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const users = await prisma.user.findMany({
-    include: { wallet: true },
-    orderBy: { name: "asc" },
-  });
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider initialUsers={users}>
+        <AuthProvider>
           {children}
           <Toaster position="top-center" />
         </AuthProvider>

@@ -9,13 +9,14 @@ import { toast } from "sonner";
 import { ShieldCheck } from "lucide-react";
 
 export default function CreateChildPage() {
-  const { currentUser, users } = useAuth();
+  const { currentUser } = useAuth();
   const router = useRouter();
   const [selectedChildId, setSelectedChildId] = useState("");
   const [spendingLimit, setSpendingLimit] = useState("200");
   const [limitType, setLimitType] = useState("WEEKLY");
   const [loading, setLoading] = useState(false);
 
+  const users: any[] = [];
   const childUsers = users.filter((u) => u.role === "CHILD");
 
   const handleSubmit = async (e: React.FormEvent) => {

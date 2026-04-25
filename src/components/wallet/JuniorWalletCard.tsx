@@ -10,7 +10,7 @@ const features = [
   { icon: Users, label: "Members", desc: "Manage circle & roles", href: "/trusted-circle/members" },
 ];
 
-export function TrustedCircleCard({ alertCount }: { alertCount?: number }) {
+export function JuniorWalletCard({ alertCount }: { alertCount?: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -26,8 +26,8 @@ export function TrustedCircleCard({ alertCount }: { alertCount?: number }) {
               <Shield size={16} className="text-white" />
             </div>
             <div>
-              <p className="text-white text-sm font-bold">Trusted Circle</p>
-              <p className="text-blue-300 text-[10px]">#JanjiTrusted</p>
+              <p className="text-white text-sm font-bold">JuniorWallet</p>
+              <p className="text-blue-300 text-[10px]">#JuniorWallet</p>
             </div>
           </div>
           {alertCount !== undefined && alertCount > 0 && (
