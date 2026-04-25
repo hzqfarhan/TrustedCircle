@@ -9,7 +9,7 @@ import { Cn } from "@/lib/utils";
 import { NetworkGraph } from "@/components/NetworkGraph";
 import { Users, Share2, UserPlus, Fingerprint, CheckCircle2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { addMemberToCircle } from "../actions";
+import { AddMemberToCircle } from "../actions";
 
 export default function MembersPage() {
   const { currentUser } = useAuth();
@@ -56,7 +56,7 @@ export default function MembersPage() {
       // Simulate success delay before server action
       setTimeout(async () => {
         setIsSubmitting(true);
-        await addMemberToCircle(newMemberName, newMemberRole);
+        await AddMemberToCircle(newMemberName, newMemberRole);
         
         // Reset and close
         setIsBiometricScanning(false);

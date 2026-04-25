@@ -1,7 +1,7 @@
 import { AllowanceAIProvider, RecommendationInput, RecommendationResult, TransactionInput, ClassificationResult, ExplanationInput, ExplanationResult } from "../provider";
-import { generateAllowanceRecommendation } from "../recommendation";
-import { classifyTransaction } from "../classification";
-import { calculateResponsibilityScore } from "../scoring";
+import { GenerateAllowanceRecommendation } from "../recommendation";
+import { ClassifyTransaction } from "../classification";
+import { CalculateResponsibilityScore } from "../scoring";
 
 export const LocalProvider: AllowanceAIProvider = {
   async generateRecommendation(input: RecommendationInput): Promise<RecommendationResult> {
@@ -34,7 +34,7 @@ export const LocalProvider: AllowanceAIProvider = {
   },
 
   async classifyTransaction(input: TransactionInput): Promise<ClassificationResult> {
-    return classifyTransaction(input.merchant, input.amount, input.note);
+    return ClassifyTransaction(input.merchant, input.amount, input.note);
   },
 
   async generateExplanation(input: ExplanationInput): Promise<ExplanationResult> {

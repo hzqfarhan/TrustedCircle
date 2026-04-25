@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function addMemberToCircle(name: string, role: string) {
+export async function AddMemberToCircle(name: string, role: string) {
   try {
     // Create new user with a wallet
     await prisma.user.create({

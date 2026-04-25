@@ -17,7 +17,7 @@ const cognitoClient = new CognitoIdentityProviderClient({
 const USER_POOL_ID = process.env.COGNITO_USER_POOL_ID || '';
 const CLIENT_ID = process.env.COGNITO_CLIENT_ID || '';
 
-export async function cognitoSignIn(email: string, password: string) {
+export async function CognitoSignIn(email: string, password: string) {
   const result = await cognitoClient.send(
     new AdminInitiateAuthCommand({
       UserPoolId: USER_POOL_ID,
@@ -32,7 +32,7 @@ export async function cognitoSignIn(email: string, password: string) {
   return result.AuthenticationResult;
 }
 
-export async function cognitoGetUser(username: string) {
+export async function CognitoGetUser(username: string) {
   const result = await cognitoClient.send(
     new AdminGetUserCommand({
       UserPoolId: USER_POOL_ID,
@@ -42,7 +42,7 @@ export async function cognitoGetUser(username: string) {
   return result;
 }
 
-export async function cognitoCreateUser(email: string, password: string, attributes: Record<string, string> = {}) {
+export async function CognitoCreateUser(email: string, password: string, attributes: Record<string, string> = {}) {
   // Create user
   await cognitoClient.send(
     new AdminCreateUserCommand({

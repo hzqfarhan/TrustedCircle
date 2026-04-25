@@ -1,5 +1,5 @@
 "use client";
-import { getScoreColor, getScoreLabel } from "@/lib/ai/scoring";
+import { GetScoreColor, GetScoreLabel } from "@/lib/ai/scoring";
 
 interface ScoreRingProps {
   score: number;
@@ -43,7 +43,7 @@ export function ScoreRing({ score, size = 120, strokeWidth = 10, showLabel = tru
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-2xl font-bold" style={{ color }}>{score}</span>
           {showLabel && (
-            <span className="text-[10px] text-gray-400 font-medium">{GetScoreLabel(score)}</span>
+            <span className="text-[10px] text-gray-400 font-medium">{ GetScoreLabel(score)}</span>
           )}
         </div>
       </div>

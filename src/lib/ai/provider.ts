@@ -56,7 +56,7 @@ export interface AllowanceAIProvider {
   generateExplanation(input: ExplanationInput): Promise<ExplanationResult>;
 }
 
-export function getAIProvider(): AllowanceAIProvider {
+export function GetAIProvider(): AllowanceAIProvider {
   const providerName = (process.env.AI_PROVIDER as AIProviderName) || "local";
   
   if (providerName === "alibaba-pai") {

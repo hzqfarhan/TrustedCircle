@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
  * to Alibaba Cloud (OSS/DataWorks) for ML training or inference.
  * Strips all PII (Personally Identifiable Information).
  */
-export function anonymizeChildAnalyticsPayload(input: {
+export function AnonymizeChildAnalyticsPayload(input: {
   childId: string;
   ageGroup: string;
   monthlyAllowance: number;

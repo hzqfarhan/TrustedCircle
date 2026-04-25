@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { RequireCurrentUser } from "@/lib/auth/auth";
-import { anonymizeChildAnalyticsPayload } from "@/lib/alibaba/sync";
+import { AnonymizeChildAnalyticsPayload } from "@/lib/alibaba/sync";
 import { CreateAuditLog } from "@/lib/data/audit-logs";
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing payload data" }, { status: 400 });
     }
 
-    const payload = anonymizeChildAnalyticsPayload(profileData);
+    const payload = AnonymizeChildAnalyticsPayload(profileData);
 
     // In a real implementation:
     // const s3Client = new S3Client({ region: process.env.ALIBABA_CLOUD_REGION, ... });

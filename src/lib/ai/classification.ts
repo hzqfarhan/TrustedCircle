@@ -33,7 +33,7 @@ const MERCHANT_RULES: { pattern: RegExp; category: TransactionCategory; needWant
 
 const RISKY_AMOUNT_THRESHOLD = 100; // RM — unusually high for a child
 
-export function classifyTransaction(
+export function ClassifyTransaction(
   merchant: string,
   amount: number,
   note?: string
@@ -60,7 +60,7 @@ export function classifyTransaction(
   return { category: 'discretionary', needWant: 'want', riskFlag: false };
 }
 
-export function getCategoryLabel(category: TransactionCategory): string {
+export function GetCategoryLabel(category: TransactionCategory): string {
   const labels: Record<TransactionCategory, string> = {
     essential: 'Essential',
     educational: 'Educational',
@@ -71,7 +71,7 @@ export function getCategoryLabel(category: TransactionCategory): string {
   return labels[category] || category;
 }
 
-export function getCategoryColor(category: TransactionCategory): { bg: string; text: string; border: string } {
+export function GetCategoryColor(category: TransactionCategory): { bg: string; text: string; border: string } {
   const colors: Record<TransactionCategory, { bg: string; text: string; border: string }> = {
     essential: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
     educational: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },

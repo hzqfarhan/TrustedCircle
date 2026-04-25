@@ -1,6 +1,6 @@
 "use client";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { getCategoryLabel } from "@/lib/ai/classification";
+import { GetCategoryLabel } from "@/lib/ai/classification";
 
 interface SpendingChartProps {
   data: Record<string, number>;
@@ -18,7 +18,7 @@ export function SpendingChart({ data }: SpendingChartProps) {
   const chartData = Object.entries(data)
     .filter(([, v]) => v > 0)
     .map(([key, value]) => ({
-      name: getCategoryLabel(key as any),
+      name: GetCategoryLabel(key as any),
       value: Math.round(value * 100) / 100,
       color: COLORS[key] || "#94a3b8",
     }));
