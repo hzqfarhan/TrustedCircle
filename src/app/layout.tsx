@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 import { Viewport } from "next";
 
 export const viewport: Viewport = {
-  themeColor: "#FECD00",
+  themeColor: "#ffffff",
 };
 
 export const metadata: Metadata = {

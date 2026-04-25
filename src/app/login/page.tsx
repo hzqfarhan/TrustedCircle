@@ -5,7 +5,8 @@ import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, User, Users, Sparkles } from "lucide-react";
+import { User, Users, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -47,8 +48,8 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
           className="relative z-10 flex flex-col items-center pt-16 px-6"
         >
-          <div className="w-20 h-20 bg-white/10 backdrop-blur rounded-3xl flex items-center justify-center mb-4 border border-white/20">
-            <Shield size={36} className="text-white" />
+          <div className="w-24 h-24 bg-white/10 backdrop-blur rounded-3xl flex items-center justify-center mb-4 border border-white/20 overflow-hidden p-2">
+            <Image src="/assets/JRwallet-logo.png" alt="JuniorWallet Logo" width={80} height={80} className="object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-white text-center">JuniorWallet</h1>
           <p className="text-blue-200/80 text-sm mt-1 italic">#JuniorWallet</p>

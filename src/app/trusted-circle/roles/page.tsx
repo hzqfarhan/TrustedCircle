@@ -4,7 +4,7 @@ import { WalletHeader } from "@/components/WalletHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const ROLES = ["PARENT", "COMPANION", "FRIEND", "GENERAL", "CHILD"];
+const ROLES = ["PARENT", "CHILD"];
 
 const PERMISSIONS = [
   "View shared fund",
@@ -19,17 +19,11 @@ const PERMISSIONS = [
 
 const ROLE_PERMS: Record<string, boolean[]> = {
   PARENT: [true, true, true, true, true, true, true, false],
-  COMPANION: [true, true, true, true, false, true, true, false],
-  FRIEND: [true, true, true, false, false, true, false, false],
-  GENERAL: [true, true, false, false, false, false, false, false],
   CHILD: [false, false, false, false, false, false, false, true],
 };
 
 const ROLE_LABELS: Record<string, string> = {
   PARENT: "Parent",
-  COMPANION: "Companion",
-  FRIEND: "Friend",
-  GENERAL: "General",
   CHILD: "Child",
 };
 
@@ -44,7 +38,7 @@ export default function RolesPage() {
 
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-6 gap-0 border-b border-gray-100 bg-gray-50">
+          <div className="grid grid-cols-4 gap-0 border-b border-gray-100 bg-gray-50">
             <div className="col-span-2 p-3 text-[10px] font-bold text-gray-500 uppercase tracking-wide">Permission</div>
             {ROLES.map((r) => (
               <div key={r} className="p-2 text-center text-[9px] font-bold text-gray-500 uppercase tracking-wide">
@@ -55,7 +49,7 @@ export default function RolesPage() {
 
           {/* Rows */}
           {PERMISSIONS.map((perm, i) => (
-            <div key={perm} className={`grid grid-cols-6 gap-0 border-b border-gray-50 last:border-0 ${i % 2 === 0 ? "" : "bg-gray-50/50"}`}>
+            <div key={perm} className={`grid grid-cols-4 gap-0 border-b border-gray-50 last:border-0 ${i % 2 === 0 ? "" : "bg-gray-50/50"}`}>
               <div className="col-span-2 p-3 text-[11px] text-gray-700 font-medium flex items-center">{perm}</div>
               {ROLES.map((role) => {
                 const has = ROLE_PERMS[role]?.[i] ?? false;
@@ -84,10 +78,7 @@ export default function RolesPage() {
                 <p className="text-sm font-bold text-gray-800">{ROLE_LABELS[role]}</p>
                 <p className="text-[11px] text-gray-400">
                   {role === "PARENT" && "Full control over circle, child accounts, and approvals."}
-                  {role === "COMPANION" && "Trusted co-manager. Can approve, contribute and verify."}
-                  {role === "FRIEND" && "Circle member with contribution and request rights."}
-                  {role === "GENERAL" && "View and contribute only. No withdrawal or approval rights."}
-                  {role === "CHILD" && "Restricted wallet. Emergency-only access, no fund permissions."}
+                  {role === "CHILD" && "Restricted wallet. Monitored by parents."}
                 </p>
               </div>
             </div>
