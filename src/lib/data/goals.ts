@@ -25,7 +25,7 @@ export async function getActiveGoalsByChild(childId: string): Promise<Goal[]> {
 }
 
 export async function createGoal(goal: Goal): Promise<void> {
-  await putItem(Tables.goals, goal as Record<string, unknown>);
+  await putItem(Tables.goals, goal);
 }
 
 export async function updateGoalProgress(id: string, currentAmount: number): Promise<void> {

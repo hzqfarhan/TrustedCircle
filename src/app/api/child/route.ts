@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getChildrenByParent, getChildProfileByUserId } from "@/lib/data/children";
+import { getTransactionsByChild } from "@/lib/data/transactions";
+import { getUnreadAlertsByParent } from "@/lib/data/alerts";
+import { getRulesByChild } from "@/lib/data/rules";
+import { getProfile } from "@/lib/data/profiles";
 
 export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get("userId");
@@ -8,51 +12,41 @@ export async function GET(req: NextRequest) {
   if (!userId) return NextResponse.json({});
 
   if (role === "PARENT") {
-    const child = await prisma.childAccount.findFirst({
-      where: { parentId: userId },
-      include: {
-        zoneRules: true,
-        child: { include: { wallet: true } },
-      },
-    });
+    const children = await getChildrenByParent(userId);
+    const child = children[0] ?? null;
 
     if (!child) return NextResponse.json({ childAccount: null });
 
-    const [recentTransactions, alerts] = await Promise.all([
-      prisma.transaction.findMany({
-        where: { senderId: child.childId },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      }),
-      prisma.alert.findMany({
-        where: { userId, isRead: false },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      }),
+    const [recentTransactions, alerts, rules, childUser] = await Promise.all([
+      getTransactionsByChild(child.id, 10),
+      getUnreadAlertsByParent(userId),
+      getRulesByChild(child.id),
+      getProfile(child.userId),
     ]);
 
     return NextResponse.json({
-      childAccount: { ...child, child: undefined },
-      childUser: child.child,
-      wallet: child.child.wallet,
+      childAccount: { ...child, zoneRules: rules },
+      childUser,
+      wallet: childUser ? { userId: childUser.id, balance: childUser.walletBalance ?? 0 } : null,
       recentTransactions,
       alerts,
     });
   }
 
   if (role === "CHILD") {
-    const child = await prisma.childAccount.findUnique({
-      where: { childId: userId },
-      include: { zoneRules: true },
-    });
-    const wallet = await prisma.wallet.findUnique({ where: { userId } });
-    const recentTransactions = await prisma.transaction.findMany({
-      where: { senderId: userId },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    });
+    const child = await getChildProfileByUserId(userId);
+    const [recentTransactions, rules, profile] = await Promise.all([
+      getTransactionsByChild(userId, 10),
+      child ? getRulesByChild(child.id) : Promise.resolve([]),
+      getProfile(userId),
+    ]);
 
-    return NextResponse.json({ childAccount: child, recentTransactions, wallet, alerts: [] });
+    return NextResponse.json({
+      childAccount: child ? { ...child, zoneRules: rules } : null,
+      recentTransactions,
+      wallet: profile ? { userId: profile.id, balance: profile.walletBalance ?? 0 } : null,
+      alerts: [],
+    });
   }
 
   return NextResponse.json({});

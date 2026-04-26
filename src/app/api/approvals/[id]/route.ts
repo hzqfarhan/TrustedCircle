@@ -1,31 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import {
+  getApprovalsByRequest,
+  updateApprovalStatus,
+} from "@/lib/data/approvals";
+import { getSharedFund, updateSharedFund } from "@/lib/data/funds";
+import { getProfile, updateWalletBalance } from "@/lib/data/profiles";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id: requestId } = await params;
   const { approverId, status } = await req.json();
 
-  // Update approval
-  await prisma.approval.updateMany({
-    where: { requestId: params.id, approverId },
-    data: { status },
-  });
+  // Find and update the specific approval for this request + approver
+  const approvals = await getApprovalsByRequest(requestId);
+  const approval = approvals.find((a) => a.requesterId === approverId);
 
-  // Check if withdrawal can be auto-released
-  const withdrawal = await prisma.sharedFundWithdrawalRequest.findUnique({
-    where: { id: params.id },
-    include: {
-      fund: true,
-      approvals: true,
-    },
-  });
+  if (approval) {
+    await updateApprovalStatus(
+      approval.id,
+      status as "APPROVED" | "REJECTED",
+      approverId
+    );
+  }
 
-  if (!withdrawal) return NextResponse.json({ ok: true });
+  // Re-fetch all approvals for this request to check auto-release
+  const updatedApprovals = await getApprovalsByRequest(requestId);
+  const fundApproval = updatedApprovals[0];
+  if (!fundApproval) return NextResponse.json({ ok: true });
 
-  const approvedCount = withdrawal.approvals.filter((a) => a.status === "APPROVED").length;
-  const rejectedCount = withdrawal.approvals.filter((a) => a.status === "REJECTED").length;
-  const totalApprovers = withdrawal.approvals.length;
+  const fund = await getSharedFund(fundApproval.fundId);
+  if (!fund) return NextResponse.json({ ok: true });
 
-  const rule = withdrawal.fund.approvalRule;
+  const withdrawalRequest = fund.withdrawalRequests?.find(
+    (w) => w.id === requestId
+  );
+  if (!withdrawalRequest) return NextResponse.json({ ok: true });
+
+  const approvedCount = updatedApprovals.filter((a) => a.status === "APPROVED").length;
+  const rejectedCount = updatedApprovals.filter((a) => a.status === "REJECTED").length;
+  const totalApprovers = updatedApprovals.length;
+
+  const rule = fund.approvalRule || "2_OF_3";
   const requiredCount =
     rule === "ALL"
       ? totalApprovers
@@ -35,24 +49,25 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   if (approvedCount >= requiredCount) {
     // Release funds — mark completed
-    await prisma.sharedFundWithdrawalRequest.update({
-      where: { id: params.id },
-      data: { status: "COMPLETED" },
+    const updatedRequests = fund.withdrawalRequests.map((w) =>
+      w.id === requestId ? { ...w, status: "COMPLETED" as const } : w
+    );
+    await updateSharedFund(fund.id, {
+      withdrawalRequests: updatedRequests,
+      balance: (fund.balance || 0) - withdrawalRequest.amount,
     });
-    await prisma.sharedFund.update({
-      where: { id: withdrawal.fundId },
-      data: { balance: { decrement: withdrawal.amount } },
-    });
+
     // Credit the requester wallet
-    await prisma.wallet.updateMany({
-      where: { userId: withdrawal.requesterId },
-      data: { balance: { increment: withdrawal.amount } },
-    });
+    const requester = await getProfile(withdrawalRequest.requesterId);
+    if (requester) {
+      const newBalance = (requester.walletBalance || 0) + withdrawalRequest.amount;
+      await updateWalletBalance(withdrawalRequest.requesterId, newBalance);
+    }
   } else if (rejectedCount > totalApprovers - requiredCount) {
-    await prisma.sharedFundWithdrawalRequest.update({
-      where: { id: params.id },
-      data: { status: "REJECTED" },
-    });
+    const updatedRequests = fund.withdrawalRequests.map((w) =>
+      w.id === requestId ? { ...w, status: "REJECTED" as const } : w
+    );
+    await updateSharedFund(fund.id, { withdrawalRequests: updatedRequests });
   }
 
   return NextResponse.json({ ok: true });

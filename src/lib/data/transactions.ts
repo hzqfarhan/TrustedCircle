@@ -37,7 +37,7 @@ export async function getTransactionsByChildInRange(
 }
 
 export async function createTransaction(tx: Transaction): Promise<void> {
-  await putItem(Tables.transactions, tx as Record<string, unknown>);
+  await putItem(Tables.transactions, tx);
 }
 
 export async function updateTransactionCategory(

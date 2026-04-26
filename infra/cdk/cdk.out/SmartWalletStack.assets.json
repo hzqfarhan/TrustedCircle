@@ -1,0 +1,21 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "9c8e1ea00a349ccab569d66914e8e0435594c0024dc14defb028bca43d0df6d2": {
+      "displayName": "SmartWalletStack Template",
+      "source": {
+        "path": "SmartWalletStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-d00413a3": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "9c8e1ea00a349ccab569d66914e8e0435594c0024dc14defb028bca43d0df6d2.json",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

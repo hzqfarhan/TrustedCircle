@@ -10,7 +10,7 @@ export async function getAllBadges(): Promise<Badge[]> {
 }
 
 export async function createBadge(badge: Badge): Promise<void> {
-  await putItem(Tables.badges, badge as Record<string, unknown>);
+  await putItem(Tables.badges, badge);
 }
 
 export async function getChildBadges(childId: string): Promise<ChildBadge[]> {
@@ -23,7 +23,7 @@ export async function getChildBadges(childId: string): Promise<ChildBadge[]> {
 }
 
 export async function awardBadge(childBadge: ChildBadge): Promise<void> {
-  await putItem(Tables.childBadges, childBadge as Record<string, unknown>);
+  await putItem(Tables.childBadges, childBadge);
 }
 
 export async function getChildBadgesWithDetails(childId: string): Promise<(ChildBadge & { badge: Badge })[]> {

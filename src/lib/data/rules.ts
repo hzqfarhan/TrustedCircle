@@ -15,7 +15,7 @@ export async function getRulesByChild(childId: string): Promise<AllowanceRule[]>
 }
 
 export async function createRule(rule: AllowanceRule): Promise<void> {
-  await putItem(Tables.allowanceRules, rule as Record<string, unknown>);
+  await putItem(Tables.allowanceRules, rule);
 }
 
 export async function updateRule(id: string, updates: Partial<AllowanceRule>): Promise<void> {

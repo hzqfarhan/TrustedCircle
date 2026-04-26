@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMockTable } from "@/lib/aws/mock-data";
+import { deepToCamel } from "@/lib/aws/dynamodb";
 import { uploadChildKycSchema } from "@/lib/validations/kyc";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ childId: string }> }) {
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ chi
     const validated = uploadChildKycSchema.parse(body.data);
     const parentId = body.parentId;
 
-    const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.id === childId && c.parentId === parentId);
+    const child = getMockTable("juniorwallet-child-profiles").find((c: any) => c.ChildId === childId && c.ParentId === parentId);
     if (!child) return NextResponse.json({ error: "Child not found or unauthorized" }, { status: 404 });
 
     const kycDocs = getMockTable("juniorwallet-child-kyc-documents");
@@ -20,33 +21,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ chi
     const fakeS3Key = `kyc-documents/${parentId}/${childId}/${docId}_${validated.fileName}`;
 
     // Get the most recent doc if any, to carry over the masked number
-    const existingDoc = kycDocs.filter((d: any) => d.childId === childId).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+    const existingDoc = kycDocs.filter((d: any) => d.ChildId === childId).sort((a: any, b: any) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime())[0];
 
     kycDocs.push({
-      id: docId,
-      childId: childId,
-      parentId,
-      documentType: existingDoc?.documentType || "mykid",
-      documentNumberMasked: existingDoc?.documentNumberMasked || "******-**-xxxx",
-      documentNumberHash: existingDoc?.documentNumberHash || "hash_xxxx",
-      documentFileKey: fakeS3Key,
-      status: "under_review",
-      submittedAt: now,
-      createdAt: now,
-      updatedAt: now,
+      KycDocumentId: docId,
+      ChildId: childId,
+      ParentId: parentId,
+      DocumentType: existingDoc?.DocumentType || "mykid",
+      DocumentNumberMasked: existingDoc?.DocumentNumberMasked || "******-**-xxxx",
+      DocumentNumberHash: existingDoc?.DocumentNumberHash || "hash_xxxx",
+      DocumentFileKey: fakeS3Key,
+      Status: "under_review",
+      SubmittedAt: now,
+      CreatedAt: now,
+      UpdatedAt: now,
     });
 
-    child.kycStatus = "kyc_under_review";
-    child.updatedAt = now;
+    child.KycStatus = "kyc_under_review";
+    child.UpdatedAt = now;
 
     const auditLogs = getMockTable("juniorwallet-audit-logs");
     auditLogs.push({
-      id: `audit_${Date.now()}`,
-      actorId: parentId,
-      action: "child_kyc_uploaded",
-      entityType: "child_kyc",
-      entityId: docId,
-      createdAt: now,
+      Id: `audit_${Date.now()}`,
+      ActorId: parentId,
+      Action: "child_kyc_uploaded",
+      EntityType: "child_kyc",
+      EntityId: docId,
+      CreatedAt: now,
     });
 
     return NextResponse.json({ success: true, docId });

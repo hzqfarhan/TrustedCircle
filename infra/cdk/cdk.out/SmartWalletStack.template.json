@@ -1,0 +1,943 @@
+{
+ "Resources": {
+  "SmartWalletUserPool0BA12435": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireNumbers": true,
+      "RequireSymbols": true,
+      "RequireUppercase": true
+     }
+    },
+    "Schema": [
+     {
+      "AttributeDataType": "String",
+      "Mutable": true,
+      "Name": "role"
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "smart-wallet-user-pool",
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/SmartWalletUserPool/Resource"
+   }
+  },
+  "SmartWalletUserPoolSmartWalletClientC3BA9C10": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "smart-wallet-client",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "SmartWalletUserPool0BA12435"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/SmartWalletUserPool/SmartWalletClient/Resource"
+   }
+  },
+  "Users0A0EEA89": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "UserId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "Role",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "role-index",
+      "KeySchema": [
+       {
+        "AttributeName": "Role",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "UserId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Users"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/Users/Resource"
+   }
+  },
+  "ChildProfilesBB8670C6": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ParentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "UserId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "parentId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ParentId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "userId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "UserId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "ChildId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "ChildProfiles"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/ChildProfiles/Resource"
+   }
+  },
+  "UserChildLink3363E7D5": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "UserChildLinkId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ParentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "parentId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ParentId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "childId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "UserChildLinkId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "UserChildLink"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/UserChildLink/Resource"
+   }
+  },
+  "Transactions098C5767": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "TransactionId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "CreatedAt",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-createdAt-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "CreatedAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "TransactionId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Transactions"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/Transactions/Resource"
+   }
+  },
+  "AllowanceRules8627A1FA": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "RuleId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "RuleId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "AllowanceRules"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/AllowanceRules/Resource"
+   }
+  },
+  "AllowanceRecommendations59476B9C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "AllowanceRecommendationsId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "CreatedAt",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "Status",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-createdAt-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "CreatedAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "status-index",
+      "KeySchema": [
+       {
+        "AttributeName": "Status",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "AllowanceRecommendationsId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "AllowanceRecommendations"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/AllowanceRecommendations/Resource"
+   }
+  },
+  "ExtraAllowanceRequests12BA0F40": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "RequestId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "CreatedAt",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ParentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "Status",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-createdAt-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "CreatedAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "parentId-status-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ParentId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "Status",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "RequestId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "ExtraAllowanceRequests"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/ExtraAllowanceRequests/Resource"
+   }
+  },
+  "GoalsB6B7CD6B": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "GoalId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "Status",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-status-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "Status",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "GoalId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Goals"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/Goals/Resource"
+   }
+  },
+  "Badges5CD980C4": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "BadgesId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "BadgesId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Badges"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/Badges/Resource"
+   }
+  },
+  "ChildBadgesF29B7EE6": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "ChildBadgesId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "ChildBadgesId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "ChildBadges"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/ChildBadges/Resource"
+   }
+  },
+  "Alerts91F83244": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "AlertId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ParentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "CreatedAt",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "parentId-createdAt-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ParentId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "CreatedAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "childId-createdAt-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "CreatedAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "AlertId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Alerts"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/Alerts/Resource"
+   }
+  },
+  "AuditLogsB945E340": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "AuditLogId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ActorId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "CreatedAt",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "actorId-createdAt-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ActorId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "CreatedAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "AuditLogId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "AuditLogs"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/AuditLogs/Resource"
+   }
+  },
+  "KYCDocuments62F671D5": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "KycDocumentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ChildId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "childId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "ChildId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "KycDocumentId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "KYCDocuments"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/KYCDocuments/Resource"
+   }
+  },
+  "SharedFunds67761CD5": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "SharedFundId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "UserId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "userId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "UserId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "SharedFundId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "SharedFunds"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/SharedFunds/Resource"
+   }
+  },
+  "Approvals8537C562": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "ApprovalId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "FundId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "RequestId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "fundId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "FundId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "requestId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "RequestId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "ApprovalId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Approvals"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/Approvals/Resource"
+   }
+  },
+  "SmartWalletAvatars5210799E": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "smart-wallet-avatars",
+    "CorsConfiguration": {
+     "CorsRules": [
+      {
+       "AllowedHeaders": [
+        "*"
+       ],
+       "AllowedMethods": [
+        "GET",
+        "PUT"
+       ],
+       "AllowedOrigins": [
+        "*"
+       ]
+      }
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/SmartWalletAvatars/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02LUQ6CMBBEz8J/WQHlAnIADeq3Ke1qCqVr2FZimt7dCNH4NS8zbyqo6hKKTM6cKz3k1nQQT16qQciZr1HR3RlPEC+M05HIiubmfvyFxhp0/n9amyT0y8mRdAfxLDuLH2WBJHgLcR/UgMtvpZREi0xhUot5CP4RfBKONELPm2e1g7KGIuvZmHwKzpsRoV3zDS6d2pbKAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SmartWalletStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "UserPoolId": {
+   "Value": {
+    "Ref": "SmartWalletUserPool0BA12435"
+   }
+  },
+  "UserPoolClientId": {
+   "Value": {
+    "Ref": "SmartWalletUserPoolSmartWalletClientC3BA9C10"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

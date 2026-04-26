@@ -26,7 +26,7 @@ export async function getChildrenByParent(parentId: string): Promise<ChildProfil
 }
 
 export async function createChildProfile(child: ChildProfile): Promise<void> {
-  await putItem(Tables.childProfiles, child as Record<string, unknown>);
+  await putItem(Tables.childProfiles, child);
 }
 
 export async function updateChildProfile(id: string, updates: Partial<ChildProfile>): Promise<void> {
@@ -56,7 +56,7 @@ export async function getChildParentLink(childId: string): Promise<ParentChildLi
 }
 
 export async function createParentChildLink(link: ParentChildLink): Promise<void> {
-  await putItem(Tables.parentChildLinks, link as Record<string, unknown>);
+  await putItem(Tables.parentChildLinks, link);
 }
 
 export async function isParentOfChild(parentId: string, childId: string): Promise<boolean> {

@@ -5,8 +5,14 @@ import { formatRM } from "@/lib/utils-tc";
 import type { Goal } from "@/types";
 
 export function GoalCard({ goal, index = 0 }: { goal: Goal; index?: number }) {
-  const progress = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0;
-  const isComplete = goal.status === "completed";
+  const g = goal as any;
+  const title = g.Title ?? g.title;
+  const goalType = g.GoalType ?? g.goalType;
+  const targetAmount = g.TargetAmount ?? g.targetAmount;
+  const currentAmount = g.CurrentAmount ?? g.currentAmount;
+  const status = g.Status ?? g.status;
+  const progress = targetAmount > 0 ? (currentAmount / targetAmount) * 100 : 0;
+  const isComplete = status === "completed";
 
   return (
     <motion.div
@@ -21,8 +27,8 @@ export function GoalCard({ goal, index = 0 }: { goal: Goal; index?: number }) {
             <Target size={16} className={isComplete ? "text-emerald-600" : "text-blue-600"} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">{goal.title}</p>
-            <p className="text-[10px] text-gray-400 capitalize">{goal.goalType}</p>
+            <p className="text-sm font-semibold text-gray-900">{title}</p>
+            <p className="text-[10px] text-gray-400 capitalize">{goalType}</p>
           </div>
         </div>
         {isComplete && (
@@ -34,8 +40,8 @@ export function GoalCard({ goal, index = 0 }: { goal: Goal; index?: number }) {
 
       <div className="mt-3">
         <div className="flex justify-between text-[11px] mb-1">
-          <span className="text-gray-500">{formatRM(goal.currentAmount)}</span>
-          <span className="text-gray-400">{formatRM(goal.targetAmount)}</span>
+          <span className="text-gray-500">{formatRM(currentAmount)}</span>
+          <span className="text-gray-400">{formatRM(targetAmount)}</span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <motion.div

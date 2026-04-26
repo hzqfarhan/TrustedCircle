@@ -1,25 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { contributeToFund } from "@/lib/data/funds";
+import { getProfile, updateWalletBalance } from "@/lib/data/profiles";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const { amount, userId } = await req.json();
 
-  // Update fund balance
-  await prisma.sharedFund.update({
-    where: { id: params.id },
-    data: { balance: { increment: parseFloat(amount) } },
-  });
-
-  // Record contribution
-  await prisma.sharedFundContribution.create({
-    data: { fundId: params.id, amount: parseFloat(amount) },
-  });
+  // Update fund balance and record contribution
+  await contributeToFund(id, parseFloat(amount), userId);
 
   // Deduct from user wallet
-  await prisma.wallet.update({
-    where: { userId },
-    data: { balance: { decrement: parseFloat(amount) } },
-  });
+  const profile = await getProfile(userId);
+  if (profile) {
+    const newBalance = (profile.walletBalance || 0) - parseFloat(amount);
+    await updateWalletBalance(userId, newBalance);
+  }
 
   return NextResponse.json({ ok: true });
 }

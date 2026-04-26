@@ -49,18 +49,21 @@ export class SmartWalletStack extends cdk.Stack {
     };
 
     // ── DynamoDB Tables ──
-    createTable('smart-wallet-profiles', 'Id', undefined, [{ name: 'RoleIndex', pk: 'Role' }]);
-    createTable('smart-wallet-child-profiles', 'Id', undefined, [{ name: 'ParentIdIndex', pk: 'ParentId' }, { name: 'UserIdIndex', pk: 'UserId' }]);
-    createTable('smart-wallet-parent-child-links', 'Id', undefined, [{ name: 'ParentIdIndex', pk: 'ParentId' }, { name: 'ChildIdIndex', pk: 'ChildId' }]);
-    createTable('smart-wallet-transactions', 'Id', undefined, [{ name: 'ChildIdCreatedAtIndex', pk: 'ChildId', sk: 'CreatedAt' }]);
-    createTable('smart-wallet-allowance-rules', 'Id', undefined, [{ name: 'ChildIdIndex', pk: 'ChildId' }]);
-    createTable('smart-wallet-allowance-recommendations', 'Id', undefined, [{ name: 'ChildIdCreatedAtIndex', pk: 'ChildId', sk: 'CreatedAt' }, { name: 'StatusIndex', pk: 'Status' }]);
-    createTable('smart-wallet-extra-allowance-requests', 'Id', undefined, [{ name: 'ChildIdCreatedAtIndex', pk: 'ChildId', sk: 'CreatedAt' }, { name: 'ParentIdStatusIndex', pk: 'ParentId', sk: 'Status' }]);
-    createTable('smart-wallet-goals', 'Id', undefined, [{ name: 'ChildIdStatusIndex', pk: 'ChildId', sk: 'Status' }]);
-    createTable('smart-wallet-badges', 'Id');
-    createTable('smart-wallet-child-badges', 'Id', undefined, [{ name: 'ChildIdIndex', pk: 'ChildId' }]);
-    createTable('smart-wallet-alerts', 'Id', undefined, [{ name: 'ParentIdCreatedAtIndex', pk: 'ParentId', sk: 'CreatedAt' }, { name: 'ChildIdCreatedAtIndex', pk: 'ChildId', sk: 'CreatedAt' }]);
-    createTable('smart-wallet-audit-logs', 'Id', undefined, [{ name: 'ActorIdCreatedAtIndex', pk: 'ActorId', sk: 'CreatedAt' }]);
+    createTable('Users', 'UserId', undefined, [{ name: 'role-index', pk: 'Role' }]);
+    createTable('ChildProfiles', 'ChildId', undefined, [{ name: 'parentId-index', pk: 'ParentId' }, { name: 'userId-index', pk: 'UserId' }]);
+    createTable('UserChildLink', 'UserChildLinkId', undefined, [{ name: 'parentId-index', pk: 'ParentId' }, { name: 'childId-index', pk: 'ChildId' }]);
+    createTable('Transactions', 'TransactionId', undefined, [{ name: 'childId-createdAt-index', pk: 'ChildId', sk: 'CreatedAt' }]);
+    createTable('AllowanceRules', 'RuleId', undefined, [{ name: 'childId-index', pk: 'ChildId' }]);
+    createTable('AllowanceRecommendations', 'AllowanceRecommendationsId', undefined, [{ name: 'childId-createdAt-index', pk: 'ChildId', sk: 'CreatedAt' }, { name: 'status-index', pk: 'Status' }]);
+    createTable('ExtraAllowanceRequests', 'RequestId', undefined, [{ name: 'childId-createdAt-index', pk: 'ChildId', sk: 'CreatedAt' }, { name: 'parentId-status-index', pk: 'ParentId', sk: 'Status' }]);
+    createTable('Goals', 'GoalId', undefined, [{ name: 'childId-status-index', pk: 'ChildId', sk: 'Status' }]);
+    createTable('Badges', 'BadgesId');
+    createTable('ChildBadges', 'ChildBadgesId', undefined, [{ name: 'childId-index', pk: 'ChildId' }]);
+    createTable('Alerts', 'AlertId', undefined, [{ name: 'parentId-createdAt-index', pk: 'ParentId', sk: 'CreatedAt' }, { name: 'childId-createdAt-index', pk: 'ChildId', sk: 'CreatedAt' }]);
+    createTable('AuditLogs', 'AuditLogId', undefined, [{ name: 'actorId-createdAt-index', pk: 'ActorId', sk: 'CreatedAt' }]);
+    createTable('KYCDocuments', 'KycDocumentId', undefined, [{ name: 'childId-index', pk: 'ChildId' }]);
+    createTable('SharedFunds', 'SharedFundId', undefined, [{ name: 'userId-index', pk: 'UserId' }]);
+    createTable('Approvals', 'ApprovalId', undefined, [{ name: 'fundId-index', pk: 'FundId' }, { name: 'requestId-index', pk: 'RequestId' }]);
 
     // ── S3 Bucket (optional avatars) ──
     new s3.Bucket(this, 'SmartWalletAvatars', {

@@ -1,0 +1,483 @@
+{
+  "/SmartWalletStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Users": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "Users0A0EEA89"
+      }
+    }
+  ],
+  "/SmartWalletStack/ChildProfiles": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "ChildProfilesBB8670C6"
+      }
+    }
+  ],
+  "/SmartWalletStack/UserChildLink": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "UserChildLink3363E7D5"
+      }
+    }
+  ],
+  "/SmartWalletStack/Transactions": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "Transactions098C5767"
+      }
+    }
+  ],
+  "/SmartWalletStack/AllowanceRules": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "AllowanceRules8627A1FA"
+      }
+    }
+  ],
+  "/SmartWalletStack/AllowanceRecommendations": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "AllowanceRecommendations59476B9C"
+      }
+    }
+  ],
+  "/SmartWalletStack/ExtraAllowanceRequests": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "ExtraAllowanceRequests12BA0F40"
+      }
+    }
+  ],
+  "/SmartWalletStack/Goals": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "GoalsB6B7CD6B"
+      }
+    }
+  ],
+  "/SmartWalletStack/Badges": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "Badges5CD980C4"
+      }
+    }
+  ],
+  "/SmartWalletStack/ChildBadges": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "ChildBadgesF29B7EE6"
+      }
+    }
+  ],
+  "/SmartWalletStack/Alerts": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "Alerts91F83244"
+      }
+    }
+  ],
+  "/SmartWalletStack/AuditLogs": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "AuditLogsB945E340"
+      }
+    }
+  ],
+  "/SmartWalletStack/KYCDocuments": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "KYCDocuments62F671D5"
+      }
+    }
+  ],
+  "/SmartWalletStack/SharedFunds": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "SharedFunds67761CD5"
+      }
+    }
+  ],
+  "/SmartWalletStack/Approvals": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "Approvals8537C562"
+      }
+    }
+  ],
+  "/SmartWalletStack/UserPoolId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolId"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:76:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/UserPoolClientId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolClientId"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:77:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals, @cspotcode\\source-map-support...",
+        "(no user code in 9007199254740991 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SmartWalletStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals, @cspotcode\\source-map-support...",
+        "(no user code in 9007199254740991 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SmartWalletStack/SmartWalletUserPool/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SmartWalletUserPool0BA12435"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new UserPool2 in aws-cdk-lib...",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:16:22)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Users/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Users0A0EEA89"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:52:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/ChildProfiles/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChildProfilesBB8670C6"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:53:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/UserChildLink/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserChildLink3363E7D5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:54:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Transactions/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Transactions098C5767"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:55:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/AllowanceRules/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AllowanceRules8627A1FA"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:56:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/AllowanceRecommendations/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AllowanceRecommendations59476B9C"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:57:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/ExtraAllowanceRequests/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExtraAllowanceRequests12BA0F40"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:58:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Goals/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "GoalsB6B7CD6B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:59:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Badges/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Badges5CD980C4"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:60:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/ChildBadges/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChildBadgesF29B7EE6"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:61:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Alerts/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Alerts91F83244"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:62:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/AuditLogs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditLogsB945E340"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:63:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/KYCDocuments/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KYCDocuments62F671D5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:64:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/SharedFunds/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SharedFunds67761CD5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:65:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/Approvals/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Approvals8537C562"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Table2 in aws-cdk-lib...",
+        "createTable (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:34:21)",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:66:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/SmartWalletAvatars/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SmartWalletAvatars5210799E"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Bucket2 in aws-cdk-lib...",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:69:5)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SmartWalletStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals, @cspotcode\\source-map-support...",
+        "(no user code in 9007199254740991 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SmartWalletStack/SmartWalletUserPool/SmartWalletClient/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SmartWalletUserPoolSmartWalletClientC3BA9C10"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addClient in aws-cdk-lib...",
+        "new SmartWalletStack (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\smart-wallet-stack.ts:26:37)",
+        "<anonymous> (C:\\Users\\muham\\OneDrive\\Documents\\GitHub\\TrustedCircle\\infra\\cdk\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ]
+}

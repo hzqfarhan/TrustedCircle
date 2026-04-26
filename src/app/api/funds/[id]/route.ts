@@ -1,23 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getSharedFund } from "@/lib/data/funds";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const fund = await prisma.sharedFund.findUnique({
-    where: { id: params.id },
-    include: {
-      members: { include: { user: { select: { id: true, name: true, role: true } } } },
-      contributions: { orderBy: { createdAt: "desc" }, take: 20 },
-      withdrawals: {
-        orderBy: { createdAt: "desc" },
-        include: {
-          requester: { select: { id: true, name: true } },
-          approvals: {
-            include: { approver: { select: { id: true, name: true } } },
-          },
-        },
-      },
-    },
-  });
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const fund = await getSharedFund(id);
 
   if (!fund) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(fund);

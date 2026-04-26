@@ -13,7 +13,7 @@ import { ScoreRing } from "@/components/ScoreRing";
 import { SpendingChart } from "@/components/SpendingChart";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { formatRM } from "@/lib/utils-tc";
-import { ChevronRight, ChevronLeft, Bell, Brain, Plus, ShieldAlert, ShieldCheck } from "lucide-react";
+import { ChevronRight, ChevronLeft, Bell, Brain, Plus, ShieldAlert, ShieldCheck, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";

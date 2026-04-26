@@ -29,7 +29,7 @@ export async function getPendingRecommendations(): Promise<AllowanceRecommendati
 }
 
 export async function createRecommendation(rec: AllowanceRecommendation): Promise<void> {
-  await putItem(Tables.recommendations, rec as Record<string, unknown>);
+  await putItem(Tables.recommendations, rec);
 }
 
 export async function approveRecommendation(

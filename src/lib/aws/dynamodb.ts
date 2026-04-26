@@ -13,6 +13,7 @@ import {
   ScanCommand,
 } from '@aws-sdk/lib-dynamodb';
 import type { NativeAttributeValue } from '@aws-sdk/lib-dynamodb';
+import { fromIni } from '@aws-sdk/credential-providers';
 import { getMockTable } from './mock-data';
 
 const client = new DynamoDBClient({
@@ -20,6 +21,20 @@ const client = new DynamoDBClient({
   ...(process.env.DYNAMODB_ENDPOINT && {
     endpoint: process.env.DYNAMODB_ENDPOINT,
   }),
+  // Use AWS SSO profile when available, otherwise env vars, otherwise default chain
+  ...(process.env.AWS_PROFILE
+    ? { credentials: fromIni({ profile: process.env.AWS_PROFILE }) }
+    : process.env.AWS_ACCESS_KEY_ID
+      ? {
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+            ...(process.env.AWS_SESSION_TOKEN && {
+              sessionToken: process.env.AWS_SESSION_TOKEN,
+            }),
+          },
+        }
+    : {}),
 });
 
 export const docClient = DynamoDBDocumentClient.from(client, {
@@ -28,20 +43,71 @@ export const docClient = DynamoDBDocumentClient.from(client, {
 
 // ─── Table names from env ────────────────────
 export const Tables = {
-  profiles: process.env.DYNAMODB_PROFILES_TABLE || 'smart-wallet-profiles',
-  childProfiles: process.env.DYNAMODB_CHILD_PROFILES_TABLE || 'smart-wallet-child-profiles',
-  parentChildLinks: process.env.DYNAMODB_PARENT_CHILD_LINKS_TABLE || 'smart-wallet-parent-child-links',
-  transactions: process.env.DYNAMODB_TRANSACTIONS_TABLE || 'smart-wallet-transactions',
-  allowanceRules: process.env.DYNAMODB_ALLOWANCE_RULES_TABLE || 'smart-wallet-allowance-rules',
-  recommendations: process.env.DYNAMODB_ALLOWANCE_RECOMMENDATIONS_TABLE || 'smart-wallet-allowance-recommendations',
-  extraRequests: process.env.DYNAMODB_EXTRA_ALLOWANCE_REQUESTS_TABLE || 'smart-wallet-extra-allowance-requests',
-  goals: process.env.DYNAMODB_GOALS_TABLE || 'smart-wallet-goals',
-  badges: process.env.DYNAMODB_BADGES_TABLE || 'smart-wallet-badges',
-  childBadges: process.env.DYNAMODB_CHILD_BADGES_TABLE || 'smart-wallet-child-badges',
-  alerts: process.env.DYNAMODB_ALERTS_TABLE || 'smart-wallet-alerts',
-  auditLogs: process.env.DYNAMODB_AUDIT_LOGS_TABLE || 'smart-wallet-audit-logs',
-  kycDocuments: process.env.DYNAMODB_CHILD_KYC_DOCUMENTS_TABLE || 'smart-wallet-child-kyc-documents',
+  profiles: process.env.DYNAMODB_PROFILES_TABLE || 'Users',
+  childProfiles: process.env.DYNAMODB_CHILD_PROFILES_TABLE || 'ChildProfiles',
+  parentChildLinks: process.env.DYNAMODB_PARENT_CHILD_LINKS_TABLE || 'UserChildLink',
+  transactions: process.env.DYNAMODB_TRANSACTIONS_TABLE || 'Transactions',
+  allowanceRules: process.env.DYNAMODB_ALLOWANCE_RULES_TABLE || 'AllowanceRules',
+  recommendations: process.env.DYNAMODB_ALLOWANCE_RECOMMENDATIONS_TABLE || 'AllowanceRecommendations',
+  extraRequests: process.env.DYNAMODB_EXTRA_ALLOWANCE_REQUESTS_TABLE || 'ExtraAllowanceRequests',
+  goals: process.env.DYNAMODB_GOALS_TABLE || 'Goals',
+  badges: process.env.DYNAMODB_BADGES_TABLE || 'Badges',
+  childBadges: process.env.DYNAMODB_CHILD_BADGES_TABLE || 'ChildBadges',
+  alerts: process.env.DYNAMODB_ALERTS_TABLE || 'Alerts',
+  auditLogs: process.env.DYNAMODB_AUDIT_LOGS_TABLE || 'AuditLogs',
+  kycDocuments: process.env.DYNAMODB_CHILD_KYC_DOCUMENTS_TABLE || 'KYCDocuments',
+  sharedFunds: process.env.DYNAMODB_SHARED_FUNDS_TABLE || 'SharedFunds',
+  approvals: process.env.DYNAMODB_APPROVALS_TABLE || 'Approvals',
 } as const;
+
+// ─── PK mapping: normalized table name → DynamoDB partition key ───
+
+function normalizeTable(name: string): string {
+  return name.replace(/^(smart-wallet-|juniorwallet-)/, '').replace(/-/g, '').toLowerCase();
+}
+
+const TABLE_PK_MAP: Record<string, string> = {
+  profiles:          'UserId',
+  users:             'UserId',
+  childprofiles:     'ChildId',
+  parentchildlinks:  'UserChildLinkId',
+  userchildlink:     'UserChildLinkId',
+  transactions:      'TransactionId',
+  allowancerules:    'RuleId',
+  allowancerecommendations: 'AllowanceRecommendationsId',
+  extraallowancerequests:   'RequestId',
+  allowancerequests: 'RequestId',
+  extraallowancerequest:    'RequestId',
+  goals:             'GoalId',
+  badges:            'BadgesId',
+  childbadges:       'ChildBadgesId',
+  alerts:            'AlertId',
+  auditlogs:         'AuditLogId',
+  childkycdocuments: 'KycDocumentId',
+  kycdocuments:      'KycDocumentId',
+  sharedfunds:       'SharedFundId',
+  approvals:         'ApprovalId',
+};
+
+function getTablePK(table: string): string {
+  return TABLE_PK_MAP[normalizeTable(table)] || 'Id';
+}
+
+/** Convert generic key `{ Id: v }` → `{ ChildId: v }` per table PK */
+function toTableKey(table: string, pascalKey: Record<string, any>): Record<string, any> {
+  const pkName = getTablePK(table);
+  if (pkName === 'Id') return pascalKey;
+  const value = pascalKey['Id'] ?? Object.values(pascalKey)[0];
+  return { [pkName]: value };
+}
+
+/** Fix item's `Id` field to match the table's actual PK name */
+function fixItemPK(table: string, item: Record<string, any>): Record<string, any> {
+  const pkName = getTablePK(table);
+  if (pkName === 'Id' || !('Id' in item)) return item;
+  const { Id, ...rest } = item;
+  return { [pkName]: Id, ...rest };
+}
 
 // ─── Case-conversion helpers ─────────────────
 
@@ -93,7 +159,7 @@ function expValuesToPascal(vals: Record<string, any>): Record<string, any> {
 }
 
 /** Recursively convert all keys in an object/array to camelCase */
-function deepToCamel(obj: any): any {
+export function deepToCamel(obj: any): any {
   if (Array.isArray(obj)) return obj.map(deepToCamel);
   if (obj !== null && typeof obj === 'object') {
     const r: Record<string, any> = {};
@@ -113,26 +179,40 @@ function mockMatch(item: Record<string, any>, kvs: Record<string, any>): boolean
   return Object.entries(kvs).every(([k, v]) => mockLookup(item, k, v));
 }
 
+/** After deepToCamel, rename the descriptive PK (e.g. 'userId') back to 'id'
+ *  so the returned object matches the TypeScript interface which expects `id`. */
+function remapPKToId(table: string, obj: any): any {
+  if (!obj) return obj;
+  const pkCamel = pascalToCamel(getTablePK(table));
+  if (pkCamel === 'id' || !(pkCamel in obj)) return obj;
+  const { [pkCamel]: idValue, ...rest } = obj;
+  return { id: idValue, ...rest };
+}
+
+function remapPKToIdArray(table: string, arr: any[]): any[] {
+  return arr.map(item => remapPKToId(table, item));
+}
+
 // ─── Generic helpers ─────────────────────────
 
 export async function getItem<T>(table: string, key: Record<string, NativeAttributeValue>): Promise<T | null> {
-  const pascalKey = mapKeys(key, camelToPascal);
+  const pascalKey = toTableKey(table, mapKeys(key, camelToPascal));
 
   if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
     const found = mockTable.find(item => mockMatch(item, pascalKey));
-    return (found ? deepToCamel(found) : null) as T | null;
+    return (found ? remapPKToId(table, deepToCamel(found)) : null) as T | null;
   }
   const result = await docClient.send(new GetCommand({ TableName: table, Key: pascalKey }));
-  return (result.Item ? deepToCamel(result.Item) : null) as T | null;
+  return (result.Item ? remapPKToId(table, deepToCamel(result.Item)) : null) as T | null;
 }
 
-export async function putItem(table: string, item: Record<string, NativeAttributeValue>): Promise<void> {
-  const pascalItem = mapKeys(item, camelToPascal);
+export async function putItem(table: string, item: Record<string, any>): Promise<void> {
+  const pascalItem = fixItemPK(table, mapKeys(item, camelToPascal));
 
   if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
-    const pk = Object.keys(pascalItem)[0];
+    const pk = getTablePK(table);
     const existingIdx = mockTable.findIndex(i => mockLookup(i, pk, pascalItem[pk]));
     if (existingIdx >= 0) {
       mockTable[existingIdx] = pascalItem;
@@ -149,7 +229,7 @@ export async function updateItem(
   key: Record<string, NativeAttributeValue>,
   updates: Record<string, NativeAttributeValue>
 ): Promise<void> {
-  const pascalKey = mapKeys(key, camelToPascal);
+  const pascalKey = toTableKey(table, mapKeys(key, camelToPascal));
   const pascalUpdates = mapKeys(updates, camelToPascal);
 
   const expressions: string[] = [];
@@ -183,7 +263,7 @@ export async function updateItem(
 }
 
 export async function deleteItem(table: string, key: Record<string, NativeAttributeValue>): Promise<void> {
-  const pascalKey = mapKeys(key, camelToPascal);
+  const pascalKey = toTableKey(table, mapKeys(key, camelToPascal));
 
   if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
@@ -206,7 +286,7 @@ export async function queryItems<T>(
     filterExpression?: string;
   }
 ): Promise<T[]> {
-  const pascalIndex = indexName ? gsiToPascal(indexName) : undefined;
+  const pascalIndex = indexName;  // GSI names on AWS are already camelCase-dash (e.g. childId-createdAt-index)
   const pascalCondition = kceToPascal(keyCondition);
   const pascalValues = expValuesToPascal(expressionValues);
   const pascalExpNames = options?.expressionNames
@@ -225,9 +305,34 @@ export async function queryItems<T>(
       }
       return true;
     });
+
+    // Apply filterExpression for MockDB (supports simple equalities like #read = :read)
+    if (pascalFilter && pascalExpNames) {
+      const filterValueKeys = Array.from(pascalFilter.matchAll(/:([A-Z][a-zA-Z]*)/g));
+      if (filterValueKeys.length > 0) {
+        results = results.filter(item => {
+          for (const match of filterValueKeys) {
+            const fullKey = match[0]; // e.g. ':Read'
+            const value = pascalValues[fullKey];
+            if (value === undefined) continue;
+            // Find what property name this :Key maps to via filter expression
+            // Parse `#Read = :Read` → find #Read → look up expressionNames → 'Read' → check item['Read']
+            const expNameMatches = Array.from(pascalFilter.matchAll(/#([A-Z][a-zA-Z]*)\s*=\s*(:[A-Z][a-zA-Z]*)/g));
+            for (const [,, expKey, valKey] of expNameMatches) {
+              if (valKey === fullKey) {
+                const propName = pascalExpNames[`#${expKey}`];
+                if (propName && !mockLookup(item, propName, value)) return false;
+              }
+            }
+          }
+          return true;
+        });
+      }
+    }
+
     if (options?.scanForward === false) results = results.reverse();
     if (options?.limit) results = results.slice(0, options.limit);
-    return deepToCamel(results) as T[];
+    return remapPKToIdArray(table, deepToCamel(results)) as T[];
   }
 
   const result = await docClient.send(
@@ -242,14 +347,14 @@ export async function queryItems<T>(
       FilterExpression: pascalFilter,
     })
   );
-  return (result.Items ? deepToCamel(result.Items) : []) as T[];
+  return (result.Items ? remapPKToIdArray(table, deepToCamel(result.Items)) : []) as T[];
 }
 
 export async function scanItems<T>(table: string, limit?: number): Promise<T[]> {
   if (process.env.USE_MOCK_DB !== 'false') {
     const mockTable = getMockTable(table);
-    return deepToCamel(limit ? mockTable.slice(0, limit) : mockTable) as T[];
+    return remapPKToIdArray(table, deepToCamel(limit ? mockTable.slice(0, limit) : mockTable)) as T[];
   }
   const result = await docClient.send(new ScanCommand({ TableName: table, Limit: limit }));
-  return (result.Items ? deepToCamel(result.Items) : []) as T[];
+  return (result.Items ? remapPKToIdArray(table, deepToCamel(result.Items)) : []) as T[];
 }

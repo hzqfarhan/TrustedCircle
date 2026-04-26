@@ -20,5 +20,5 @@ export async function createAuditLog(
     newValue,
     createdAt: new Date().toISOString(),
   };
-  await putItem(Tables.auditLogs, log as Record<string, unknown>);
+  await putItem(Tables.auditLogs, log);
 }

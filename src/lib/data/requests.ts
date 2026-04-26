@@ -34,7 +34,7 @@ export async function getRequestsByParent(parentId: string, status?: string): Pr
 }
 
 export async function createExtraRequest(req: ExtraAllowanceRequest): Promise<void> {
-  await putItem(Tables.extraRequests, req as Record<string, unknown>);
+  await putItem(Tables.extraRequests, req);
 }
 
 export async function resolveExtraRequest(

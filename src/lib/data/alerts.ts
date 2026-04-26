@@ -26,7 +26,7 @@ export async function getUnreadAlertsByParent(parentId: string): Promise<Alert[]
     Tables.alerts,
     'parentId-createdAt-index',
     'parentId = :parentId',
-    { ':parentId': parentId },
+    { ':parentId': parentId, ':read': false },
     {
       scanForward: false,
       filterExpression: '#read = :read',
@@ -36,7 +36,21 @@ export async function getUnreadAlertsByParent(parentId: string): Promise<Alert[]
 }
 
 export async function createAlert(alert: Alert): Promise<void> {
-  await putItem(Tables.alerts, alert as Record<string, unknown>);
+  await putItem(Tables.alerts, alert);
+}
+
+export async function getUnreadAlertsByChild(childId: string): Promise<Alert[]> {
+  return queryItems<Alert>(
+    Tables.alerts,
+    'childId-createdAt-index',
+    'childId = :childId',
+    { ':childId': childId, ':read': false },
+    {
+      scanForward: false,
+      filterExpression: '#read = :read',
+      expressionNames: { '#read': 'read' },
+    }
+  );
 }
 
 export async function markAlertRead(id: string): Promise<void> {

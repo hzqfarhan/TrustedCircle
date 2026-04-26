@@ -33,13 +33,13 @@ export default function ChildDetailPage() {
   }, [currentUser, authLoading, childId]);
 
   if (authLoading || loading || !data) return <MobileShell><LoadingState /></MobileShell>;
-  const child = data.childProfile;
+  const child = data.child;
 
   return (
     <MobileShell>
       <WalletHeader 
         showBack 
-        title={child.fullName} 
+        title={child.FullName} 
         rightElement={
           <Link href={`/parent/child/${childId}/profile`} className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center active:bg-blue-100 transition-colors">
             <User size={16} className="text-blue-600" />
@@ -50,12 +50,12 @@ export default function ChildDetailPage() {
         {/* Summary */}
         <div className="mx-4 mt-3 rounded-3xl p-5" style={{ background: "linear-gradient(135deg, #0B5CFF 0%, #002FA7 100%)" }}>
           <div className="flex items-center gap-4">
-            <ScoreRing score={child.responsibilityScore} size={80} strokeWidth={7} showLabel={false} />
+            <ScoreRing score={child.ResponsibilityScore} size={80} strokeWidth={7} showLabel={false} />
             <div>
-              <p className="text-white text-lg font-bold">{child.fullName}</p>
-              <p className="text-blue-200 text-xs">{child.ageGroup}</p>
-              <p className="text-white text-xl font-bold mt-1">{formatRM(child.currentBalance)}</p>
-              <p className="text-blue-200 text-[10px]">Monthly: {formatRM(child.monthlyAllowance)}</p>
+              <p className="text-white text-lg font-bold">{child.FullName}</p>
+              <p className="text-blue-200 text-xs">{child.AgeGroup}</p>
+              <p className="text-white text-xl font-bold mt-1">{formatRM(child.CurrentBalance)}</p>
+              <p className="text-blue-200 text-[10px]">Monthly: {formatRM(child.MonthlyAllowance)}</p>
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function ChildDetailPage() {
         {data.goals?.length > 0 && (
           <div className="px-4 pt-5">
             <p className="text-sm font-bold text-gray-800 mb-3">Savings Goals</p>
-            <div className="space-y-2">{data.goals.map((g: any, i: number) => <GoalCard key={g.id} goal={g} index={i} />)}</div>
+            <div className="space-y-2">{data.goals.map((g: any, i: number) => <GoalCard key={g.GoalId || g.id} goal={g} index={i} />)}</div>
           </div>
         )}
 
@@ -123,16 +123,16 @@ export default function ChildDetailPage() {
           <p className="text-sm font-bold text-gray-800 mb-3">Recent Transactions</p>
           <div className="space-y-1">
             {(data.transactions || []).slice(0, 5).map((tx: any) => (
-              <div key={tx.id} className="bg-white rounded-xl p-3 flex items-center gap-3">
+              <div key={tx.TransactionId || tx.id} className="bg-white rounded-xl p-3 flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-gray-800 truncate">{tx.merchant}</p>
-                    <CategoryBadge category={tx.category} />
+                    <p className="text-sm font-semibold text-gray-800 truncate">{tx.Merchant}</p>
+                    <CategoryBadge category={tx.Category} />
                   </div>
-                  <p className="text-[11px] text-gray-400">{formatDate(tx.createdAt)}</p>
+                  <p className="text-[11px] text-gray-400">{formatDate(tx.CreatedAt)}</p>
                 </div>
-                <p className={`text-sm font-bold ${tx.transactionType === "topup" ? "text-emerald-600" : "text-gray-800"}`}>
-                  {tx.transactionType === "topup" ? "+" : "-"}{formatRM(tx.amount)}
+                <p className={`text-sm font-bold ${tx.TransactionType === "topup" ? "text-emerald-600" : "text-gray-800"}`}>
+                  {tx.TransactionType === "topup" ? "+" : "-"}{formatRM(tx.Amount)}
                 </p>
               </div>
             ))}

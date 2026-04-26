@@ -7,45 +7,37 @@ const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString()
 
 export const MockDB: Record<string, any[]> = {
   "juniorwallet-profiles": [
-    { Id: 'demo_parent', FullName: 'Paan', Role: 'parent', AvatarUrl: '/pfp/paan.png', WalletBalance: 2500, CreatedAt: now, UpdatedAt: now },
-    { Id: 'demo_child', FullName: 'Aiman', Role: 'child', AvatarUrl: '/pfp/child.png', WalletBalance: 0, CreatedAt: now, UpdatedAt: now }
+    { UserId: 'demo_parent', FullName: 'Paan', Role: 'parent', AvatarUrl: '/pfp/paan.png', WalletBalance: 2500, CreatedAt: now, UpdatedAt: now },
+    { UserId: 'demo_child', FullName: 'Aiman', Role: 'child', AvatarUrl: '/pfp/child.png', WalletBalance: 0, CreatedAt: now, UpdatedAt: now },
+    { UserId: 'demo_child_ibad_user', FullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", Role: 'child', WalletBalance: 0, CreatedAt: now, UpdatedAt: now }
   ],
   "juniorwallet-child-profiles": [
-    { Id: 'cp_aiman', UserId: 'demo_child', ParentId: 'demo_parent', FullName: 'Aiman', AgeGroup: 'Teen', ResponsibilityScore: 72, CurrentBalance: 165, MonthlyAllowance: 165, Status: 'active', CreatedAt: now, UpdatedAt: now }
+    { ChildId: 'cp_aiman', UserId: 'demo_child', ParentId: 'demo_parent', FullName: 'Aiman', AgeGroup: 'Teen', ResponsibilityScore: 72, CurrentBalance: 165, MonthlyAllowance: 165, Status: 'active', CreatedAt: now, UpdatedAt: now },
+    { ChildId: 'child_ibad_demo', UserId: 'demo_child_ibad_user', ParentId: 'demo_parent', FullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", Nickname: 'ibad', Email: 'ibad.junior@example.com', DateOfBirth: '2016-04-01', AgeGroup: 'under_12', Relationship: 'son', ResponsibilityScore: 72, CurrentBalance: 165, MonthlyAllowance: 165, KycStatus: 'kyc_pending', Status: 'pending_kyc', CreatedAt: now, UpdatedAt: now }
   ],
   "juniorwallet-parent-child-links": [
-    { Id: 'link_1', ParentId: 'demo_parent', ChildId: 'cp_aiman', Relationship: 'father', CreatedAt: now }
-    { id: 'demo_parent', fullName: 'Paan', role: 'parent', avatarUrl: '/pfp/paan.png', walletBalance: 2500, createdAt: now, updatedAt: now },
-    { id: 'demo_child', fullName: 'Aiman', role: 'child', avatarUrl: '/pfp/child.png', walletBalance: 0, createdAt: now, updatedAt: now },
-    { id: 'demo_child_ibad_user', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", role: 'child', walletBalance: 0, createdAt: now, updatedAt: now }
-  ],
-  "juniorwallet-child-profiles": [
-    { id: 'cp_aiman', userId: 'demo_child', parentId: 'demo_parent', fullName: 'Aiman', ageGroup: 'Teen', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, status: 'active', createdAt: now, updatedAt: now },
-    { id: 'child_ibad_demo', userId: 'demo_child_ibad_user', parentId: 'demo_parent', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", nickname: 'ibad', email: 'ibad.junior@example.com', dateOfBirth: '2016-04-01', ageGroup: 'under_12', relationship: 'son', responsibilityScore: 72, currentBalance: 165, monthlyAllowance: 165, kycStatus: 'kyc_pending', status: 'pending_kyc', createdAt: now, updatedAt: now }
-  ],
-  "juniorwallet-parent-child-links": [
-    { id: 'link_1', parentId: 'demo_parent', childId: 'cp_aiman', relationship: 'father', createdAt: now },
-    { id: 'link_ibad', parentId: 'demo_parent', childId: 'child_ibad_demo', relationship: 'father', createdAt: now }
+    { UserChildLinkId: 'link_1', ParentId: 'demo_parent', ChildId: 'cp_aiman', Relationship: 'father', CreatedAt: now },
+    { UserChildLinkId: 'link_ibad', ParentId: 'demo_parent', ChildId: 'child_ibad_demo', Relationship: 'father', CreatedAt: now }
   ],
   "juniorwallet-transactions": [
-    { Id: 'tx_1', ChildId: 'cp_aiman', Amount: 8.50, Merchant: 'Kantin Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'Lunch', CreatedAt: daysAgo(1) },
-    { Id: 'tx_2', ChildId: 'cp_aiman', Amount: 4.00, Merchant: 'Bas Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'Bus fare', CreatedAt: daysAgo(2) },
-    { Id: 'tx_3', ChildId: 'cp_aiman', Amount: 12.00, Merchant: 'Kantin Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, CreatedAt: daysAgo(3) },
-    { Id: 'tx_4', ChildId: 'cp_aiman', Amount: 25.00, Merchant: 'Kedai Buku', Category: 'educational', Classification: 'educational', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'School materials', CreatedAt: daysAgo(4) },
-    { Id: 'tx_5', ChildId: 'cp_aiman', Amount: 15.00, Merchant: 'Stationery Shop', Category: 'educational', Classification: 'educational', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, CreatedAt: daysAgo(5) },
-    { Id: 'tx_6', ChildId: 'cp_aiman', Amount: 45.00, Merchant: 'Steam Gaming', Category: 'discretionary', Classification: 'discretionary', NeedWant: 'want', TransactionType: 'spend', RiskFlag: false, Note: 'Game purchase', CreatedAt: daysAgo(6) },
-    { Id: 'tx_7', ChildId: 'cp_aiman', Amount: 20.00, Merchant: 'Savings', Category: 'savings', Classification: 'savings', NeedWant: 'neutral', TransactionType: 'saving', RiskFlag: false, Note: 'Weekly savings', CreatedAt: daysAgo(7) },
-    { Id: 'tx_8', ChildId: 'cp_aiman', Amount: 8.00, Merchant: 'Cafeteria', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, CreatedAt: daysAgo(8) },
-    { Id: 'tx_9', ChildId: 'cp_aiman', Amount: 120.00, Merchant: 'Unknown Store', Category: 'risky', Classification: 'risky', NeedWant: 'want', TransactionType: 'spend', RiskFlag: true, Note: 'Suspicious high amount', CreatedAt: daysAgo(10) },
-    { Id: 'tx_10', ChildId: 'cp_aiman', Amount: 165.00, Merchant: 'Monthly Allowance', Category: 'essential', Classification: 'essential', NeedWant: 'neutral', TransactionType: 'topup', RiskFlag: false, Note: 'Monthly allowance', CreatedAt: daysAgo(30) },
+    { TransactionId: 'tx_1', ChildId: 'cp_aiman', Amount: 8.50, Merchant: 'Kantin Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'Lunch', CreatedAt: daysAgo(1) },
+    { TransactionId: 'tx_2', ChildId: 'cp_aiman', Amount: 4.00, Merchant: 'Bas Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'Bus fare', CreatedAt: daysAgo(2) },
+    { TransactionId: 'tx_3', ChildId: 'cp_aiman', Amount: 12.00, Merchant: 'Kantin Sekolah', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, CreatedAt: daysAgo(3) },
+    { TransactionId: 'tx_4', ChildId: 'cp_aiman', Amount: 25.00, Merchant: 'Kedai Buku', Category: 'educational', Classification: 'educational', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, Note: 'School materials', CreatedAt: daysAgo(4) },
+    { TransactionId: 'tx_5', ChildId: 'cp_aiman', Amount: 15.00, Merchant: 'Stationery Shop', Category: 'educational', Classification: 'educational', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, CreatedAt: daysAgo(5) },
+    { TransactionId: 'tx_6', ChildId: 'cp_aiman', Amount: 45.00, Merchant: 'Steam Gaming', Category: 'discretionary', Classification: 'discretionary', NeedWant: 'want', TransactionType: 'spend', RiskFlag: false, Note: 'Game purchase', CreatedAt: daysAgo(6) },
+    { TransactionId: 'tx_7', ChildId: 'cp_aiman', Amount: 20.00, Merchant: 'Savings', Category: 'savings', Classification: 'savings', NeedWant: 'neutral', TransactionType: 'saving', RiskFlag: false, Note: 'Weekly savings', CreatedAt: daysAgo(7) },
+    { TransactionId: 'tx_8', ChildId: 'cp_aiman', Amount: 8.00, Merchant: 'Cafeteria', Category: 'essential', Classification: 'essential', NeedWant: 'need', TransactionType: 'spend', RiskFlag: false, CreatedAt: daysAgo(8) },
+    { TransactionId: 'tx_9', ChildId: 'cp_aiman', Amount: 120.00, Merchant: 'Unknown Store', Category: 'risky', Classification: 'risky', NeedWant: 'want', TransactionType: 'spend', RiskFlag: true, Note: 'Suspicious high amount', CreatedAt: daysAgo(10) },
+    { TransactionId: 'tx_10', ChildId: 'cp_aiman', Amount: 165.00, Merchant: 'Monthly Allowance', Category: 'essential', Classification: 'essential', NeedWant: 'neutral', TransactionType: 'topup', RiskFlag: false, Note: 'Monthly allowance', CreatedAt: daysAgo(30) },
   ],
   "juniorwallet-allowance-rules": [
-    { Id: 'rule_1', ChildId: 'cp_aiman', Category: 'discretionary', LimitType: 'monthly', Amount: 50, IsActive: true, CreatedBy: 'demo_parent', CreatedAt: now, UpdatedAt: now },
-    { Id: 'rule_2', ChildId: 'cp_aiman', Category: 'essential', LimitType: 'monthly', Amount: 150, IsActive: true, CreatedBy: 'demo_parent', CreatedAt: now, UpdatedAt: now }
+    { RuleId: 'rule_1', ChildId: 'cp_aiman', Category: 'discretionary', LimitType: 'monthly', Amount: 50, IsActive: true, CreatedBy: 'demo_parent', CreatedAt: now, UpdatedAt: now },
+    { RuleId: 'rule_2', ChildId: 'cp_aiman', Category: 'essential', LimitType: 'monthly', Amount: 150, IsActive: true, CreatedBy: 'demo_parent', CreatedAt: now, UpdatedAt: now }
   ],
   "juniorwallet-allowance-recommendations": [
     {
-      Id: 'rec_1', ChildId: 'cp_aiman', SuggestedAmount: 165, BasicNeeds: 120, SchoolAdjustment: 20, FlexibleBuffer: 30, SavingsGoal: 20, OverspendingPenalty: 25, ResponsibilityScore: 72,
+      AllowanceRecommendationsId: 'rec_1', ChildId: 'cp_aiman', SuggestedAmount: 165, BasicNeeds: 120, SchoolAdjustment: 20, FlexibleBuffer: 30, SavingsGoal: 20, OverspendingPenalty: 25, ResponsibilityScore: 72,
       PredictedSpending: { Essential: 120, Educational: 20, Discretionary: 30, Savings: 20 },
       RiskFlags: [{ Category: 'discretionary', Message: 'Gaming purchases increased this month. A RM20 gaming limit is recommended.', Severity: 'medium' }],
       Explanation: 'The recommended allowance is RM165. Food and transport spending were stable, but gaming purchases increased this month. A RM20 gaming limit is recommended.',
@@ -54,34 +46,119 @@ export const MockDB: Record<string, any[]> = {
   ],
   "juniorwallet-extra-allowance-requests": [],
   "juniorwallet-goals": [
-    { Id: 'goal_1', ChildId: 'cp_aiman', Title: 'School Supplies Fund', GoalType: 'education', TargetAmount: 50, CurrentAmount: 20, Status: 'active', CreatedAt: now },
-    { Id: 'goal_2', ChildId: 'cp_aiman', Title: 'Emergency Fund', GoalType: 'emergency', TargetAmount: 100, CurrentAmount: 35, Status: 'active', CreatedAt: now }
+    { GoalId: 'goal_1', ChildId: 'cp_aiman', Title: 'School Supplies Fund', GoalType: 'education', TargetAmount: 50, CurrentAmount: 20, Status: 'active', CreatedAt: now },
+    { GoalId: 'goal_2', ChildId: 'cp_aiman', Title: 'Emergency Fund', GoalType: 'emergency', TargetAmount: 100, CurrentAmount: 35, Status: 'active', CreatedAt: now }
   ],
   "juniorwallet-badges": [
-    { Id: 'badge_1', Name: 'Smart Saver', Description: 'Saved consistently for 4 weeks', Icon: '💰', RequirementKey: 'savings_streak_4', CreatedAt: now },
-    { Id: 'badge_2', Name: 'Budget Hero', Description: 'Stayed within all category limits', Icon: '🦸', RequirementKey: 'within_limits', CreatedAt: now },
-    { Id: 'badge_3', Name: 'Needs First', Description: 'Spent mostly on needs over wants', Icon: '🎯', RequirementKey: 'needs_ratio', CreatedAt: now },
-    { Id: 'badge_4', Name: 'Goal Builder', Description: 'Created and funded a savings goal', Icon: '🏗️', RequirementKey: 'goal_funded', CreatedAt: now },
+    { BadgesId: 'badge_1', Name: 'Smart Saver', Description: 'Saved consistently for 4 weeks', Icon: '💰', RequirementKey: 'savings_streak_4', CreatedAt: now },
+    { BadgesId: 'badge_2', Name: 'Budget Hero', Description: 'Stayed within all category limits', Icon: '🦸', RequirementKey: 'within_limits', CreatedAt: now },
+    { BadgesId: 'badge_3', Name: 'Needs First', Description: 'Spent mostly on needs over wants', Icon: '🎯', RequirementKey: 'needs_ratio', CreatedAt: now },
+    { BadgesId: 'badge_4', Name: 'Goal Builder', Description: 'Created and funded a savings goal', Icon: '🏗️', RequirementKey: 'goal_funded', CreatedAt: now },
   ],
   "juniorwallet-child-badges": [
-    { Id: 'cb_1', ChildId: 'cp_aiman', BadgeId: 'badge_1', UnlockedAt: daysAgo(14) },
-    { Id: 'cb_2', ChildId: 'cp_aiman', BadgeId: 'badge_3', UnlockedAt: daysAgo(7) }
+    { ChildBadgesId: 'cb_1', ChildId: 'cp_aiman', BadgeId: 'badge_1', UnlockedAt: daysAgo(14) },
+    { ChildBadgesId: 'cb_2', ChildId: 'cp_aiman', BadgeId: 'badge_3', UnlockedAt: daysAgo(7) }
   ],
   "juniorwallet-alerts": [
-    { Id: 'alert_1', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'Risky Transaction Detected', Message: 'Aiman made a RM120 purchase at an unknown store. Please review.', Severity: 'warning', Read: false, CreatedAt: daysAgo(10) },
-    { Id: 'alert_2', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'AI Recommendation Ready', Message: 'New monthly allowance recommendation for Aiman: RM165', Severity: 'info', Read: false, CreatedAt: now },
-    { Id: 'alert_3', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'Gaming Limit Warning', Message: 'Aiman is approaching the RM50 gaming limit this month.', Severity: 'warning', Read: false, CreatedAt: daysAgo(5) }
+    { AlertId: 'alert_1', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'Risky Transaction Detected', Message: 'Aiman made a RM120 purchase at an unknown store. Please review.', Severity: 'warning', Read: false, CreatedAt: daysAgo(10) },
+    { AlertId: 'alert_2', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'AI Recommendation Ready', Message: 'New monthly allowance recommendation for Aiman: RM165', Severity: 'info', Read: false, CreatedAt: now },
+    { AlertId: 'alert_3', ChildId: 'cp_aiman', ParentId: 'demo_parent', Title: 'Gaming Limit Warning', Message: 'Aiman is approaching the RM50 gaming limit this month.', Severity: 'warning', Read: false, CreatedAt: daysAgo(5) }
   ],
   "juniorwallet-audit-logs": [
-    { id: 'audit_child_ibad_created', actorId: 'demo_parent', action: 'child_created', entityType: 'child_profile', entityId: 'child_ibad_demo', newValue: { childId: 'child_ibad_demo', nickname: 'ibad', fullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", kycStatus: 'kyc_pending', documentNumberMasked: '******-**-0031' }, createdAt: now }
+    { AuditLogId: 'audit_child_ibad_created', ActorId: 'demo_parent', Action: 'child_created', EntityType: 'child_profile', EntityId: 'child_ibad_demo', NewValue: { ChildId: 'child_ibad_demo', Nickname: 'ibad', FullName: "MUHAMMAD KHAIRUL IBAD BIN JIMA'AIN", KycStatus: 'kyc_pending', DocumentNumberMasked: '******-**-0031' }, CreatedAt: now }
   ],
   "juniorwallet-child-kyc-documents": [
-    { id: 'kyc_ibad_demo_mykid', childId: 'child_ibad_demo', parentId: 'demo_parent', documentType: 'mykid', documentNumberMasked: '******-**-0031', documentNumberHash: 'hash_160401010031', documentFileKey: 'kyc-documents/demo_parent/child_ibad_demo/kyc_ibad_demo_mykid', status: 'pending', submittedAt: now, createdAt: now, updatedAt: now }
+    { KycDocumentId: 'kyc_ibad_demo_mykid', ChildId: 'child_ibad_demo', ParentId: 'demo_parent', DocumentType: 'mykid', DocumentNumberMasked: '******-**-0031', DocumentNumberHash: 'hash_160401010031', DocumentFileKey: 'kyc-documents/demo_parent/child_ibad_demo/kyc_ibad_demo_mykid', Status: 'pending', SubmittedAt: now, CreatedAt: now, UpdatedAt: now }
+  ],
+  "juniorwallet-shared-funds": [
+    {
+      SharedFundId: 'fund_emergency_001',
+      Name: 'Family Emergency Fund',
+      UserId: 'demo_parent',
+      Balance: 500,
+      GoalAmount: 2000,
+      ApprovalRule: 'ALL',
+      Members: [
+        { UserId: 'demo_parent', Role: 'ADMIN' },
+        { UserId: 'demo_child', Role: 'MEMBER' }
+      ],
+      Contributions: [
+        { ContributorId: 'demo_parent', Amount: 400, CreatedAt: daysAgo(14) },
+        { ContributorId: 'demo_child', Amount: 100, CreatedAt: daysAgo(7) }
+      ],
+      WithdrawalRequests: [],
+      CreatedAt: daysAgo(14),
+      UpdatedAt: daysAgo(7)
+    },
+    {
+      SharedFundId: 'fund_school_001',
+      Name: 'School Supplies Fund',
+      UserId: 'demo_parent',
+      Balance: 150,
+      GoalAmount: 300,
+      ApprovalRule: 'PARENT_ONLY',
+      Members: [
+        { UserId: 'demo_parent', Role: 'ADMIN' },
+        { UserId: 'demo_child', Role: 'MEMBER' }
+      ],
+      Contributions: [
+        { ContributorId: 'demo_parent', Amount: 150, CreatedAt: daysAgo(10) }
+      ],
+      WithdrawalRequests: [],
+      CreatedAt: daysAgo(10),
+      UpdatedAt: daysAgo(10)
+    }
+  ],
+  "juniorwallet-approvals": [
+    {
+      ApprovalId: 'approval_001',
+      RequestId: 'withdrawal_req_001',
+      FundId: 'fund_emergency_001',
+      ApproverId: 'demo_parent',
+      Status: 'PENDING',
+      CreatedAt: now
+    },
+    {
+      ApprovalId: 'approval_002',
+      RequestId: 'withdrawal_req_002',
+      FundId: 'fund_school_001',
+      ApproverId: 'demo_parent',
+      Status: 'APPROVED',
+      RespondedAt: daysAgo(1),
+      CreatedAt: daysAgo(5)
+    }
   ]
+};
+
+// Map AWS table names to their MockDB equivalents
+const AWS_TO_MOCK_TABLE: Record<string, string> = {
+  Users: 'juniorwallet-profiles',
+  ChildProfiles: 'juniorwallet-child-profiles',
+  UserChildLink: 'juniorwallet-parent-child-links',
+  Transactions: 'juniorwallet-transactions',
+  AllowanceRules: 'juniorwallet-allowance-rules',
+  AllowanceRecommendations: 'juniorwallet-allowance-recommendations',
+  ExtraAllowanceRequests: 'juniorwallet-extra-allowance-requests',
+  Goals: 'juniorwallet-goals',
+  Badges: 'juniorwallet-badges',
+  ChildBadges: 'juniorwallet-child-badges',
+  Alerts: 'juniorwallet-alerts',
+  AuditLogs: 'juniorwallet-audit-logs',
+  KYCDocuments: 'juniorwallet-child-kyc-documents',
+  SharedFunds: 'juniorwallet-shared-funds',
+  Approvals: 'juniorwallet-approvals',
 };
 
 // Also fallback to "smart-wallet-*" naming so it works regardless of .env configuration.
 export function getMockTable(tableName: string) {
+  // 1. Direct AWS table name → MockDB name
+  if (AWS_TO_MOCK_TABLE[tableName]) {
+    if (!MockDB[AWS_TO_MOCK_TABLE[tableName]]) {
+      MockDB[AWS_TO_MOCK_TABLE[tableName]] = [];
+    }
+    return MockDB[AWS_TO_MOCK_TABLE[tableName]];
+  }
+  // 2. smart-wallet-* → juniorwallet-* fallback
   const normalizedName = tableName.replace("smart-wallet-", "juniorwallet-");
   if (!MockDB[normalizedName]) {
     MockDB[normalizedName] = [];

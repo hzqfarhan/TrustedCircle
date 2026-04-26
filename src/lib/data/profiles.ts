@@ -16,7 +16,7 @@ export async function getProfilesByRole(role: string): Promise<Profile[]> {
 }
 
 export async function createProfile(profile: Profile): Promise<void> {
-  await putItem(Tables.profiles, profile as Record<string, unknown>);
+  await putItem(Tables.profiles, profile);
 }
 
 export async function updateProfile(id: string, updates: Partial<Profile>): Promise<void> {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { executeTransfer } from "@/lib/data/transfers";
+import { createAlert } from "@/lib/data/alerts";
 
 export async function POST(req: NextRequest) {
   const {
@@ -13,44 +14,31 @@ export async function POST(req: NextRequest) {
     riskActions,
   } = await req.json();
 
-  // Deduct from sender wallet
-  await prisma.wallet.updateMany({
-    where: { userId: senderId },
-    data: { balance: { decrement: amount } },
+  // executeTransfer handles wallet balance deduction + transaction creation
+  // Risk score and severity are stored directly on the transaction item (DynamoDB is schemaless)
+  const txId = await executeTransfer({
+    childId: senderId,
+    amount,
+    recipientId: senderId, // For self-transfers / merchant payments, recipient = sender
+    merchant: recipientName,
+    category: "discretionary",
+    riskScore,
+    riskSeverity,
   });
-
-  const tx = await prisma.transaction.create({
-    data: {
-      amount,
-      note: note || `Transfer to ${recipientName}`,
-      status: "COMPLETED",
-      senderId,
-      category: "TRANSFER",
-    },
-  });
-
-  if (riskScore !== undefined) {
-    await prisma.riskAssessment.create({
-      data: {
-        transactionId: tx.id,
-        score: riskScore,
-        severity: riskSeverity,
-        reasons: JSON.stringify(riskReasons),
-        actions: JSON.stringify(riskActions),
-      },
-    });
-  }
 
   // If high risk, create alert
   if (riskSeverity === "HIGH" || riskSeverity === "MEDIUM") {
-    await prisma.alert.create({
-      data: {
-        userId: senderId,
-        message: `Transfer of RM ${amount.toFixed(2)} to ${recipientName} was flagged as ${riskSeverity}. Risk score: ${riskScore}`,
-        severity: riskSeverity,
-      },
+    await createAlert({
+      id: crypto.randomUUID(),
+      childId: senderId,
+      parentId: senderId, // Will be resolved via child profile lookup if needed
+      title: "Transfer Flagged",
+      message: `Transfer of RM ${Number(amount).toFixed(2)} to ${recipientName} was flagged as ${riskSeverity}. Risk score: ${riskScore}`,
+      severity: riskSeverity === "HIGH" ? "critical" : "warning",
+      read: false,
+      createdAt: new Date().toISOString(),
     });
   }
 
-  return NextResponse.json({ ok: true, transactionId: tx.id });
+  return NextResponse.json({ ok: true, transactionId: txId });
 }
